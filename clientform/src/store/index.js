@@ -1,0 +1,28 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import company from './company.module'
+import user from './user.module'
+import car from './car.module'
+
+Vue.use(Vuex)
+
+const state = {}
+
+const getters = {}
+
+const mutations = {}
+
+const actions = {}
+
+
+export default new Vuex.Store({
+  state,
+  getters,
+  mutations,
+  actions,
+  modules: {
+    company,
+    user,
+    car
+  }
+})
