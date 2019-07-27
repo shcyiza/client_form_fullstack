@@ -1,22 +1,15 @@
-const { gql } = require('apollo-server-express');
 const _$merge = require('lodash.merge')
 const { makeExecutableSchema } = require('graphql-tools')
 
 
 // types
-const Car = require('./Car/types')
+const CarType = require('./Car/types')
 
 //resolver
 const CarResolver = require('./Car/resolvers')
 
-const Query = gql`
-  type Query {
-    Car(plate_number: String!): Car
-  }
-`
-
 const ClientFormShema = makeExecutableSchema({
-    typeDefs: [ Query, Car ],
+    typeDefs: [ CarType ],
     resolvers:  _$merge(CarResolver)
 })
 
