@@ -18,7 +18,6 @@ const Mutation = {
             return resp
           })
           .catch(err => {
-            err.status = 404
             logger.error("CarModel :" + err.message)
             throw err
         })
