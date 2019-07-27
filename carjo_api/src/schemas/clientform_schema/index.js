@@ -1,42 +1,23 @@
-const {
-    GraphQLID,
-    GraphQLString,
-    //GraphQLList,
-    GraphQLNonNull,
-    GraphQLObjectType,
-    GraphQLSchema
-} = require('graphql')
+const { gql } = require('apollo-server-express');
+const _$merge = require('lodash.merge')
+const { makeExecutableSchema } = require('graphql-tools')
 
-const { CarModel } = require('../../models/index')
 
-const CarType = new GraphQLObjectType({
-    name: 'Car',
-    fields: {
-        id: { type: GraphQLID },
-        plate_number: { type: GraphQLString },
-        brand: { type: GraphQLString },
-        model: { type: GraphQLString },
-        color: { type: GraphQLString }
-    }
+// types
+const Car = require('./Car/types')
+
+//resolver
+const CarResolver = require('./Car/resolvers')
+
+const Query = gql`
+  type Query {
+    Car(plate_number: String!): Car
+  }
+`
+
+const ClientFormShema = makeExecutableSchema({
+    typeDefs: [ Query, Car ],
+    resolvers:  _$merge(CarResolver)
 })
 
-const CarSchema = new GraphQLSchema({
-    query: new GraphQLObjectType({
-        name: 'Query',
-        fields: {
-            Car: {
-                type: CarType,
-                args: {
-                    plate_number: { type: GraphQLNonNull(GraphQLString) }
-                },
-                resolve: (root, args) => {
-                    return CarModel.findOne({
-                        plate_number: args.plate_number
-                    }).exec()
-                }
-            }
-        }
-    })
-})
-
-module.exports = {CarSchema}
+module.exports = ClientFormShema
