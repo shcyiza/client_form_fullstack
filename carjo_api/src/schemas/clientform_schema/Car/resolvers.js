@@ -13,11 +13,10 @@ const Mutation = {
     registerCar(parent, args) {
         const car = new CarModel({...args})
         return car.save()
-          .then(resp => {
+        .then(resp => {
             logger.info(`CarModel: ${args.plate_number} registered successfully`)
             return resp
-          })
-          .catch(err => {
+        }).catch(err => {
             logger.error("CarModel :" + err.message)
             throw err
         })

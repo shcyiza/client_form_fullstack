@@ -5,6 +5,7 @@ const logger = require('./utils/logger')
 
 const cors = require('cors')
 const Mongoose = require('mongoose')
+const Redis = require("redis");
 const { ApolloServer } = require('apollo-server-express')
 
 Mongoose.connect('mongodb://localhost:27017/carjoDB',{
@@ -13,25 +14,39 @@ Mongoose.connect('mongodb://localhost:27017/carjoDB',{
 })
 
 var db = Mongoose.connection
-db.on('error', console.log.bind(console, 'connection error:'))
+db.on('error', () => {
+    logger.error('DB error!')
+})
 db.once('open', () => {
-    console.log('successfull connection')
+    logger.info('DB successfully connected')
 })
 
-const app = Express()
+redis_client = Redis.createClient();
+
+redis_client.on("error", function (err) {
+    logger.error( err);
+});
+
+const app = Express();
 
 //logger
 morgan.token('body', function (req, res) { return JSON.stringify(req.body.query.replace(/[{}\n]/g, "").replace(/\"/g, "'")) });
 app.use(morgan(
-    'method=:method -  url=:url - '
-    + '- response-time=:response-time - '
-    + 'graphQL-body= :body'
-    , { stream: logger.stream }
+    'method=:method - url=:url - response-time=:response-time - graphQL-body= :body',
+    { stream: logger.stream }
 ))
 
 const ClientFormSchema = require('./schemas/clientform_schema/index')
-const client_form_api = new ApolloServer({ schema: ClientFormSchema })
 const client_form_path = '/client_form_graph'
+const client_form_api = new ApolloServer({
+    schema: ClientFormSchema,
+    context: ({req, res}) => ({
+        req,
+        res,
+        redis_client,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    })
+})
+
 
 
 
@@ -41,14 +56,7 @@ app.post(client_form_path,
 
 client_form_api.applyMiddleware({
     app,
-    path: client_form_path,
-    formatError: (err) => {
-        if (err.message.startsWith("Database Error: ")) {
-          return new Error('Internal server error');
-        }
-        
-        return err
-    }
+    path: client_form_path
 })
 
 const connection_port = 6060
