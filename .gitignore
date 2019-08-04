@@ -5,8 +5,10 @@
 doc_carjo_client_form.md
 
 # local env files
+/clientform/.env
 /clientform/.env.local
 /clientform/.env.*.local
+/carjo_api/.env
 /carjo_api/.env.local
 /carjo_api/.env.*.local
 

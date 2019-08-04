@@ -5,7 +5,7 @@ const logger = require('./utils/logger')
 
 const cors = require('cors')
 const Mongoose = require('mongoose')
-const Redis = require("redis");
+const Redis = require("ioredis");
 const { ApolloServer } = require('apollo-server-express')
 
 Mongoose.connect('mongodb://localhost:27017/carjoDB',{
@@ -13,37 +13,49 @@ Mongoose.connect('mongodb://localhost:27017/carjoDB',{
     useCreateIndex: true
 })
 
-var db = Mongoose.connection
-db.on('error', () => {
-    logger.error('DB error!')
+const db = Mongoose.connection
+db.on('error', function(err) {
+    logger.error('DB connection error!:', err)
 })
-db.once('open', () => {
+db.once('open', function() {
     logger.info('DB successfully connected')
 })
 
-redis_client = Redis.createClient();
+const redis = new Redis();
 
-redis_client.on("error", function (err) {
-    logger.error( err);
+redis.on("error", function (err) {
+    logger.error('redis connection error:', err);
+});
+
+redis.on("ready", function (err) {
+    logger.info("redis successfully connected");
 });
 
 const app = Express();
 
-//logger
-morgan.token('body', function (req, res) { return JSON.stringify(req.body.query.replace(/[{}\n]/g, "").replace(/\"/g, "'")) });
+// logger middleware
+morgan.token('body', function (req, res) {
+    return JSON.stringify(
+        req.body.query
+        .replace(/[{}\n]/g, "")
+        .replace(/\"/g, "'")
+        .replace(/[ ]{2,}/g, " ")
+    )
+});
+
 app.use(morgan(
     'method=:method - url=:url - response-time=:response-time - graphQL-body= :body',
     { stream: logger.stream }
 ))
 
-const ClientFormSchema = require('./schemas/clientform_schema/index')
+const ClientFormSchema = require('./schemas/ClientForm')
 const client_form_path = '/client_form_graph'
 const client_form_api = new ApolloServer({
     schema: ClientFormSchema,
     context: ({req, res}) => ({
         req,
         res,
-        redis_client,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+        redis,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     })
 })
 
@@ -63,3 +75,4 @@ const connection_port = 6060
 app.listen(connection_port, () => {
     logger.info(`🚀 (Express + Apollo + Mongoose) app running at localhost:${connection_port}`)
 })
+
