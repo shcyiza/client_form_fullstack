@@ -6,7 +6,7 @@ const typeDef = gql`
             email: String!,
         ): UserSessionRequest,
 
-        GenerateUserSession(
+        ClaimUserSession(
             email: String!,
             request_timestamp: String!,
             claim_token: String!,

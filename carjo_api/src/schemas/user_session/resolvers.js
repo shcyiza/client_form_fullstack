@@ -17,6 +17,12 @@ const onError = function(err) {
     throw err
 }
 
+const delTokenToClaim = function(redis, key, cbOnSuccess)  {
+    redis.del(key).then(cbOnSuccess).catch(err => {
+        onError(err)
+    });
+}
+
 const cacheTokenToClaim = (redis, {id, email}, passed_status = {}) => {
 
     const request_timestamp = moment().format('YYMMDDHHmmss')
@@ -55,39 +61,34 @@ const Mutation = {
         })
     },
 
-    GenerateUserSession: (parent, {email, request_timestamp, claim_token}, {redis}) => {
+    ClaimUserSession: (parent, {email, request_timestamp, claim_token}, {redis}) => {
 
         return UserModel.findOne({email}).then(user => {
             onNoUserFound(user)
+
             const id = user.id
-            logger.debug(makeUserSessionToken(id))
             const key = composeClaimKey(id, request_timestamp);
+
             return redis.get(key).then(token_to_claim => {
                 if (token_to_claim === claim_token) {
 
-                    redis.del(key).then(() => {
+                    delTokenToClaim(redis, key, () => {
                         logger.debug(`Successfull claim from ${email} token to claim deleted.`)
-                    }).catch(err => {
-                        onError(err)
-                    });
+                    })
 
                     return {
                         status: STATUS[1], 
                         user_session_token: makeUserSessionToken(id)
                     };
                 }
-                let altered
 
-                redis.del(key).then(resp => {
-                    altered = resp
+                delTokenToClaim(redis, key, resp => {
                     logger.warn(
-                        `Invalid login claim made for ${email} ${altered ? 'refreshing': 'creating new'} token to claim.`
+                        `Invalid login claim made for ${email} ${resp ? 'refreshing': 'creating new'} token to claim.`
                     )
-                }).catch(err => {
-                    onError(err)
-                });
+                })
 
-                const passed_status = {status: altered ? STATUS[2] : STATUS[0], msg: "Invalide token, please try again"}
+                const passed_status = {status: STATUS[2], msg: "Invalide token, please try again"}
 
                 return cacheTokenToClaim(redis, user, passed_status)
             });
