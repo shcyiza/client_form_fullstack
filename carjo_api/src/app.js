@@ -8,7 +8,7 @@ const Mongoose = require('mongoose')
 const Redis = require("ioredis");
 const { ApolloServer } = require('apollo-server-express')
 
-Mongoose.connect('mongodb://localhost:27017/carjoDB',{
+Mongoose.connect(process.env.DB_HOST,{
     useNewUrlParser: true,
     useCreateIndex: true
 })

@@ -7,6 +7,10 @@ const UserModel = Mongoose.model('User', {
 }, 'user')
  
 const CarModel = Mongoose.model('Car', {
+    user: {
+        type: Mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     plate_number:  { type: String, index: true, unique : true, required : true },
     brand: { type: String, required : true },
     model: { type: String, required : true },
