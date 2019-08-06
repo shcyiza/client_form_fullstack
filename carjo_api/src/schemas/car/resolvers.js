@@ -3,13 +3,19 @@ const logger = require('../../utils/logger')
 
 const Car = {};
 
-const Query = { 
+const CarQr = {
     Car(parent, {plate_number}) {
         return CarModel.findOne({plate_number}).exec()
     }
 };
 
-const Mutation = {
+const UserCarsQr = { 
+    UserCars(parent, {user}){
+        return CarModel.find({user}).exec()
+    }
+};
+
+const RegisterCarMttn = {
     RegisterCar(parent, args) {
         const car = new CarModel({...args})
         return car.save()
@@ -23,4 +29,4 @@ const Mutation = {
     }
 };
 
-module.exports = {Car, Query, Mutation}
+module.exports = {Car, CarQr, UserCarsQr, RegisterCarMttn}

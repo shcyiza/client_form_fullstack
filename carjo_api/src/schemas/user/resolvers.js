@@ -3,15 +3,17 @@ const logger = require('../../utils/logger')
 
 const User = {}
 
-const Query = { 
-    User(parent, args) {
-        return UserModel.findOne({
-            email: args.email
-        }).exec()
+const UserQr = {
+    User(parent, {email, id}) {
+        const qr = {}
+        if(email) qr.email = email;
+        if(id) qr._id = id;
+
+        return UserModel.findOne(qr).exec()
     }
 }
 
-const Mutation = {
+const RegisterUserMttn = {
     RegisterUser(parent, args) {
         const user = new UserModel({...args})
         return user.save()
@@ -25,4 +27,4 @@ const Mutation = {
     }
 }
 
-module.exports = {User, Query, Mutation}
+module.exports = {User, UserQr, RegisterUserMttn}

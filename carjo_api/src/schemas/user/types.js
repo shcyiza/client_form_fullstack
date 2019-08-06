@@ -1,25 +1,28 @@
 const { gql } = require('apollo-server-express');
 
-const typeDef = gql`
-    type Query {
-        User(email: String!): User
-    },
+const USER_TYPE = gql`
+    type User {
+        id: ID!,
+        full_name: String!,
+        email: String!,
+        phone: String!
+    }
+`
 
-    type Mutation {
+const USER_QR = gql`
+    extend type Query {
+        User(email: String, id: String): User
+    }
+`
+
+const REGISTER_USER_MTTN = gql`
+    extend type Mutation {
         RegisterUser(
             full_name: String!,
             email: String!,
             phone: String!
         ): User!
-    },
-
-    type User {
-        id: ID!,
-        full_name: String!,
-        email: String!,
-        phone: String!,
-        token: String
     }
 `
 
-module.exports = typeDef
+module.exports = {USER_QR, USER_TYPE, REGISTER_USER_MTTN}

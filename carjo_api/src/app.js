@@ -8,6 +8,8 @@ const Mongoose = require('mongoose')
 const Redis = require("ioredis");
 const { ApolloServer } = require('apollo-server-express')
 
+var jwtMiddleware = require('express-jwt');
+
 Mongoose.connect(process.env.DB_HOST,{
     useNewUrlParser: true,
     useCreateIndex: true
@@ -46,12 +48,12 @@ morgan.token('body', function (req, res) {
 app.use(morgan(
     'method=:method - url=:url - response-time=:response-time - graphQL-body= :body',
     { stream: logger.stream }
-))
+), cors({origin: '*'}))
 
-const ClientFormSchema = require('./schemas/ClientForm')
-const client_form_path = '/client_form_graph'
-const client_form_api = new ApolloServer({
-    schema: ClientFormSchema,
+const SessionManagementSchema = require('./schemas/SessionManagement')
+const session_management_path = '/session_management_graph'
+const session_management_api = new ApolloServer({
+    schema: SessionManagementSchema,
     context: ({req, res}) => ({
         req,
         res,
@@ -59,11 +61,30 @@ const client_form_api = new ApolloServer({
     })
 })
 
+const ClientFormSchema = require('./schemas/ClientForm')
+const client_form_path = '/client_form_graph'
+const client_form_api = new ApolloServer({
+    schema: ClientFormSchema,
+    context: ({req, res}) => ({
+        req,
+        res,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+    })
+})
 
+session_management_api.applyMiddleware({
+    app,
+    path: session_management_path
+})
 
-
-app.post(client_form_path,
-    cors({origin: '*'})
+app.post(
+    client_form_path, 
+    jwtMiddleware({secret: process.env.JWT_CLIENT_FORM_SECRET}),
+    function (err, req, res, next) {
+        if (err.name === 'UnauthorizedError') {
+          res.status(401).send('Unauthorized');
+        }
+        next()
+    }
 )
 
 client_form_api.applyMiddleware({
