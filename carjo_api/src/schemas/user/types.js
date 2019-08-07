@@ -3,7 +3,8 @@ const { gql } = require('apollo-server-express');
 const USER_TYPE = gql`
     type User {
         id: ID!,
-        full_name: String!,
+        first_name: String!,
+        last_name: String!,
         email: String!,
         phone: String!
     }
@@ -18,7 +19,8 @@ const USER_QR = gql`
 const REGISTER_USER_MTTN = gql`
     extend type Mutation {
         RegisterUser(
-            full_name: String!,
+            first_name: String!,
+            last_name: String!,
             email: String!,
             phone: String!
         ): User!
