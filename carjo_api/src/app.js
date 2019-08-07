@@ -96,4 +96,3 @@ const connection_port = 6060
 app.listen(connection_port, () => {
     logger.info(`🚀 (Express + Apollo + Mongoose) app running at localhost:${connection_port}`)
 })
-

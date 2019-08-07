@@ -1,4 +1,3 @@
-const _$merge = require('lodash.merge')
 const { makeExecutableSchema } = require('graphql-tools')
 const BASE_TYPE = require('../utils/gql_base_type')
 
