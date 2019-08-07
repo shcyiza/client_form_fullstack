@@ -1,56 +1,14 @@
-const {generateDigitToken} = require('../../utils/token_generator')
-const moment = require('moment')
 const logger = require('../../utils/logger')
-const {UserModel, UserMethods} = require('../../models/index')
+const {UserModel} = require('../../models/index')
 const {makeUserSessionToken} = require('../../utils/jwt')
 
-const STATUS = ["pending", "active", "altered"]
+const {
+    STATUS, composeClaimKey, onNoUserFound, onError, delTokenToClaim, cacheTokenToClaim
+} = require('./helpers');
 
-const composeClaimKey = (user_id, request_timestamp) => (  
-    `carjo_api:session_request:${user_id}:${request_timestamp}`
-)
-
-const onNoUserFound = function(user) { UserMethods.errorOnNoUserFound(user, 'email') }
-
-const onError = function(err) {
-    logger.error(`User Session request error: ${err.message}`)
-    throw err
-}
-
-const delTokenToClaim = function(redis, key, cbOnSuccess)  {
-    redis.del(key).then(cbOnSuccess).catch(err => {
-        onError(err)
-    });
-}
-
-const cacheTokenToClaim = (redis, {id, email}, passed_status = {}) => {
-
-    const request_timestamp = moment().format('YYMMDDHHmmss')
-    const key = composeClaimKey(id, request_timestamp);
-    const token_to_claim = generateDigitToken(8);
-
-    return redis.set(
-        key, token_to_claim, 'NX', 'EX', 600
-    ).then(resp => {
-        logger.debug(`token to claim for ${email} created at key: ${key}`)
-
-        if (resp) return {
-            status: passed_status.status || STATUS[0],
-            request_timestamp,
-            message: passed_status.msg || null
-        }
-
-        const err = new Error(`could not create token for ${email}`)
-        onError(err)
-
-    }).catch(err => {
-        onError(err)
-    })
-}
-
-const Mutation = {
+const RequestUserSessionMttn = {
     RequestUserSession(parent, {email}, {redis}) {
-        
+    
         return UserModel.findOne({email}).then(user => {
             onNoUserFound(user)
 
@@ -59,8 +17,10 @@ const Mutation = {
         }).catch(err => {
             onError(err)
         })
-    },
+    }
+};
 
+const ClaimUserSessionMttn = {
     ClaimUserSession: (parent, {email, request_timestamp, claim_token}, {redis}) => {
 
         return UserModel.findOne({email}).then(user => {
@@ -96,7 +56,7 @@ const Mutation = {
         }).catch(err => {
             onError(err)
         })
-    },
+    }
 };
 
-module.exports = {Mutation}
+module.exports = {RequestUserSessionMttn, ClaimUserSessionMttn}
