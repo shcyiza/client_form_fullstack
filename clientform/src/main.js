@@ -3,11 +3,13 @@ import App from './App.vue'
 import store from './store'
 import router from './router'
 import Vuelidate from 'vuelidate'
-
+import GQLProvider from './lib/graphql'
 require('@/assets/styles/main.sass')
 
 Vue.use(Vuelidate);
-Vue.config.productionTip = false
+Vue.use(GQLProvider);
+
+Vue.config.productionTip = false;
 
 new Vue({
   store,
