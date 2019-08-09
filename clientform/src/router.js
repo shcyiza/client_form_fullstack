@@ -2,8 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home'
 import CarwashForm from './views/CarwashForm'
+import Login from './views/Login'
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   scrollBehavior() {
@@ -21,5 +22,10 @@ export default new Router({
       name: 'carwash',
       component: CarwashForm
     },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    }
   ]
 })
