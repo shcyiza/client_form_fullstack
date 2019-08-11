@@ -6,7 +6,7 @@ const USER_TYPE = gql`
         first_name: String!,
         last_name: String!,
         email: String!,
-        phone: String!
+        phone: String!,
     }
 `
 

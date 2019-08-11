@@ -1,7 +1,10 @@
 const {UserModel} = require('../../models/index')
 const logger = require('../../utils/logger')
+const {findOrCreateAktiContact} = require('../../utils/akti')
 
 const User = {}
+
+
 
 const UserQr = {
     User(parent, {email, id}) {
@@ -9,7 +12,15 @@ const UserQr = {
         if(email) qr.email = email;
         if(id) qr._id = id;
 
-        return UserModel.findOne(qr).exec()
+        return UserModel.findOne(qr).then(user => {
+            console.log(user)
+            if(user) {
+                if(!user.akti_account_id) findOrCreateAktiContact(user, (akti_user) => {
+                    return UserModel.findOneAndUpdate({_id: id}, {akti_contact_id: akti_user.contactID}).exec()
+                })
+            }
+            return user
+        })
     }
 }
 

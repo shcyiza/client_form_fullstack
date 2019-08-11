@@ -4,16 +4,18 @@ import { graph }  from "../lib/graphql";
 const USER_BY_EMAIL = `query ($email: String!) {
     User(email: $email) {
         id
-        full_name
+        first_name
+        last_name
     }
 }`;
 
-const SIGN_UP = `mutation ($full_name: String!, $email: String!, $phone: String!){
-    RegisterUser(full_name: $full_name, email: $email, phone: $phone){
-      id
-      full_name
-      email
-      phone
+const SIGN_UP = `mutation ($first_name: String!, $last_name: String!, $email: String!, $phone: String!){
+    RegisterUser(first_name: $first_name, last_name: $last_name, email: $email, phone: $phone){
+        id
+        first_name
+        last_name
+        email
+        phone
     }
 }`;
 
@@ -44,24 +46,26 @@ export async function checkEmailExists(email) {
     return !!User; // Same as User !== null
 }
 
-export function registerUser(user) {
-    const mutation = graph.mutate(SIGN_UP);
+export async function registerUser(user) {
+    const {first_name, last_name, email, phone} = user
+    const mutation = graph(SIGN_UP);
     return mutation({
-        full_name: user.full_name,
-        email: user.email,
-        phone: user.phone
+        first_name,
+        last_name,
+        email,
+        phone
     });
 }
 
-export function requestToken(email) {
-    const mutation = graph.mutate(REQUEST_TOKEN);
+export async function requestToken(email) {
+    const mutation = graph(REQUEST_TOKEN);
     return mutation({
         email
     });
 }
 
-export function claimToken(email, request_timestamp, claim_token) {
-    const mutation = graph.mutate(CLAIM_TOKEN);
+export async function claimToken(email, request_timestamp, claim_token) {
+    const mutation = await graph(CLAIM_TOKEN);
     return mutation({
         email,
         request_timestamp,

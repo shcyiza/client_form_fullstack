@@ -1,5 +1,5 @@
 <script>
-import { checkEmailExists, registerUser, requestToken, claimToken} from '../graphql/queries/users';
+import { checkEmailExists, registerUser, requestToken, claimToken} from '../graphql/users';
 
 export default {
     name: 'login', 
@@ -8,7 +8,8 @@ export default {
             user: {
                 email: '',
                 phone: '',
-                full_name: ''
+                first_name: '',
+                last_name: ''
             },
             token: '',
             isValidEmail: true,
@@ -62,7 +63,8 @@ export default {
         </template>
         <template v-else-if="shouldRegister">
             <h2>Registration</h2>
-            <input type="text" placeholder="Full name" v-model="user.full_name" />
+            <input type="text" placeholder="First name" v-model="user.first_name" />
+            <input type="text" placeholder="Last name" v-model="user.last_name" />
             <input type="tel" placeholder="phone number" v-model="user.phone" />
             <button @click.prevent="registerUser"> Register </button>
         </template>

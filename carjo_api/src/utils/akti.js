@@ -138,7 +138,7 @@ const getContact= async email => {
 const createContact = async contact_draft => {
     try {
         const payload = {
-            "accountId": contact_draft.accountId ||"",
+            "accountId": "407",
             "firstName": contact_draft.firstName,
             "lastName": contact_draft.lastName || 'Nolastname',
             "title": "",
@@ -169,7 +169,7 @@ const createContact = async contact_draft => {
 }
 
 const createB2BContact = async accountDraft => {
-    try {
+    try {f
         const payload = {
             "companyName": `${accountDraft.first_name} ${accountDraft.last_name}`,
             "vatNr": "",
@@ -182,7 +182,7 @@ const createB2BContact = async accountDraft => {
             "languageKey": "",
             "sectorKey": "",
             "email": accountDraft.email,
-            "phoneNr": accountDraft.firstPhoneNumber,
+            "phoneNr": accountDraft.phone,
             "countryKey": 26,
             "isSupplier": 0,
             "isCustomer": 1,
@@ -202,18 +202,6 @@ const createB2BContact = async accountDraft => {
                     "email": accountDraft.email,
                     "note": "",
                     "languageKey": ""
-                }
-            ],
-            "addresses": [
-                {
-                    "isBilling": 1,
-                    "isPrimary": 1,
-                    "isDelivery": 1,
-                    "isSite": 1,
-                    "countryKey": 26,
-                    "streetAddress": accountDraft.address,
-                    "city": accountDraft.city,
-                    "zip": accountDraft.zip
                 }
             ]
         }
@@ -235,4 +223,32 @@ const createB2BContact = async accountDraft => {
     }
 }
 
-module.exports = { createContact, getContact, getCompany, createAccount, getAccountById, createIntervention, createB2BContact }
+function findOrCreateAktiContact({first_name, last_name, email, phone}, callback) {
+    getContact(email).then(resp => {
+        let akti_user = resp.data.data[0]
+        if(akti_user) {
+            callback(akti_user)
+        } else {
+            createContact({
+                firstName: first_name,
+                lastName: last_name,
+                email,
+                phone
+            }).then(resp => {
+                akti_user = resp.data.data
+                callback(akti_user)
+            })
+        }
+    })
+}
+
+module.exports = {
+    createContact,
+    getContact,
+    getCompany,
+    createAccount,
+    getAccountById,
+    createIntervention,
+    createB2BContact,
+    findOrCreateAktiContact
+}
