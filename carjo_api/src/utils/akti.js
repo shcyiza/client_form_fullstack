@@ -5,7 +5,18 @@ const axios = require('axios')
 const token = process.env.AKTI_API_KEY
 const url = 'https://my.akti.com/api/v2'
 
-const createIntervention = async (accountId, contactId, interventionDraft) => {
+function akti(method, path, data=undefined) {
+    return axios({
+        method,
+        url: url + path,
+        data,
+        headers: {
+            'token': token
+        }
+    })
+}
+
+const createIntervention = (accountId, contactId, interventionDraft) => {
 
     try {
         const payload = {
@@ -32,19 +43,11 @@ const createIntervention = async (accountId, contactId, interventionDraft) => {
             ]
         }
 
-        const options = {
-            data: payload,
-            headers: {
-                'token': token
-            }
-        }
         //console.log('options', options)
-        return await axios.post(
-            `${url}/intervention/interventions`,
-            options
-        )
+        return akti( 'post', `/intervention/interventions`, payload )
     } catch (err) {
         logger.error(err.message)
+        throw err
     }
 }
 
@@ -70,72 +73,42 @@ const createAccount = async accountDraft => {
             "addresses": []
         }
 
-        const options = {
-            data: payload,
-            headers: {
-                'token': token
-            }
-        }
-
-        return await axios.post(`${url}/crm/account/contacts`, options)
+        return akti( 'post', '/crm/account/contacts', payload )
     } catch (err) {
         logger.error(err.message)
+        throw err
     }
 }
 
 const getAccountById = async (id, detailLvl = 1) => {
     try {
-        const options = {
-            headers: {
-                'token': token
-            }
-        }
+        return akti( 'get', `/crm/accounts?accountId=${id}&detail=${detailLvl}`)
 
-        return await axios.get(
-            `${url}/crm/accounts?accountId=${id}&detail=${detailLvl}`,
-            options
-        )
     } catch (err) {
         logger.error(err.message)
+        throw err
     }
 }
 
 const getCompany = async (commercial_name, detailLvl = 1) => {
     try {
-        const options = {
-            headers: {
-                'token': token
-            }
-        }
-
-        return await axios.get(
-            `${url}/crm/accounts?commercialName=${commercial_name}&detail=${detailLvl}`,
-            options
-        )
-
+        return akti( 'get', `/crm/accounts?commercialName=${commercial_name}&detail=${detailLvl}`)
     } catch (err) {
         logger.error(err.message)
+        throw err
     }
 }
 
 const getContact= async email => {
     try {
-        const options = {
-            headers: {
-                'token': token
-            }
-        }
-
-        return await axios.get(
-            `${url}/crm/account/contacts?email=${email}&detail=1`,
-            options
-        )
+        return akti( 'get', `/crm/account/contacts?email=${email}&detail=1`)
     } catch (err) {
         logger.error(err.message)
+        throw err
     }
 }
 
-const createContact = async contact_draft => {
+const createContact = contact_draft => {
     try {
         const payload = {
             "accountId": "407",
@@ -155,16 +128,10 @@ const createContact = async contact_draft => {
             "languageKey": ""
         }
 
-        const options = {
-            data: payload,
-            headers: {
-                'token': token
-            }
-        }
-
-        return await axios.post(`${url}/crm/account/contacts`, options)
+        return akti( 'post', '/crm/account/contacts', payload )
     } catch (err) {
         logger.error(err.message)
+        throw err
     }
 }
 
@@ -206,39 +173,32 @@ const createB2BContact = async accountDraft => {
             ]
         }
 
-        const options = {
-            method: 'POST',
-            uri: `${url}/crm/accounts`,
-            json: true,
-            body: payload,
-            headers: {
-                'token': token
-            }
-        }
+        return akti( 'post', '/crm/accounts', payload )
 
-        return await rp(options)
     } catch (err) {
-        console.log('err', err)
-        return err
+        logger.error(err.message)
+        throw err
     }
 }
 
 function findOrCreateAktiContact({first_name, last_name, email, phone}, callback) {
-    getContact(email).then(resp => {
+    return getContact(email).then(resp => {
         let akti_user = resp.data.data[0]
         if(akti_user) {
-            callback(akti_user)
+            logger.info(`user ${email} found in AKTI`)
+            return akti_user
         } else {
-            createContact({
+            logger.info(`user ${email} will be created created in AKTI`)
+            return createContact({
                 firstName: first_name,
                 lastName: last_name,
                 email,
                 phone
-            }).then(resp => {
-                akti_user = resp.data.data
-                callback(akti_user)
             })
         }
+    }).catch(err => {
+        logger.error(err.message)
+        throw err
     })
 }
 

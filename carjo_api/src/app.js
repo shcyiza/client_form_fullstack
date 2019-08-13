@@ -12,7 +12,8 @@ var jwtMiddleware = require('express-jwt');
 
 Mongoose.connect(process.env.DB_HOST,{
     useNewUrlParser: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useFindAndModify: false
 })
 
 const db = Mongoose.connection

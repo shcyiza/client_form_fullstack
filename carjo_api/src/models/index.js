@@ -5,7 +5,7 @@ const UserModel = Mongoose.model('User', {
     last_name: { type: String, required : true },
     email: { type: String, index: true, unique : true, required : true },
     phone: { type: String, index: true, unique : true, required : true },
-    akti_contact_id: { type: String, index: true, unique : true },
+    akti_contact_id: { type: String, index: true, sparse: true }
 }, 'user')
  
 const CarModel = Mongoose.model('Car', {
