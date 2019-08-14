@@ -1,5 +1,5 @@
 <script>
-import { checkEmailExists, registerUser, requestToken, claimToken} from '../graphql/queries/users';
+import { checkEmailExists, registerUser, requestToken, claimToken} from '../graphql/users';
 
 export default {
     name: 'login', 
@@ -8,7 +8,8 @@ export default {
             user: {
                 email: '',
                 phone: '',
-                full_name: ''
+                first_name: '',
+                last_name: ''
             },
             token: '',
             isValidEmail: true,
@@ -38,10 +39,20 @@ export default {
             }
             // TODO throw error and try again
         },
-        login() {
+        async login() {
             // claim token 
-            claimToken(this.user.email, this.request_timestamp, this.token)
-            this.$router.push('carwash');
+            const {ClaimUserSession: {
+                status, message, user_session_token
+            }} = await claimToken(this.user.email, this.request_timestamp, this.token)
+            if(user_session_token) {
+                localStorage.setItem('user_session_token', user_session_token)
+                this.$router.push('order_form')
+            } else {
+                this.user.email = ""
+                console.log('status:', status, 'message', message)
+            }
+            // TODO add trials features
+            // TODO add error handling generally (vue toast!)
         }
     }
 }
@@ -49,6 +60,7 @@ export default {
 
 <template>
 <div>
+    <h2>Thanks for choosing Carjo...</h2>
     <form>
         <template v-if="verifyToken">
             <h2>Validate Token</h2>
@@ -56,13 +68,14 @@ export default {
             <button @click.prevent="login"> validate </button>
         </template>
         <template v-else-if="isValidEmail">
-            <h2>Verify email adress</h2>
+            <h4>Please enter your email adress</h4>
             <input type="text" placeholder="email" v-model="user.email" />
             <button @click.prevent="checkEmail"> Verify </button>
         </template>
         <template v-else-if="shouldRegister">
             <h2>Registration</h2>
-            <input type="text" placeholder="Full name" v-model="user.full_name" />
+            <input type="text" placeholder="First name" v-model="user.first_name" />
+            <input type="text" placeholder="Last name" v-model="user.last_name" />
             <input type="tel" placeholder="phone number" v-model="user.phone" />
             <button @click.prevent="registerUser"> Register </button>
         </template>

@@ -12,7 +12,8 @@ var jwtMiddleware = require('express-jwt');
 
 Mongoose.connect(process.env.DB_HOST,{
     useNewUrlParser: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useFindAndModify: false
 })
 
 const db = Mongoose.connection
@@ -37,12 +38,11 @@ const app = Express();
 
 // logger middleware
 morgan.token('body', function (req, res) {
-    return JSON.stringify(
-        req.body.query
+    return req.body && JSON.stringify(req.body)
         .replace(/[{}\n]/g, "")
         .replace(/\"/g, "'")
-        .replace(/[ ]{2,}/g, " ")
-    )
+        .replace(/\\n/g, "'")
+        .replace(/[ ]{1,}/g, " ")
 });
 
 app.use(morgan(

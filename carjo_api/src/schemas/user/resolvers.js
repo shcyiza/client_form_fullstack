@@ -1,29 +1,55 @@
 const {UserModel} = require('../../models/index')
 const logger = require('../../utils/logger')
+const {findOrCreateAktiContact} = require('../../utils/akti')
 
 const User = {}
 
-const UserQr = {
-    User(parent, {email, id}) {
-        const qr = {}
-        if(email) qr.email = email;
-        if(id) qr._id = id;
 
-        return UserModel.findOne(qr).exec()
+
+const UserQr = {
+    async User(parent, {email, id}) {
+        try {
+            const qr = {}
+            if(email) qr.email = email;
+            if(id) qr._id = id;
+    
+            let user = await UserModel.findOne(qr)
+    
+            if(user) {
+                if(!!user.akti_contact_id === false){
+                    const akti_user = await findOrCreateAktiContact(user)
+    
+                    return await UserModel.findOneAndUpdate(
+                        qr, 
+                        {akti_contact_id: akti_user.contactId}, 
+                        {new: true}
+                    );
+                }
+            }
+            
+            return user
+        } catch (err) {
+            logger.error("model User error:" + err.message)
+            throw err
+        }
     }
 }
 
 const RegisterUserMttn = {
-    RegisterUser(parent, args) {
-        const user = new UserModel({...args})
-        return user.save()
-        .then(resp => {
-            logger.info(`model User success: ${args.email} Registered successfully`)
-            return resp
-        }).catch(err => {
+    async RegisterUser(parent, args) {
+        try {
+            let akti_user = await findOrCreateAktiContact(args)
+            const akti_contact_id = akti_user.contactId || akti_user.data.data.contactId
+            
+            return await new UserModel({
+                ...args, 
+                akti_contact_id
+            }).save()
+
+        } catch (err) {
             logger.error("model User error:" + err.message)
             throw err
-        })
+        }
     }
 }
 
