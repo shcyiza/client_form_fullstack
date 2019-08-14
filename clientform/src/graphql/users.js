@@ -65,10 +65,14 @@ export async function requestToken(email) {
 }
 
 export async function claimToken(email, request_timestamp, claim_token) {
-    const mutation = await graph(CLAIM_TOKEN);
-    return mutation({
-        email,
-        request_timestamp,
-        claim_token
-    });
+    try {
+        const mutation = await graph(CLAIM_TOKEN);
+        return mutation({
+            email,
+            request_timestamp,
+            claim_token
+        });
+    } catch (err) {
+        alert(err.message)
+    }
 }

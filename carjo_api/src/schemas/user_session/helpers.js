@@ -26,7 +26,7 @@ const cacheTokenToClaim = (redis, {id, email}, passed_status = {}) => {
 
     const request_timestamp = moment().format('YYMMDDHHmmss')
     const key = composeClaimKey(id, request_timestamp);
-    const token_to_claim = generateDigitToken(8);
+    const token_to_claim = generateDigitToken(5);
 
     return redis.set(
         key, token_to_claim, 'NX', 'EX', 600

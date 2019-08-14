@@ -1,9 +1,21 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import CarwashForm from './views/CarwashForm'
+import OrderForm from './views/OrderForm'
 import Login from './views/Login'
 
 Vue.use(Router);
+
+function ifUserSession(check, redirect) {
+  return (to, from, next) => {
+    const token = localStorage.getItem('user_session_token')
+
+    if(!!token === check){
+      next()
+    } else {
+      next({name: redirect})
+    }
+  }
+}
 
 export default new Router({
   scrollBehavior() {
@@ -12,14 +24,16 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/carwash',
-      name: 'carwash',
-      component: CarwashForm
+      path: '/',
+      name: 'welcome',
+      component: Login,
+      beforeEnter: ifUserSession(false, 'order_form')
     },
     {
-      path: '/login',
-      name: 'login',
-      component: Login
+      path: '/order_form',
+      name: 'order_form',
+      component: OrderForm,
+      beforeEnter: ifUserSession(true, 'welcome')
     }
   ]
 })
