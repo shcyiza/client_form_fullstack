@@ -46,7 +46,7 @@ morgan.token('body', function (req, res) {
 });
 
 app.use(morgan(
-    'method=:method - url=:url - response-time=:response-time - graphQL-body= :body',
+    'method=:method - url=:url - response-time=:response-time - graphQL-body= :body \n',
     { stream: logger.stream }
 ), cors({origin: '*'}))
 
@@ -81,7 +81,10 @@ app.post(
     jwtMiddleware({secret: process.env.JWT_CLIENT_FORM_SECRET}),
     function (err, req, res, next) {
         if (err.name === 'UnauthorizedError') {
-          res.status(401).send('Unauthorized');
+            res.statusCode = 404;
+            res.send({message: 'Unauthorized', status: 404});
+            logger.warn(`POST ${client_form_path} recieved Unauthorize request`)
+            return null
         }
         next()
     }

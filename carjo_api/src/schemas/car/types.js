@@ -1,6 +1,6 @@
 const { gql } = require('apollo-server-express');
 
-const CAR_TYPE = gql`
+const CAR_TYPE = `
     type Car {
         id: ID!,
         plate_number: String,

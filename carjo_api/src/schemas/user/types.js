@@ -7,13 +7,19 @@ const USER_TYPE = gql`
         last_name: String!,
         email: String!,
         phone: String!,
-        akti_contact_id: String,
+        cars: [Car]
     }
 `
 
 const USER_QR = gql`
     extend type Query {
         User(email: String, id: String): User
+    }
+`
+
+const AUTH_USER_QR = gql`
+    extend type Query {
+        AuthUser: User
     }
 `
 
@@ -28,4 +34,4 @@ const REGISTER_USER_MTTN = gql`
     }
 `
 
-module.exports = {USER_QR, USER_TYPE, REGISTER_USER_MTTN}
+module.exports = {USER_TYPE, USER_QR, AUTH_USER_QR, REGISTER_USER_MTTN}

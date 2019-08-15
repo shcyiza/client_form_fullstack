@@ -1,5 +1,7 @@
 <script>
-import { checkEmailExists, registerUser, requestToken, claimToken} from '../graphql/users';
+import { checkEmailExists, registerUser,} from '../graphql/users'
+import { requestToken, claimToken} from '../graphql/auth'
+import toast from "../services/toast_notification"
 
 export default {
     name: 'login', 
@@ -11,7 +13,7 @@ export default {
                 first_name: '',
                 last_name: ''
             },
-            token: '',
+            claim_token: '',
             isValidEmail: true,
             verifyToken: false,
             shouldRegister: false
@@ -40,19 +42,34 @@ export default {
             // TODO throw error and try again
         },
         async login() {
-            // claim token 
-            const {ClaimUserSession: {
-                status, message, user_session_token
-            }} = await claimToken(this.user.email, this.request_timestamp, this.token)
-            if(user_session_token) {
-                localStorage.setItem('user_session_token', user_session_token)
-                this.$router.push('order_form')
-            } else {
-                this.user.email = ""
-                console.log('status:', status, 'message', message)
+            try {
+                const {ClaimUserSession: {
+                    status, message, user_session_token
+                }} = await claimToken(this.user.email, this.request_timestamp, this.claim_token)
+                if(user_session_token) {
+                    localStorage.setItem('user_session_token', user_session_token)
+                    toast(
+                        this.$toasted,
+                        `Let's get your car some services!`,
+                        "success"
+                    )
+                    this.$router.push('order_form')
+                } else {
+                    this.user.email = ""
+                    toast(
+                        this.$toasted,
+                        `Wrong token. please try again (${status}:${message})`,
+                        "info"
+                    )
+                }
+            } catch (err) {
+                toast(
+                    this.$toasted,
+                    "Oops... An problem has occured, please try again later.",
+                    "error"
+                )
             }
             // TODO add trials features
-            // TODO add error handling generally (vue toast!)
         }
     }
 }
@@ -64,7 +81,7 @@ export default {
     <form>
         <template v-if="verifyToken">
             <h2>Validate Token</h2>
-            <input type="text" placeholder="token" v-model="token" />
+            <input type="text" placeholder="token" v-model="claim_token" />
             <button @click.prevent="login"> validate </button>
         </template>
         <template v-else-if="isValidEmail">
