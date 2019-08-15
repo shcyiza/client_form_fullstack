@@ -1,7 +1,7 @@
 <script>
 import { checkEmailExists, registerUser,} from '../graphql/users'
 import { requestToken, claimToken} from '../graphql/auth'
-import toast from "../services/toast_notification"
+import toast from "../helpers/toast_notification"
 
 export default {
     name: 'login', 

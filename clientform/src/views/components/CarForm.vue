@@ -1,25 +1,41 @@
 <script>
 import { required } from 'vuelidate/lib/validators'
+import CarSelector from "./form/CarSelector";
 import FormField from './form/FormField'
 import { mapGetters } from 'vuex'
+
+const initCarDraft = () => Object.assign({}, {
+    plate_number: '',
+    brand: '',
+    model: '',
+    color: ''
+})
 
 export default {
     name: "CarForm",
     components: {
-        FormField
+        FormField,
+        CarSelector
+    },
+    data() {
+        return {
+            car_draft: initCarDraft()
+        }
     },
     computed: {
         ...mapGetters({
-            plate: "getPlate",
-            brand: "getBrand",
-            model: "getModel"
+            cars: "getCars",
+            user: "getAuthedUser"
         }),
         carAttr() {
-            return ["plate", "brand", "model"]
+            return Object.keys(this.car_draft)
         }
     },
     validations: {
-        plate: {
+        color: {
+            required: false
+        },
+        plate_number: {
             required
         },
         brand: {
@@ -27,13 +43,20 @@ export default {
         },
         model: {
             required
-        }
+        },
     },
     methods: {
-        updateStore (attr, value) {
-            this.$store.dispatch('updateCarAttr', {attr,  value})
+        handleInput(attr, input) {
+            this.car_draft[attr] = input
+        },
+        addCar(event) {
+            event.preventDefault()
+            this.$store.dispatch('addCar', [this.user.id, this.car_draft])
+            this.car_draft = initCarDraft()
         }
-    }
+    },
+    created() {
+    },
 }
 </script>
 
@@ -41,16 +64,21 @@ export default {
     <div class="custom-form">
         <h2>Car Form</h2>
 
-        <div v-for="(attr, i) in carAttr" :key="i">
-            <form-field
-                    :label="attr"
-                    :value="$v[attr].$model"
-                    :warnings="[
-                        {validator: !$v[attr].required, message: 'required'},
-                    ]"
-                    @input="updateStore(attr, $event)"
-            />
-        </div>
+        <car-selector :cars="cars"/>
+
+        <form
+                id="add-car"
+                @submit="addCar"
+        >
+            <div v-for="(attr, i) in carAttr" :key="i">
+                <label class="label">{{attr}}</label>
+                <input class="input"
+                        v-model="car_draft[attr]"
+                />
+            </div>
+
+            <button class="button" type="submit">Add Car</button>
+        </form>
     </div>
 </template>
 

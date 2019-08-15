@@ -1,4 +1,4 @@
-const {UserModel} = require('../../models/index')
+const {UserModel, CarModel} = require('../../models/index')
 const logger = require('../../utils/logger')
 const {findOrCreateAktiContact} = require('../../utils/akti')
 
@@ -7,10 +7,15 @@ const onError = function(err) {
     throw err
 }
 
+// properties resolvers
 const User = {}
 
+async function cars({id}) {
+    const user_cars = await CarModel.find({user: id}).exec()
+    return user_cars || []
+}
 
-
+// query and mutation resolver
 const UserQr = {
     async User(parent, {email, id}) {
         try {
@@ -76,4 +81,4 @@ const AuthUserQr = {
     }
 }
 
-module.exports = {User, UserQr, RegisterUserMttn, AuthUserQr}
+module.exports = {User, cars, UserQr, RegisterUserMttn, AuthUserQr}

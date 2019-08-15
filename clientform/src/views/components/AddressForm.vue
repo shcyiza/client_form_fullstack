@@ -1,5 +1,5 @@
 <script>
-    import SitesButtons from './form/SitesButtons'
+    import SitesButtons from './form/SiteSelector'
 
     export default {
         name: "AddressForm",

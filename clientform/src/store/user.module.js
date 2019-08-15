@@ -1,57 +1,67 @@
-import {fetchAktiContact} from "../services/AktiServices"
+import { authedUser } from "../graphql/users"
+import toast from '../helpers/toast_notification'
 // initial state
 const state = {
-    contactId: "",
-    accountId: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    mobilePhone: "",
-    is_loading: false
+    user: {
+        id: "",
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        is_loading: false
+    }
 }
 
 // getters
 const getters = {
-    AktiContactInfo: state => ({
-        firstName: state.firstName,
-        lastName: state.lastName,
-        mobilePhone: state.mobilePhone
-    })
+    getAuthedUser: state => state.user
 }
 
 // actions
 const actions = {
-    fetchContact(context, email, accountId = "") {
-        fetchAktiContact(accountId, email).then(({data}) => {
-            if (data.data[0]) {
-                context.commit("setUser", data.data[0])
-                // eslint-disable-next-line no-console
-                console.log("company was fetch successfully")
+    fetchAuthedUser({ commit }, [fatalErrorCallback, toasted]) {
+        authedUser().then((resp) => {
+            const {AuthUser} = resp
+            
+            if(AuthUser) {
+                const user = Object.assign({}, AuthUser)
+                delete user.cars
+                const cars = AuthUser.cars
+
+                commit('setUser', user)
+                if(cars.length > 0) commit('setCars', cars)
             } else {
-                context.commit("setUser", email)
-                // eslint-disable-next-line no-console
-                console.log(`no result for ${email} contact`)
+                toast(
+                    toasted,
+                    "No account found...",
+                    "error"
+                )
+                fatalErrorCallback()
+            } 
+        }).catch(err => {
+            if(err.status === 404) {
+                toast(
+                    toasted,
+                    "Your session has expired... Authentify yourself again.",
+                    "error"
+                )
+                fatalErrorCallback()
+            } else {
+                toast(
+                    toasted,
+                    "Oops... An problem has occured, please try again later.",
+                    "error"
+                )
+                throw err
             }
         })
-        .catch(err => {
-            // eslint-disable-next-line no-console
-            console.log("contact fetch was unsuccessful", err)
-            throw err
-        })
-    }
+    },
 }
 
 // mutations
 const mutations = {
     setUser(state, payload) {
-        [
-            "contactId", "accountId", "firstName", "lastName", "email", "mobilePhone"
-        ].forEach(attr => {
-            state[attr] = payload[attr] || ""
-        })
-    },
-    setEmail(state, payload) {
-        state.email = payload.email
+        state.user = payload
     }
 }
 

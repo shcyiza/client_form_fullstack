@@ -1,9 +1,8 @@
 <script>
 import { mapGetters } from "vuex"
-import { authedUser } from "../graphql/users"
 import CarForm from "./components/CarForm"
 import AddressForm from "./components/AddressForm"
-import toast from "../services/toast_notification"
+import toast from "../helpers/toast_notification"
 
 export default {
     name: "OrderForm",
@@ -11,9 +10,8 @@ export default {
         return {
             form_name: "Order Form",
             company_code: this.$route.query.company || "",
-            user: {},
-            cars: [],
-            
+            //user: {},
+            //cars: [],
         }
     },
     components: {
@@ -22,42 +20,16 @@ export default {
     },
     computed: {
         ...mapGetters({
-            company: "getCompanyDetails"
+            company: "getCompanyDetails",
+            user: "getAuthedUser"
         })
     },
     methods: {
         getAuthedUser() {
-            authedUser().then((resp) => {
-                const {AuthUser} = resp
-                if(AuthUser) {
-                    this.user = AuthUser
-                    delete this.user.cars
-                    
-                    this.cars = AuthUser.cars || []
-                } else {
-                    toast(
-                        this.$toasted,
-                        "No account found...",
-                        "error"
-                    )
-                    this.endSession()
-                } 
-            }).catch(err => {
-                if(err.status === 404) {
-                    toast(
-                        this.$toasted,
-                        "Your session has expired... Authentify yourself again.",
-                        "error"
-                    )
-                    this.endSession()
-                } else {
-                    toast(
-                        this.$toasted,
-                        "Oops... An problem has occured, please try again later.",
-                        "error"
-                    )
-                }
-            })
+            this.$store.dispatch(
+                "fetchAuthedUser",
+                [this.endSession.bind(this), this.$toasted]
+            )
         },
         endSession() {
             localStorage.removeItem('user_session_token')
