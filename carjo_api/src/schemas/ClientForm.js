@@ -4,10 +4,12 @@ const BASE_TYPE = require("../utils/gql_base_type");
 
 const {PRIVATE_USER_TYPE, AUTH_USER_QR} = require("./user/types");
 const {CAR_TYPE, USER_CARS_QR, REGISTER_CAR_MTTN} = require("./car/types");
-const {ADDRESS_TYPE, REGISTER_ADDRESS_MTTN} = require("./address/types");
 
-const {User, cars, AuthUserQr} = require("./user/resolvers");
+const {User, cars, address, AuthUserQr} = require("./user/resolvers");
 const {Car, RegisterCarMttn} = require("./car/resolvers");
+
+const {ADDRESS_TYPE, REGISTER_USER_ADDRESS_MTTN, UPDATE_USER_ADDRESS_MTTN} = require("./address/types");
+const {RegisterUserAddressMttn, UpdateUserAddressMttn} = require("./address/resolvers");
 
 const ClientFormSchema = makeExecutableSchema({
     typeDefs: [
@@ -18,16 +20,19 @@ const ClientFormSchema = makeExecutableSchema({
         AUTH_USER_QR, 
         USER_CARS_QR,
         REGISTER_CAR_MTTN ,
-        REGISTER_ADDRESS_MTTN,
+        REGISTER_USER_ADDRESS_MTTN,
+        UPDATE_USER_ADDRESS_MTTN,
     ],
     resolvers:  {
         Query: {
             ...AuthUserQr,
         },
         Mutation: {
-            ...RegisterCarMttn
+            ...RegisterCarMttn,
+            ...RegisterUserAddressMttn,
+            ...UpdateUserAddressMttn,
         },
-        User:{...User, cars},
+        User:{...User, cars, address},
         Car
     }
 });

@@ -1,6 +1,6 @@
 <script>
 import { required } from 'vuelidate/lib/validators'
-import CarSelector from "./form/CarSelector";
+import CarSelector from "./form/CarSelector"
 import { mapGetters } from 'vuex'
 
 const initCarDraft = () => Object.assign({}, {
@@ -8,7 +8,7 @@ const initCarDraft = () => Object.assign({}, {
     brand: '',
     model: '',
     color: ''
-})
+});
 
 export default {
     name: "CarForm",
@@ -29,24 +29,7 @@ export default {
             return Object.keys(this.car_draft)
         }
     },
-    validations: {
-        color: {
-            required: false
-        },
-        plate_number: {
-            required
-        },
-        brand: {
-            required
-        },
-        model: {
-            required
-        },
-    },
     methods: {
-        handleInput(attr, input) {
-            this.car_draft[attr] = input
-        },
         addCar(event) {
             event.preventDefault()
             this.$store.dispatch('addCar', [this.user.id, this.car_draft])

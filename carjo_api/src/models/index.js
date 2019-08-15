@@ -51,12 +51,12 @@ const CompanyModel = Mongoose.model(
 const AddressModel = Mongoose.model(
     "Address",
     {
-        localisable_id: {
+        localisable: {
             type: Mongoose.Schema.Types.ObjectId,
             required: true,
             refPath: "localisable",
         },
-        localisable: {
+        localisable_type: {
             type: String,
             required: true,
             enum: ["User", "Company"],

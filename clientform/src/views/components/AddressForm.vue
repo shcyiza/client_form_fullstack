@@ -1,15 +1,16 @@
 <script>
-    import SitesButtons from './form/SiteSelector'
-
+    import AddressSelector from './form/AddressSelector'
+    import { mapGetters } from "vuex"
     export default {
-        name: "AddressForm",
+        name: 'AddressForm',
         components: {
-            SitesButtons
+            AddressSelector
         },
         computed: {
-            sites() {
-                return this.$store.getters.getCompanySites
-            }
+            ...mapGetters({
+                addresses: "getAddresses",
+                user: "getAuthedUser"
+            }),
         }
     }
 </script>
@@ -17,7 +18,7 @@
 <template>
     <div>
         <h2>Address</h2>
-        <sites-buttons :sites="sites"/>
+        <address-selector :addresses="addresses"/>
     </div>
 </template>
 

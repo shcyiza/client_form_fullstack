@@ -33,6 +33,12 @@ const AUTHED_USER = `query {
             model
             color 
         }
+        address {
+            id
+            street
+            city
+            zip
+        }
     }
 }`;
 
