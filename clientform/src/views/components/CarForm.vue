@@ -1,7 +1,6 @@
 <script>
 import { required } from 'vuelidate/lib/validators'
 import CarSelector from "./form/CarSelector";
-import FormField from './form/FormField'
 import { mapGetters } from 'vuex'
 
 const initCarDraft = () => Object.assign({}, {
@@ -14,7 +13,6 @@ const initCarDraft = () => Object.assign({}, {
 export default {
     name: "CarForm",
     components: {
-        FormField,
         CarSelector
     },
     data() {

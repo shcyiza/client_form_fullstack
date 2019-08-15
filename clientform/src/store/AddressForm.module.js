@@ -1,18 +1,17 @@
-// initial state
-const state = {}
 
-// getters
-const getters = {}
+const state = {
 
-// actions
-const actions = {}
+};
 
-// mutations
-const mutations = {}
+const getters = {};
+
+const actions = {};
+
+const mutations = {};
 
 export default {
-    state,
-    getters,
-    actions,
-    mutations
-}
+  state,
+  getters,
+  actions,
+  mutations,
+};

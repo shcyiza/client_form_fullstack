@@ -13,7 +13,7 @@ export default {
 <template>
   <div class="sites-container">
       <div v-for="(car, i) in cars" :key="i">
-          <div class="button is-large is-fullwidth is-info">
+          <div class="button is-large is-fullwidth is-info" style="margin: 7px;">
               <p class="address-legend">{{car.plate_number}}, {{car.model}} {{car.brand}}</p>
           </div>
       </div>
