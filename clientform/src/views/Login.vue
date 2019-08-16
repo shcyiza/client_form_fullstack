@@ -1,7 +1,7 @@
 <script>
 import { checkEmailExists, registerUser,} from '../graphql/users'
 import { requestToken, claimToken} from '../graphql/auth'
-import toast from "../helpers/toast_notification"
+import {notifyError, notifySuccess} from "../helpers/toast_notification"
 
 export default {
     name: 'login', 
@@ -44,30 +44,19 @@ export default {
         async login() {
             try {
                 const {ClaimUserSession: {
-                    status, message, user_session_token
+                    status, message, user_session_token, request_timestamp
                 }} = await claimToken(this.user.email, this.request_timestamp, this.claim_token)
                 if(user_session_token) {
                     localStorage.setItem('user_session_token', user_session_token)
-                    toast(
-                        this.$toasted,
-                        `Let's get your car some services!`,
-                        "success"
-                    )
+                    notifySuccess(`Let's get your car some services!`)
                     this.$router.push('order_form')
                 } else {
-                    this.user.email = ""
-                    toast(
-                        this.$toasted,
-                        `Wrong token. please try again (${status}:${message})`,
-                        "info"
-                    )
+                    this.user.claim_token = ""
+                    this.request_timestamp = request_timestamp
+                    notifyError(`Wrong token. please try again (${status}:${message})`)
                 }
             } catch (err) {
-                toast(
-                    this.$toasted,
-                    "Oops... An problem has occured, please try again later.",
-                    "error"
-                )
+                notifyError("Oops... An problem has occurred, please try again later.",)
             }
             // TODO add trials features
         }

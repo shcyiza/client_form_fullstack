@@ -1,5 +1,6 @@
 /* eslint-disable no-shadow,no-param-reassign */
 import { registerCar } from '../graphql/car';
+import { notifyError, notifySuccess } from '../helpers/toast_notification';
 
 const state = {
   cars: [],
@@ -14,8 +15,10 @@ const actions = {
     registerCar(payload)
       .then(({ RegisterCar }) => {
         commit('pushCar', RegisterCar);
+        notifySuccess('Car successfully added!')
       })
       .catch((err) => {
+        notifyError('Car could not be added...');
         throw err;
       });
   },

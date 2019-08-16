@@ -1,5 +1,5 @@
 import { authedUser } from '../graphql/users';
-import toast from '../helpers/toast_notification';
+import { notifyError } from '../helpers/toast_notification';
 // initial state
 const state = {
   user: {
@@ -19,7 +19,7 @@ const getters = {
 
 // actions
 const actions = {
-  fetchAuthedUser({ commit }, [fatalErrorCallback, toasted]) {
+  fetchAuthedUser({ commit }, [fatalErrorCallback]) {
     authedUser().then((resp) => {
       const { AuthUser } = resp;
 
@@ -33,27 +33,15 @@ const actions = {
         if (cars.length > 0) commit('setCars', cars);
         if (address) commit('setUserAddresses', address);
       } else {
-        toast(
-          toasted,
-          'No account found...',
-          'error',
-        );
+        notifyError('No account found...');
         fatalErrorCallback();
       }
     }).catch((err) => {
       if (err.status === 404) {
-        toast(
-          toasted,
-          'Your session has expired... Authentify yourself again.',
-          'error',
-        );
+        notifyError('Your session has expired... Please log back in.');
         fatalErrorCallback();
       } else {
-        toast(
-          toasted,
-          'Oops... An problem has occured, please try again later.',
-          'error',
-        );
+        notifyError('Oops... An problem has occurred, please try again later.');
         throw err;
       }
     });

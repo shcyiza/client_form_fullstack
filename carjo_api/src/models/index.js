@@ -64,6 +64,7 @@ const AddressModel = Mongoose.model(
         street: {type: String, required: true},
         city: {type: String, required: true},
         zip: {type: String, required: true},
+        name: {type: String},
         akti_address_id: {type: String, index: true, sparse: true},
     },
     "address",
