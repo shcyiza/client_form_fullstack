@@ -10,8 +10,8 @@ const getters = {
 };
 
 const actions = {
-  addCar({ commit }, [user_id, payload]) {
-    registerCar({ user: user_id, ...payload })
+  addCar({ commit }, payload) {
+    registerCar(payload)
       .then(({ RegisterCar }) => {
         commit('pushCar', RegisterCar);
       })

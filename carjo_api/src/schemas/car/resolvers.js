@@ -18,8 +18,8 @@ const UserCarsQr = {
 };
 
 const RegisterCarMttn = {
-    RegisterCar(parent, args) {
-        const car = new CarModel({...args});
+    RegisterCar(parent, args, {req}) {
+        const car = new CarModel({...args, user: req.user.user_id});
 
         return car
             .save()

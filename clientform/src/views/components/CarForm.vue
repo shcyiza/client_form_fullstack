@@ -32,7 +32,7 @@ export default {
     methods: {
         addCar(event) {
             event.preventDefault()
-            this.$store.dispatch('addCar', [this.user.id, this.car_draft])
+            this.$store.dispatch('addCar', this.car_draft)
             this.car_draft = initCarDraft()
         }
     },

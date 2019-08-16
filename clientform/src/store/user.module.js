@@ -31,7 +31,7 @@ const actions = {
 
         commit('setUser', user);
         if (cars.length > 0) commit('setCars', cars);
-        if (address) commit('setAddresses', [address]);
+        if (address) commit('setUserAddresses', address);
       } else {
         toast(
           toasted,

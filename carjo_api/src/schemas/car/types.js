@@ -24,7 +24,6 @@ const USER_CARS_QR = gql`
 const REGISTER_CAR_MTTN = gql`
     extend type Mutation {
         RegisterCar(
-            user: String!
             plate_number: String!
             brand: String!
             model: String!

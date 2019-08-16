@@ -1,4 +1,4 @@
-import { userSessionGraph }  from "../lib/graphql";
+import { userSessionGraph } from '../lib/graphql';
 
 const REQUEST_TOKEN = `mutation ($email: String!){
     RequestUserSession(email: $email){
@@ -18,21 +18,22 @@ const CLAIM_TOKEN = `mutation ($email: String!, $request_timestamp: String!, $cl
 }`;
 
 export async function requestToken(email) {
-    const mutation = userSessionGraph(REQUEST_TOKEN);
-    return mutation({
-        email
-    });
+  const mutation = userSessionGraph(REQUEST_TOKEN);
+  return mutation({
+    email,
+  });
 }
 
+// eslint-disable-next-line camelcase,consistent-return
 export async function claimToken(email, request_timestamp, claim_token) {
-    try {
-        const mutation = await userSessionGraph(CLAIM_TOKEN);
-        return mutation({
-            email,
-            request_timestamp,
-            claim_token
-        });
-    } catch (err) {
-        alert(err.message)
-    }
+  try {
+    const mutation = await userSessionGraph(CLAIM_TOKEN);
+    return mutation({
+      email,
+      request_timestamp,
+      claim_token,
+    });
+  } catch (err) {
+    alert(err.message);
+  }
 }
