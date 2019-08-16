@@ -1,5 +1,4 @@
 <script>
-import { required } from 'vuelidate/lib/validators'
 import CarSelector from "./form/CarSelector"
 import { mapGetters } from 'vuex'
 
