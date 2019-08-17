@@ -1,4 +1,4 @@
-import { graph }  from "../lib/graphql";
+import { userSessionGraph, clientFormGraph } from '../lib/graphql';
 
 
 const USER_BY_EMAIL = `query ($email: String!) {
@@ -19,60 +19,45 @@ const SIGN_UP = `mutation ($first_name: String!, $last_name: String!, $email: St
     }
 }`;
 
-const REQUEST_TOKEN = `mutation ($email: String!){
-    RequestUserSession(email: $email){
-        status
-        message
-        request_timestamp
-    }
-}`;
-
-const CLAIM_TOKEN = `mutation ($email: String!, $request_timestamp: String!, $claim_token: String!){
-    ClaimUserSession(email: $email, request_timestamp: $request_timestamp, claim_token: $claim_token){
-        status
-        message
-        request_timestamp
-        user_session_token
+const AUTHED_USER = `query {
+    AuthUser {
+        id
+        first_name
+        last_name
+        email
+        phone
+        cars {
+            id
+            plate_number
+            brand
+            model
+            color 
+        }
+        address {
+            id
+            street
+            city
+            zip
+        }
     }
 }`;
 
 export function findUserByEmail(email) {
-    const query = graph(USER_BY_EMAIL);
-    return query({ email });
-} 
+  const query = userSessionGraph(USER_BY_EMAIL);
+  return query({ email });
+}
 
 export async function checkEmailExists(email) {
-    const {User} = await findUserByEmail(email);
-    return !!User; // Same as User !== null
+  const { User } = await findUserByEmail(email);
+  return !!User; // Same as User !== null
 }
 
 export async function registerUser(user) {
-    const {first_name, last_name, email, phone} = user
-    const mutation = graph(SIGN_UP);
-    return mutation({
-        first_name,
-        last_name,
-        email,
-        phone
-    });
+  const mutation = userSessionGraph(SIGN_UP);
+  return mutation(user);
 }
 
-export async function requestToken(email) {
-    const mutation = graph(REQUEST_TOKEN);
-    return mutation({
-        email
-    });
-}
-
-export async function claimToken(email, request_timestamp, claim_token) {
-    try {
-        const mutation = await graph(CLAIM_TOKEN);
-        return mutation({
-            email,
-            request_timestamp,
-            claim_token
-        });
-    } catch (err) {
-        alert(err.message)
-    }
+export function authedUser() {
+  const query = clientFormGraph(AUTHED_USER);
+  return query();
 }

@@ -1,37 +1,41 @@
-// initial state
+/* eslint-disable no-shadow,no-param-reassign */
+import { registerCar } from '../graphql/car';
+import { notifyError, notifySuccess } from '../helpers/toast_notification';
+
 const state = {
-    plate: "",
-    brand: "",
-    model: ""
-}
+  cars: [],
+};
 
-// getters
 const getters = {
-    getPlate: state => state.plate,
-    getBrand: state => state.brand,
-    getModel: state => state.model
-}
+  getCars: (state) => state.cars,
+};
 
-// actions
 const actions = {
-    updateCarAttr({ commit }, {attr, value}) {
-        const validAttr = ["plate", "brand", "model"]
-        if (validAttr.includes(attr)) {
-            commit("setCarAttr", {attr, value})
-        }
-    }
-}
+  addCar({ commit }, payload) {
+    registerCar(payload)
+      .then(({ RegisterCar }) => {
+        commit('pushCar', RegisterCar);
+        notifySuccess('Car successfully added!')
+      })
+      .catch((err) => {
+        notifyError('Car could not be added...');
+        throw err;
+      });
+  },
+};
 
-// mutations
 const mutations = {
-    setCarAttr: (state, {attr, value}) => {
-        state[attr] = value || ""
-    }
-}
+  setCars: (state, payload) => {
+    state.cars = payload;
+  },
+  pushCar: (state, payload) => {
+    state.cars.push(payload);
+  },
+};
 
 export default {
-    state,
-    getters,
-    actions,
-    mutations
-}
+  state,
+  getters,
+  actions,
+  mutations,
+};

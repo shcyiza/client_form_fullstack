@@ -1,8 +1,8 @@
 <script>
 export default {
-    name: "SitesButtons",
+    name: "CarSelector",
     props: {
-        sites:{
+        cars:{
             type: Array,
             required: true
         }
@@ -12,9 +12,9 @@ export default {
 
 <template>
   <div class="sites-container">
-      <div v-for="(place, i) in sites" :key="i">
+      <div v-for="(car, i) in cars" :key="i">
           <div class="button is-large is-fullwidth is-info">
-              <p class="address-legend">{{place.street}}, {{place.zip_code}} {{place.city}}</p>
+              <p class="address-legend">{{car.plate_number}}, {{car.model}} {{car.brand}}</p>
           </div>
       </div>
   </div>

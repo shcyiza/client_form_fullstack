@@ -1,31 +1,40 @@
-const { makeExecutableSchema } = require('graphql-tools')
-const BASE_TYPE = require('../utils/gql_base_type')
+/* eslint-disable prettier/prettier */
+const { makeExecutableSchema } = require('graphql-tools');
+const BASE_TYPE = require("../utils/gql_base_type");
 
-const {USER_TYPE, USER_QR} = require('./user/types') // !!! main type where Query and Mutation types are defined
-const {CAR_TYPE, USER_CARS_QR, REGISTER_CAR_MTTN} = require('./car/types')
+const {PRIVATE_USER_TYPE, AUTH_USER_QR} = require("./user/types");
+const {CAR_TYPE, USER_CARS_QR, REGISTER_CAR_MTTN} = require("./car/types");
 
-const {User, UserQr} = require('./user/resolvers')
-const {Car, UserCarsQr, RegisterCarMttn} = require('./car/resolvers')
+const {User, cars, address, AuthUserQr} = require("./user/resolvers");
+const {Car, RegisterCarMttn} = require("./car/resolvers");
 
-const ClientFormShema = makeExecutableSchema({
+const {ADDRESS_TYPE, REGISTER_USER_ADDRESS_MTTN, UPDATE_USER_ADDRESS_MTTN} = require("./address/types");
+const {RegisterUserAddressMttn, UpdateUserAddressMttn} = require("./address/resolvers");
+
+const ClientFormSchema = makeExecutableSchema({
     typeDefs: [
         BASE_TYPE,
-        USER_TYPE,
-        USER_QR, 
         CAR_TYPE,
+        PRIVATE_USER_TYPE,
+        ADDRESS_TYPE,
+        AUTH_USER_QR, 
         USER_CARS_QR,
-        REGISTER_CAR_MTTN 
+        REGISTER_CAR_MTTN ,
+        REGISTER_USER_ADDRESS_MTTN,
+        UPDATE_USER_ADDRESS_MTTN,
     ],
     resolvers:  {
         Query: {
-            ...UserQr,
-            ...UserCarsQr 
+            ...AuthUserQr,
         },
         Mutation: {
-            ...RegisterCarMttn
+            ...RegisterCarMttn,
+            ...RegisterUserAddressMttn,
+            ...UpdateUserAddressMttn,
         },
-        User, Car
+        User:{...User, cars, address},
+        Car
     }
-})
+});
 
-module.exports = ClientFormShema
+module.exports = ClientFormSchema;

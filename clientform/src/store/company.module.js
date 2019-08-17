@@ -1,8 +1,7 @@
-import {fetchAktiCompany} from "../services/AktiServices"
+import {fetchAktiCompany} from "../helpers/AktiServices"
 
 // initial state
 const state = {
-    accountId: "",
     companyName: "",
     vatNr: "",
     vat: "",

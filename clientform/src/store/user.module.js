@@ -1,63 +1,63 @@
-import {fetchAktiContact} from "../services/AktiServices"
+import { authedUser } from '../graphql/users';
+import { notifyError } from '../helpers/toast_notification';
 // initial state
 const state = {
-    contactId: "",
-    accountId: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    mobilePhone: "",
-    is_loading: false
-}
+  user: {
+    id: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    is_loading: false,
+  },
+};
 
 // getters
 const getters = {
-    AktiContactInfo: state => ({
-        firstName: state.firstName,
-        lastName: state.lastName,
-        mobilePhone: state.mobilePhone
-    })
-}
+  getAuthedUser: (state) => state.user,
+};
 
 // actions
 const actions = {
-    fetchContact(context, email, accountId = "") {
-        fetchAktiContact(accountId, email).then(({data}) => {
-            if (data.data[0]) {
-                context.commit("setUser", data.data[0])
-                // eslint-disable-next-line no-console
-                console.log("company was fetch successfully")
-            } else {
-                context.commit("setUser", email)
-                // eslint-disable-next-line no-console
-                console.log(`no result for ${email} contact`)
-            }
-        })
-        .catch(err => {
-            // eslint-disable-next-line no-console
-            console.log("contact fetch was unsuccessful", err)
-            throw err
-        })
-    }
-}
+  fetchAuthedUser({ commit }, [fatalErrorCallback]) {
+    authedUser().then((resp) => {
+      const { AuthUser } = resp;
+
+      if (AuthUser) {
+        const user = { ...AuthUser };
+        delete user.cars;
+        delete user.address;
+        const { cars, address } = AuthUser;
+
+        commit('setUser', user);
+        if (cars.length > 0) commit('setCars', cars);
+        if (address) commit('setUserAddresses', address);
+      } else {
+        notifyError('No account found...');
+        fatalErrorCallback();
+      }
+    }).catch((err) => {
+      if (err.status === 404) {
+        notifyError('Your session has expired... Please log back in.');
+        fatalErrorCallback();
+      } else {
+        notifyError('Oops... An problem has occurred, please try again later.');
+        throw err;
+      }
+    });
+  },
+};
 
 // mutations
 const mutations = {
-    setUser(state, payload) {
-        [
-            "contactId", "accountId", "firstName", "lastName", "email", "mobilePhone"
-        ].forEach(attr => {
-            state[attr] = payload[attr] || ""
-        })
-    },
-    setEmail(state, payload) {
-        state.email = payload.email
-    }
-}
+  setUser(state, payload) {
+    state.user = payload;
+  },
+};
 
 export default {
-    state,
-    getters,
-    actions,
-    mutations
-}
+  state,
+  getters,
+  actions,
+  mutations,
+};

@@ -1,39 +1,42 @@
 <script>
-import { required } from 'vuelidate/lib/validators'
-import FormField from './form/FormField'
+import CarSelector from "./form/CarSelector"
 import { mapGetters } from 'vuex'
+
+const initCarDraft = () => Object.assign({}, {
+    plate_number: '',
+    brand: '',
+    model: '',
+    color: ''
+});
 
 export default {
     name: "CarForm",
     components: {
-        FormField
+        CarSelector
+    },
+    data() {
+        return {
+            car_draft: initCarDraft()
+        }
     },
     computed: {
         ...mapGetters({
-            plate: "getPlate",
-            brand: "getBrand",
-            model: "getModel"
+            cars: "getCars",
+            user: "getAuthedUser"
         }),
         carAttr() {
-            return ["plate", "brand", "model"]
-        }
-    },
-    validations: {
-        plate: {
-            required
-        },
-        brand: {
-            required
-        },
-        model: {
-            required
+            return Object.keys(this.car_draft)
         }
     },
     methods: {
-        updateStore (attr, value) {
-            this.$store.dispatch('updateCarAttr', {attr,  value})
+        addCar(event) {
+            event.preventDefault()
+            this.$store.dispatch('addCar', this.car_draft)
+            this.car_draft = initCarDraft()
         }
-    }
+    },
+    created() {
+    },
 }
 </script>
 
@@ -41,16 +44,21 @@ export default {
     <div class="custom-form">
         <h2>Car Form</h2>
 
-        <div v-for="(attr, i) in carAttr" :key="i">
-            <form-field
-                    :label="attr"
-                    :value="$v[attr].$model"
-                    :warnings="[
-                        {validator: !$v[attr].required, message: 'required'},
-                    ]"
-                    @input="updateStore(attr, $event)"
-            />
-        </div>
+        <car-selector :cars="cars"/>
+
+        <form
+                id="add-car"
+                @submit="addCar"
+        >
+            <div v-for="(attr, i) in carAttr" :key="i">
+                <label class="label">{{attr}}</label>
+                <input class="input"
+                        v-model="car_draft[attr]"
+                />
+            </div>
+
+            <button class="button" type="submit">Add Car</button>
+        </form>
     </div>
 </template>
 
