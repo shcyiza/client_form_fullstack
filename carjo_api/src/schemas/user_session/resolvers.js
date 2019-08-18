@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 const logger = require("../../utils/logger");
 const {UserModel} = require("../../models/index");
 const {makeUserSessionToken} = require("../../utils/jwt");
+=======
+const logger = require('../../utils/logger');
+const {UserModel} = require('../../models/index');
+// FIXME [IJP] 2019-08-18: should avoid this dependency if possible
+const {makeUserSessionToken} = require('../../utils/jwt');
+>>>>>>> develop
 
 const {
     STATUS,
@@ -13,6 +20,7 @@ const {
 
 const RequestUserSessionMttn = {
     RequestUserSession(parent, {email}, {redis}) {
+<<<<<<< HEAD
         return UserModel.findOne({email})
             .then(user => {
                 onNoUserFound(user);
@@ -23,6 +31,18 @@ const RequestUserSessionMttn = {
                 onError(err);
             });
     },
+=======
+
+        return UserModel.findOne({email}).then(user => {
+            onNoUserFound(user)
+
+            return cacheTokenToClaim(redis, user)
+
+        }).catch(err => {
+            onError(err)
+        })
+    }
+>>>>>>> develop
 };
 
 const ClaimUserSessionMttn = {
@@ -56,10 +76,24 @@ const ClaimUserSessionMttn = {
                         );
                     });
 
+<<<<<<< HEAD
                     const passed_status = {
                         status: STATUS[2],
                         msg: "Invalide token, please try again",
                     };
+=======
+                    return {
+                        status: STATUS[1],
+                        user_session_token: makeUserSessionToken(id)
+                    };
+                }
+
+                delTokenToClaim(redis, key, resp => {
+                    logger.warn(
+                        `Invalid login claim made for ${email} ${resp ? 'refreshing' : 'creating new'} token to claim.`
+                    )
+                })
+>>>>>>> develop
 
                     return cacheTokenToClaim(redis, user, passed_status);
                 });
