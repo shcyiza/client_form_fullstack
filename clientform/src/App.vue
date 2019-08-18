@@ -4,7 +4,6 @@ import { toast } from './helpers/toast_notification';
 export default {
   methods: {
     handleToastNotification(e) {
-      console.log(e)
       toast(
         this.$toasted,
         e.detail.message,
@@ -24,8 +23,6 @@ export default {
 <template>
   <div id="app">
     <div id="nav">
-      <!--<router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>-->
     </div>
     <router-view/>
   </div>
