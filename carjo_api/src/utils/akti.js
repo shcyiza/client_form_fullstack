@@ -13,7 +13,7 @@ const akti = (method, path, data = undefined) => {
             token: token,
         },
     });
-}
+};
 
 const createIntervention = (accountId, contactId, interventionDraft) => {
     try {
@@ -180,7 +180,7 @@ const createB2BContact = async accountDraft => {
     }
 };
 
-const findOrCreateAktiContact = (contact_draft) => {
+const findOrCreateAktiContact = contact_draft => {
     const {email} = contact_draft;
 
     return getContact(email)
@@ -200,7 +200,7 @@ const findOrCreateAktiContact = (contact_draft) => {
         });
 };
 
-const findOrCreateAktiCompany = (company_draft) => {
+const findOrCreateAktiCompany = company_draft => {
     const {code_name} = company_draft;
 
     return getCompany(code_name)
