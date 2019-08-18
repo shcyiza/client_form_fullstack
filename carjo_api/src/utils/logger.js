@@ -1,3 +1,4 @@
+// FIXME [IJP] 2019-08-18: leave in a conf
 const winston = require("winston");
 
 winston.emitErrs = true;
