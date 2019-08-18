@@ -29,3 +29,7 @@ export const notifyError = (message) => {
 export const notifySuccess = (message) => {
   dispatchNotification(message, 'success');
 };
+
+export const notifyInfo = (message) => {
+  dispatchNotification(message, 'info');
+};

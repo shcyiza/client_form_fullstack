@@ -30,20 +30,26 @@ const CarModel = Mongoose.model(
 const CompanyModel = Mongoose.model(
     "Company",
     {
-        akti_code_name: {
+        name: {type: String, required: true},
+        vat_number: {type: String, required: true},
+        email: String,
+        phone: String,
+        first_color: String,
+        second_color: String,
+        third_color: String,
+        web_site: String,
+        logo_url: String,
+        code_name: {
             type: String,
             index: true,
             unique: true,
             required: true,
         },
-        name: {type: String, required: true},
-        email: String,
-        phone: String,
-        primary_color: String,
-        secoundary_color: String,
-        ternairy_color: String,
-        web_site: String,
-        logo_url: String,
+        akti_account_id: {
+            type: String,
+            index: true,
+            sparse: true,
+        },
     },
     "company",
 );
