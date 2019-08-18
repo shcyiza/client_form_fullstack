@@ -6,10 +6,16 @@ const logger = require("../utils/logger");
 function ApolloResource(path, sever) {
     this.path = path;
     this.server = sever;
+    this.applyMiddleware = function (app) {
+        sever.applyMiddleware({
+            app,
+            path: path,
+        });
+    }
 }
 
 const apollo = {
-    connect: function (app, redis) {
+    connect: function (redis) {
         logger.info(redis.toString());
         const session_management_path = "/session_management_graph";
         const session_management_api = new ApolloServer({
@@ -27,16 +33,6 @@ const apollo = {
                 req,
                 res,
             }),
-        });
-
-        session_management_api.applyMiddleware({
-            app,
-            path: session_management_path,
-        });
-
-        client_form_api.applyMiddleware({
-            app,
-            path: client_form_path,
         });
 
         return {

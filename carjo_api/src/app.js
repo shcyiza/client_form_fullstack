@@ -22,12 +22,17 @@ app.use(
 
 const apollo = apolloConfig.connect(app, redis);
 
+
+apollo.session_management.applyMiddleware(app);
 // Secure the client_form with JWT
+// depend of oder of injection of other midelware :-(
 app.post(
     apollo.client_form.path,
     security.jwtFilter,
     security.authenticationErrorFilter(apollo.client_form.path)
 );
+apollo.client_form.applyMiddleware(app);
+
 
 const connection_port = 6060;
 app.listen(connection_port, () => {
