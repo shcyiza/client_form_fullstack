@@ -54,7 +54,7 @@
                 />
             </div>
 
-            <button class="button" type="submit">Add Car</button>
+            <button class="button" type="submit">Add address</button>
         </form>
     </div>
 </template>
