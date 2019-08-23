@@ -12,10 +12,8 @@ export default {
 
 <template>
   <div class="sites-container">
-      <div v-for="(car, i) in cars" :key="i">
-          <div class="button is-large is-fullwidth is-info">
-              <p class="address-legend">{{car.plate_number}}, {{car.model}} {{car.brand}}</p>
-          </div>
+      <div v-for="(car, i) in cars" :key="i" class="box selector">
+          <p class="address-legend">{{car.plate_number}}, {{car.model}} {{car.brand}}</p>
       </div>
   </div>
 </template>

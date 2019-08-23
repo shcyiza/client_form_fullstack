@@ -14,7 +14,7 @@ async function cars({id}) {
 
 // eslint-disable-next-line func-style
 async function addresses({id}) {
-    return await AddressModel.findAll({
+    return await AddressModel.find({
         localisable: id,
         localisable_type: "User",
     }).exec();

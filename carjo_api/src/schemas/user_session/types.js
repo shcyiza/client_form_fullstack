@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express');
+const {gql} = require("apollo-server-express");
 
 const USER_SESSION_REQUEST_TYPE = gql`
     type UserSessionRequest {
@@ -7,24 +7,26 @@ const USER_SESSION_REQUEST_TYPE = gql`
         request_timestamp: String
         user_session_token: String
     }
-`
+`;
 
 const REQUEST_USER_SESSION_MTTN = gql`
     extend type Mutation {
-        RequestUserSession(
-            email: String!,
-        ): UserSessionRequest,
-    },
-`
+        RequestUserSession(email: String!): UserSessionRequest
+    }
+`;
 
 const CLAIM_USER_SESSION_MTTN = gql`
     extend type Mutation {
         ClaimUserSession(
-            email: String!,
-            request_timestamp: String!,
-            claim_token: String!,
-        ): UserSessionRequest,
-    },
-`
+            email: String!
+            request_timestamp: String!
+            claim_token: String!
+        ): UserSessionRequest
+    }
+`;
 
-module.exports = {USER_SESSION_REQUEST_TYPE, REQUEST_USER_SESSION_MTTN, CLAIM_USER_SESSION_MTTN}
+module.exports = {
+    USER_SESSION_REQUEST_TYPE,
+    REQUEST_USER_SESSION_MTTN,
+    CLAIM_USER_SESSION_MTTN,
+};

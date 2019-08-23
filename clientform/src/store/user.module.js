@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow,no-param-reassign */
 import { authedUser } from '../graphql/users';
 import { notifyError } from '../helpers/toast_notification';
 // initial state
@@ -27,11 +28,11 @@ const actions = {
         const user = { ...AuthUser };
         delete user.cars;
         delete user.address;
-        const { cars, address } = AuthUser;
+        const { cars, addresses } = AuthUser;
 
         commit('setUser', user);
         if (cars.length > 0) commit('setCars', cars);
-        if (address) commit('setUserAddresses', address);
+        if (addresses.length > 0) commit('setAddresses', addresses);
       } else {
         notifyError('No account found...');
         fatalErrorCallback();

@@ -5,7 +5,8 @@
     const initAddressDraft = () => Object.assign({}, {
         street: '',
         city: '',
-        zip: ''
+        zip: '',
+        name: ''
     });
 
     export default {
@@ -20,7 +21,7 @@
         },
         computed: {
             ...mapGetters({
-                address: "getUserAddress",
+                addresses: "getUserAddresses",
                 user: "getAuthedUser"
             }),
             addressAttr() {
@@ -30,7 +31,7 @@
         methods: {
             addOrUpdateAddress(event) {
                 event.preventDefault();
-                this.$store.dispatch('addOrUpdateAddress', this.address_draft);
+                this.$store.dispatch('addAddress', this.address_draft);
                 this.address_draft = initAddressDraft()
             }
         },
@@ -40,13 +41,7 @@
 <template>
     <div>
         <h2>Address</h2>
-        <address-selector :addresses="[]"/>
-
-        <div>
-            <div>
-                <p class="address-legend">{{address.street}}, {{address.city}}, {{address.zip}}</p>
-            </div>
-        </div>
+        <address-selector :addresses="addresses"/>
 
         <form
                 id="add-address"
@@ -59,7 +54,7 @@
                 />
             </div>
 
-            <button class="button" type="submit">Add Car</button>
+            <button class="button" type="submit">Add address</button>
         </form>
     </div>
 </template>

@@ -6,6 +6,7 @@ const ADDRESS_TYPE = gql`
         street: String!
         city: String!
         zip: String!
+        name: String
     }
 `;
 
@@ -15,6 +16,7 @@ const REGISTER_USER_ADDRESS_MTTN = gql`
             street: String!
             city: String!
             zip: String!
+            name: String
         ): Address
     }
 `;
@@ -26,6 +28,7 @@ const UPDATE_USER_ADDRESS_MTTN = gql`
             street: String
             city: String
             zip: String
+            name: String
         ): Address!
     }
 `;

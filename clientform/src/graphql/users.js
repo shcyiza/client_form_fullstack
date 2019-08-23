@@ -34,6 +34,7 @@ const AUTHED_USER = `query {
             color 
         }
         addresses {
+            name
             id
             street
             city
