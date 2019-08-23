@@ -1,7 +1,7 @@
-const logger = require('../../utils/logger');
-const {UserModel} = require('../../models/index');
+const logger = require("../../utils/logger");
+const {UserModel} = require("../../models/index");
 // FIXME [IJP] 2019-08-18: should avoid this dependency if possible
-const {makeUserSessionToken} = require('../../utils/jwt');
+const {makeUserSessionToken} = require("../../utils/jwt");
 
 const {
     STATUS,
@@ -17,7 +17,6 @@ const RequestUserSessionMttn = {
         return UserModel.findOne({email})
             .then(user => {
                 onNoUserFound(user);
-
                 return cacheTokenToClaim(redis, user);
             })
             .catch(err => {

@@ -4,16 +4,11 @@ import { notifyError } from '../helpers/toast_notification';
 
 
 const state = {
-  user_address: {
-    id: '',
-    street: '',
-    city: '',
-    zip: '',
-  },
+  user_addresses: [],
 };
 
 const getters = {
-  getUserAddress: (state) => state.user_address,
+  getUserAddresses: (state) => state.user_addresses,
 };
 
 const actions = {

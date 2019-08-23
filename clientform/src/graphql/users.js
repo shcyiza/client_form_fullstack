@@ -33,7 +33,7 @@ const AUTHED_USER = `query {
             model
             color 
         }
-        address {
+        addresses {
             id
             street
             city
