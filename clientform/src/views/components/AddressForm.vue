@@ -5,7 +5,8 @@
     const initAddressDraft = () => Object.assign({}, {
         street: '',
         city: '',
-        zip: ''
+        zip: '',
+        name: ''
     });
 
     export default {
@@ -30,7 +31,7 @@
         methods: {
             addOrUpdateAddress(event) {
                 event.preventDefault();
-                this.$store.dispatch('addOrUpdateAddress', this.address_draft);
+                this.$store.dispatch('addAddress', this.address_draft);
                 this.address_draft = initAddressDraft()
             }
         },

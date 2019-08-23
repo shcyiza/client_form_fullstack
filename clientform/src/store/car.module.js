@@ -13,8 +13,8 @@ const getters = {
 const actions = {
   addCar({ commit }, payload) {
     registerCar(payload)
-      .then(({ RegisterCar }) => {
-        commit('pushCar', RegisterCar);
+      .then(({ RegisterCar: car }) => {
+        commit('pushCar', car);
         notifySuccess('Car successfully added!')
       })
       .catch((err) => {
