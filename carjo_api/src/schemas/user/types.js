@@ -18,7 +18,7 @@ const PRIVATE_USER_TYPE = gql`
         email: String!
         phone: String!
         cars: [Car]
-        address: Address
+        addresses: [Address]
     }
 `;
 

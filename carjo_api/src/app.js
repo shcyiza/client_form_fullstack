@@ -15,7 +15,7 @@ const app = express();
 
 app.use(requestLog.getMiddleware(), cors({origin: "*"}));
 
-const apollo = apolloConfig.connect(app, redis);
+const apollo = apolloConfig.connect(redis);
 
 apollo.session_management.applyMiddleware(app);
 // Secure the client_form with JWT

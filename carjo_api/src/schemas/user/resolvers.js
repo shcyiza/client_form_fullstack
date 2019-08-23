@@ -13,8 +13,8 @@ async function cars({id}) {
 }
 
 // eslint-disable-next-line func-style
-async function address({id}) {
-    return await AddressModel.findOne({
+async function addresses({id}) {
+    return await AddressModel.findAll({
         localisable: id,
         localisable_type: "User",
     }).exec();
@@ -88,4 +88,4 @@ const AuthUserQr = {
     },
 };
 
-module.exports = {User, cars, address, UserQr, RegisterUserMttn, AuthUserQr};
+module.exports = {User, cars, addresses, UserQr, RegisterUserMttn, AuthUserQr};

@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express');
+const {gql} = require("apollo-server-express");
 
 const BASE_TYPE = gql`
     type Query {
@@ -7,5 +7,6 @@ const BASE_TYPE = gql`
     type Mutation {
         _dummy: String
     }
-`
-module.exports = BASE_TYPE
+`;
+
+module.exports = BASE_TYPE;

@@ -2,7 +2,6 @@ const {makeExecutableSchema} = require("graphql-tools");
 const BASE_TYPE = require("../utils/gql_base_type");
 
 const {PUBLIC_USER_TYPE, USER_QR, REGISTER_USER_MTTN} = require("./user/types");
-const {CAR_TYPE} = require("./car/types");
 
 const {
     USER_SESSION_REQUEST_TYPE,

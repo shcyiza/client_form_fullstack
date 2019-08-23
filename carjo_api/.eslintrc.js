@@ -146,7 +146,6 @@ module.exports = {
 
         "require-yield": ERROR,
         "spaced-comment": [ERROR, "always"],
-        "strict": [ERROR, "function"],
         "use-isnan": ERROR,
         "valid-typeof": ERROR,
         "vars-on-top": ERROR,
