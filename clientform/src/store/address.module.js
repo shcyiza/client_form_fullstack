@@ -1,7 +1,6 @@
-/* eslint-disable no-shadow,no-param-reassign */
+/* eslint-disable no-shadow,no-param-reassign, camelcase */
 import { registerAddress } from '../graphql/address';
 import { notifyError, notifySuccess } from '../helpers/toast_notification';
-
 
 const state = {
   addresses: [],

@@ -2,7 +2,7 @@
 import { mapGetters } from "vuex"
 import CarForm from "./components/CarForm"
 import AddressForm from "./components/AddressForm"
-import toast from "../helpers/toast_notification"
+import { notifySuccess } from "../helpers/toast_notification"
 
 export default {
     name: "OrderForm",
@@ -28,7 +28,7 @@ export default {
         getAuthedUser() {
             this.$store.dispatch(
                 "fetchAuthedUser",
-                [this.endSession.bind(this), this.$toasted]
+                this.endSession.bind(this)
             )
         },
         endSession() {
@@ -36,12 +36,7 @@ export default {
             this.$router.push('/')
         },
         logout() {
-            toast(
-                this.$toasted,
-                `Thank you, see you soon!`,
-                "success"
-            )
-            this.endSession()
+            notifySuccess("Thank you, see you soon!")
         }
     },
     created() {

@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow,no-param-reassign */
+/* eslint-disable no-shadow,no-param-reassign, camelcase */
 import { registerCar } from '../graphql/car';
 import { notifyError, notifySuccess } from '../helpers/toast_notification';
 
@@ -15,7 +15,7 @@ const actions = {
     registerCar(payload)
       .then(({ RegisterCar: car }) => {
         commit('pushCar', car);
-        notifySuccess('Car successfully added!')
+        notifySuccess('Car successfully added!');
       })
       .catch((err) => {
         notifyError('Car could not be added...');

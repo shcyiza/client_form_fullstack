@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow,no-param-reassign */
+/* eslint-disable no-shadow,no-param-reassign, camelcase */
 import { authedUser } from '../graphql/users';
 import { notifyError } from '../helpers/toast_notification';
 // initial state
@@ -20,7 +20,7 @@ const getters = {
 
 // actions
 const actions = {
-  fetchAuthedUser({ commit }, [fatalErrorCallback]) {
+  fetchAuthedUser({ commit }, fatalErrorCallback) {
     authedUser().then((resp) => {
       const { AuthUser } = resp;
 

@@ -1,20 +1,20 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import OrderForm from './views/OrderForm'
-import Login from './views/Login'
+import Vue from 'vue';
+import Router from 'vue-router';
+import OrderForm from './views/OrderForm.vue';
+import Login from './views/Login.vue';
 
 Vue.use(Router);
 
 function ifUserSession(check, redirect) {
   return (to, from, next) => {
-    const token = localStorage.getItem('user_session_token')
+    const token = localStorage.getItem('user_session_token');
 
-    if(!!token === check){
-      next()
+    if (!!token === check) {
+      next();
     } else {
-      next({name: redirect})
+      next({ name: redirect });
     }
-  }
+  };
 }
 
 export default new Router({
@@ -27,13 +27,13 @@ export default new Router({
       path: '/',
       name: 'welcome',
       component: Login,
-      beforeEnter: ifUserSession(false, 'order_form')
+      beforeEnter: ifUserSession(false, 'order_form'),
     },
     {
       path: '/order_form',
       name: 'order_form',
       component: OrderForm,
-      beforeEnter: ifUserSession(true, 'welcome')
-    }
-  ]
-})
+      beforeEnter: ifUserSession(true, 'welcome'),
+    },
+  ],
+});
