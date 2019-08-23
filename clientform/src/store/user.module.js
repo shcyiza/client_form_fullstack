@@ -27,11 +27,11 @@ const actions = {
         const user = { ...AuthUser };
         delete user.cars;
         delete user.address;
-        const { cars, address } = AuthUser;
+        const { cars, addresses } = AuthUser;
 
         commit('setUser', user);
         if (cars.length > 0) commit('setCars', cars);
-        if (address) commit('setUserAddresses', address);
+        if (addresses.length > 0) commit('setUserAddresses', addresses);
       } else {
         notifyError('No account found...');
         fatalErrorCallback();

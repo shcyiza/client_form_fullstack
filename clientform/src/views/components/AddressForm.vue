@@ -20,7 +20,7 @@
         },
         computed: {
             ...mapGetters({
-                address: "getUserAddress",
+                addresses: "getUserAddresses",
                 user: "getAuthedUser"
             }),
             addressAttr() {
@@ -40,13 +40,7 @@
 <template>
     <div>
         <h2>Address</h2>
-        <address-selector :addresses="[]"/>
-
-        <div>
-            <div>
-                <p class="address-legend">{{address.street}}, {{address.city}}, {{address.zip}}</p>
-            </div>
-        </div>
+        <address-selector :addresses="addresses"/>
 
         <form
                 id="add-address"

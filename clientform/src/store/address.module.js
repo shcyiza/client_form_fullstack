@@ -32,7 +32,7 @@ const actions = {
 
 const mutations = {
   setUserAddresses: (state, payload) => {
-    state.user_address = payload;
+    state.user_addresses = payload;
   },
 };
 
