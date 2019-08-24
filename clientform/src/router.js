@@ -39,16 +39,15 @@ const router = new Router({
 });
 
 function hasQueryParams(route) {
-  return !!Object.keys(route.query).length
+  return !!Object.keys(route.query).length;
 }
 
-
 router.beforeEach((to, from, next) => {
-  if(!hasQueryParams(to) && hasQueryParams(from)){
-    next({name: to.name, query: from.query});
+  if (!hasQueryParams(to) && hasQueryParams(from)) {
+    next({ name: to.name, query: from.query });
   } else {
-    next()
+    next();
   }
 });
 
-export default router
+export default router;

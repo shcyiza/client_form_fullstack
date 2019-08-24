@@ -1,47 +1,47 @@
 <script>
-import { mapGetters } from "vuex"
-import CarForm from "./components/CarForm"
-import AddressForm from "./components/AddressForm"
-import { notifySuccess } from "../helpers/toast_notification"
+import { mapGetters } from 'vuex';
+import CarForm from './components/CarForm.vue';
+import AddressForm from './components/AddressForm.vue';
+import { notifySuccess } from '../helpers/toast_notification';
 
 export default {
-    name: "OrderForm",
-    data() {
-        return {
-            //user: {},
-            //cars: [],
-        }
+  name: 'OrderForm',
+  data() {
+    return {
+      // user: {},
+      // cars: [],
+    };
+  },
+  components: {
+    CarForm,
+    AddressForm,
+  },
+  computed: {
+    ...mapGetters({
+      company: 'getCompanyDetails',
+      user: 'getAuthedUser',
+    }),
+  },
+  methods: {
+    getAuthedUser() {
+      this.$store.dispatch(
+        'fetchAuthedUser',
+        this.endSession.bind(this),
+      );
     },
-    components: {
-        CarForm,
-        AddressForm
+    endSession() {
+      localStorage.removeItem('user_session_token');
+      this.$router.push('/');
     },
-    computed: {
-        ...mapGetters({
-            company: "getCompanyDetails",
-            user: "getAuthedUser"
-        })
+    logout() {
+      this.endSession();
+      notifySuccess('Thank you, see you soon!');
     },
-    methods: {
-        getAuthedUser() {
-            this.$store.dispatch(
-                "fetchAuthedUser",
-                this.endSession.bind(this)
-            )
-        },
-        endSession() {
-            localStorage.removeItem('user_session_token');
-            this.$router.push('/')
-        },
-        logout() {
-            this.endSession();
-            notifySuccess("Thank you, see you soon!");
-        },
-    },
-    created() {
-        this.getAuthedUser()
-    }
-}
+  },
+  created() {
+    this.getAuthedUser();
+  },
+};
 </script>
 
 <template>

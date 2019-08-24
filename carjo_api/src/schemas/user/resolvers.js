@@ -5,14 +5,12 @@ const {onError} = require("../../utils/utils");
 // properties resolvers
 const User = {};
 
-// eslint-disable-next-line func-style
 async function cars({id}) {
     const user_cars = await CarModel.find({user: id}).exec();
 
     return user_cars || [];
 }
 
-// eslint-disable-next-line func-style
 async function addresses({id}) {
     return await AddressModel.find({
         localisable: id,

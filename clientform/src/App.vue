@@ -1,17 +1,17 @@
 <script>
+import { mapGetters } from 'vuex';
 import { toast } from './helpers/toast_notification';
-import {mapGetters} from "vuex";
 
 export default {
   data() {
     return {
-      company_code: this.$route.query.company || "",
-    }
+      company_code: this.$route.query.company || '',
+    };
   },
   computed: {
     ...mapGetters({
-      company: "getCompanyDetails"
-    })
+      company: 'getCompanyDetails',
+    }),
   },
   methods: {
     handleToastNotification(e) {
@@ -20,16 +20,16 @@ export default {
         e.detail.message,
         e.detail.type,
       );
-    }
+    },
   },
   created() {
-    this.$store.dispatch("initCompanyData", this.company_code);
-    document.addEventListener('toast-notification', this.handleToastNotification)
+    this.$store.dispatch('initCompanyData', this.company_code);
+    document.addEventListener('toast-notification', this.handleToastNotification);
   },
   beforeDestroy() {
-    document.removeEventListener('toast-notification', this.handleToastNotification)
-  }
-}
+    document.removeEventListener('toast-notification', this.handleToastNotification);
+  },
+};
 </script>
 
 <template>

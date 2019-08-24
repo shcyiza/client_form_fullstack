@@ -1,41 +1,41 @@
 <script>
-    import AddressSelector from './form/AddressSelector'
-    import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex';
+import AddressSelector from './form/AddressSelector.vue';
 
-    const initAddressDraft = () => Object.assign({}, {
-        street: '',
-        city: '',
-        zip: '',
-        name: ''
-    });
+const initAddressDraft = () => ({
+  street: '',
+  city: '',
+  zip: '',
+  name: '',
+});
 
-    export default {
-        name: 'AddressForm',
-        data() {
-            return {
-                address_draft: initAddressDraft()
-            }
-        },
-        components: {
-            AddressSelector
-        },
-        computed: {
-            ...mapGetters({
-                addresses: "getUserAddresses",
-                user: "getAuthedUser"
-            }),
-            addressAttr() {
-                return Object.keys(this.address_draft)
-            }
-        },
-        methods: {
-            addOrUpdateAddress(event) {
-                event.preventDefault();
-                this.$store.dispatch('addAddress', this.address_draft);
-                this.address_draft = initAddressDraft()
-            }
-        },
-    }
+export default {
+  name: 'AddressForm',
+  data() {
+    return {
+      address_draft: initAddressDraft(),
+    };
+  },
+  components: {
+    AddressSelector,
+  },
+  computed: {
+    ...mapGetters({
+      addresses: 'getUserAddresses',
+      user: 'getAuthedUser',
+    }),
+    addressAttr() {
+      return Object.keys(this.address_draft);
+    },
+  },
+  methods: {
+    addOrUpdateAddress(event) {
+      event.preventDefault();
+      this.$store.dispatch('addAddress', this.address_draft);
+      this.address_draft = initAddressDraft();
+    },
+  },
+};
 </script>
 
 <template>

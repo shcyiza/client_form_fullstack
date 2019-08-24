@@ -15,12 +15,12 @@
 
 <script>
 export default {
-    name: "SitesButtons",
-    props: {
-        addresses:{
-            type: Array,
-            required: true
-        }
-    }
-}
+  name: 'SitesButtons',
+  props: {
+    addresses: {
+      type: Array,
+      required: true,
+    },
+  },
+};
 </script>
