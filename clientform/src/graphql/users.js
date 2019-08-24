@@ -1,6 +1,5 @@
 import { userSessionGraph, clientFormGraph } from '../lib/graphql';
 
-
 const USER_BY_EMAIL = `query ($email: String!) {
     User(email: $email) {
         id

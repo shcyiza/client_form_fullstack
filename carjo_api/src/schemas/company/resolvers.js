@@ -2,7 +2,7 @@ const {CompanyModel, AddressModel} = require("../../models/index");
 const {onError} = require("../../utils/utils");
 
 const Company = {
-    async locations({id}) {
+    async addresses({id}) {
         return await AddressModel.find({
             localisable: id,
             localisable_type: "Company",

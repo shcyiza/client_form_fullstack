@@ -13,6 +13,7 @@ export default {
   name: 'AddressForm',
   data() {
     return {
+      company_mode: false,
       address_draft: initAddressDraft(),
     };
   },
@@ -21,9 +22,16 @@ export default {
   },
   computed: {
     ...mapGetters({
-      addresses: 'getUserAddresses',
-      user: 'getAuthedUser',
+      user_addresses: 'getUserAddresses',
+      company_addresses: 'getCompanyAddresses'
     }),
+    companyMode () {
+      return this.company_addresses.length > 0
+    },
+    addresses() {
+      if (this.companyMode) return this.company_addresses;
+      return this.user_addresses;
+    },
     addressAttr() {
       return Object.keys(this.address_draft);
     },
@@ -35,6 +43,7 @@ export default {
       this.address_draft = initAddressDraft();
     },
   },
+
 };
 </script>
 
@@ -44,6 +53,7 @@ export default {
         <address-selector :addresses="addresses"/>
 
         <form
+                v-if="!companyMode"
                 id="add-address"
                 @submit="addOrUpdateAddress"
         >

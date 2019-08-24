@@ -10,7 +10,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      company: 'getCompanyDetails',
+      company: 'getCompanyInfo',
     }),
   },
   methods: {

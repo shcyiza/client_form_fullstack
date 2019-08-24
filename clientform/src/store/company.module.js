@@ -1,41 +1,28 @@
 /* eslint-disable no-shadow,no-param-reassign, camelcase */
-import { fetchAktiCompany } from '../helpers/AktiServices';
+import { fetchCompany } from '../graphql/company';
 
 // initial state
 const state = {
-  companyName: '',
-  vatNr: '',
-  vat: '',
-  addresses: [],
+  company: {
+    addresses: []
+  },
 };
 
 // getters
 const getters = {
-  getCompanyDetails: (state) => ({
-    id: state.accountId,
-    name: state.companyName,
-    vat_number: state.vatNr,
-    vat_rate: state.vat,
+  getCompanyInfo: ({ company }) => ({
+    id: company.id,
+    name: company.name,
+    vat_number: company.vat_number,
   }),
-  getCompanySites: (state) => state.addresses.map((site) => ({
-    id: site.addressId,
-    street: site.streetAddress,
-    city: site.city,
-    zip_code: site.zip,
-  })),
+  getCompanyAddresses: ({ company }) => company.addresses,
 };
-
 // actions
 const actions = {
-  fetchCompany(context, company_code) {
-    fetchAktiCompany(company_code).then(({ data }) => {
-      if (data.data[0]) {
-        context.commit('setCompany', data.data[0]);
-        // eslint-disable-next-line no-console
-        console.log('company was fetch successfully');
-      } else {
-        // eslint-disable-next-line no-console
-        console.log(`no result for ${company_code} company`);
+  fetchCompany(context, code_name) {
+    fetchCompany(code_name).then(({ Company }) => {
+      if (Company) {
+        context.commit('setCompany', Company);
       }
     })
       .catch((err) => {
@@ -44,23 +31,17 @@ const actions = {
         throw err;
       });
   },
-  initCompanyData({ state, dispatch }, company_code) {
-    if (company_code && !state.accountId) {
-      dispatch('fetchCompany', company_code);
+  initCompanyData({ state, dispatch }, code_name) {
+    if (code_name && !state.id) {
+      dispatch('fetchCompany', code_name);
     }
   },
 };
 
 // mutations
 const mutations = {
-  setCompany(state, {
-    accountId, companyName, vatNr, vat, addresses,
-  }) {
-    state.accountId = accountId;
-    state.companyName = companyName;
-    state.vatNr = vatNr;
-    state.vat = vat;
-    state.addresses = addresses;
+  setCompany(state, payload) {
+    state.company = payload;
   },
 };
 

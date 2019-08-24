@@ -8,7 +8,8 @@ const COMPANY_TYPE = gql`
         first_color: String
         second_color: String
         third_color: String
-        locations: [Address!]
+        vat_number: String
+        addresses: [Address!]
     }
 `;
 

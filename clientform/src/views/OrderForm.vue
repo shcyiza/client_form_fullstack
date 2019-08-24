@@ -18,7 +18,6 @@ export default {
   },
   computed: {
     ...mapGetters({
-      company: 'getCompanyDetails',
       user: 'getAuthedUser',
     }),
   },
