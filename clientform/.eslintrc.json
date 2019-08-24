@@ -19,5 +19,7 @@
         "vue"
     ],
     "rules": {
+        "indent": [2, 4],
+        "camelcase": "off"
     }
 }

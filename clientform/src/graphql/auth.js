@@ -18,17 +18,17 @@ const CLAIM_TOKEN = `mutation ($email: String!, $request_timestamp: String!, $cl
 }`;
 
 export function requestToken(email) {
-  const mutation = userSessionGraph(REQUEST_TOKEN);
-  return mutation({
-    email,
-  });
+    const mutation = userSessionGraph(REQUEST_TOKEN);
+    return mutation({
+        email,
+    });
 }
 
 export function claimToken(email, request_timestamp, claim_token) {
-  const mutation = userSessionGraph(CLAIM_TOKEN);
-  return mutation({
-    email,
-    request_timestamp,
-    claim_token,
-  });
+    const mutation = userSessionGraph(CLAIM_TOKEN);
+    return mutation({
+        email,
+        request_timestamp,
+        claim_token,
+    });
 }

@@ -1,55 +1,47 @@
 <script>
-import { mapGetters } from "vuex"
-import CarForm from "./components/CarForm"
-import AddressForm from "./components/AddressForm"
-import { notifySuccess } from "../helpers/toast_notification"
+import { mapGetters } from 'vuex';
+import CarForm from './components/CarForm.vue';
+import AddressForm from './components/AddressForm.vue';
+import { notifySuccess } from '../helpers/toast_notification';
 
 export default {
-    name: "OrderForm",
+    name: 'OrderForm',
     data() {
-        return {
-            form_name: "Order Form",
-            company_code: this.$route.query.company || "",
-            //user: {},
-            //cars: [],
-        }
+        return {};
     },
     components: {
         CarForm,
-        AddressForm
+        AddressForm,
     },
     computed: {
         ...mapGetters({
-            company: "getCompanyDetails",
-            user: "getAuthedUser"
-        })
+            user: 'getAuthedUser',
+        }),
     },
     methods: {
         getAuthedUser() {
             this.$store.dispatch(
-                "fetchAuthedUser",
-                this.endSession.bind(this)
-            )
+                'fetchAuthedUser',
+                this.endSession.bind(this),
+            );
         },
         endSession() {
-            localStorage.removeItem('user_session_token')
-            this.$router.push('/')
+            localStorage.removeItem('user_session_token');
+            this.$router.push('/');
         },
         logout() {
-            notifySuccess("Thank you, see you soon!")
-        }
+            this.endSession();
+            notifySuccess('Thank you, see you soon!');
+        },
     },
     created() {
-        this.$store.dispatch("initCompanyData", this.company_code)
-        this.getAuthedUser()
-    }
-}
+        this.getAuthedUser();
+    },
+};
 </script>
 
 <template>
     <div>
-        <h1>{{company.name || "Carjo"}}</h1>
-        <h3>{{company.name && "Carjo"}}</h3>
         <div class="has-text-left">
             <h5><b>Hey,</b> {{user.first_name}} {{user.last_name}}</h5>
         </div>

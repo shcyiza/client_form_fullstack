@@ -21,11 +21,11 @@ const UPDATE_USER_ADDRESS = `mutation ($id: String!, $street: String!, $city: St
 }`;
 
 export function registerAddress(address) {
-  const mutation = clientFormGraph(REGISTER_USER_ADDRESS);
-  return mutation(address);
+    const mutation = clientFormGraph(REGISTER_USER_ADDRESS);
+    return mutation(address);
 }
 
 export function updateAddress(address) {
-  const mutation = clientFormGraph(UPDATE_USER_ADDRESS);
-  return mutation(address);
+    const mutation = clientFormGraph(UPDATE_USER_ADDRESS);
+    return mutation(address);
 }

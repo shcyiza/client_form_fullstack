@@ -1,41 +1,41 @@
 <script>
-    export default {
-        name: "form-field",
-        props: {
-            label: {
-                type: String,
-                required: true
-            },
-            value: {
-                type: String,
-                required: true
-            },
-            warnings: {
-                type: Array,
-                required: true
+export default {
+    name: 'form-field',
+    props: {
+        label: {
+            type: String,
+            required: true,
+        },
+        value: {
+            type: String,
+            required: true,
+        },
+        warnings: {
+            type: Array,
+            required: true,
+        },
+    },
+    data() {
+        return {
+            inputVal: this.value,
+        };
+    },
+    computed: {
+        hasWarning() {
+            return !!this.warnings.find((w) => w.validator === true);
+        },
+    },
+    watch: {
+        inputVal(val) {
+            this.$emit('input', val);
+        },
+        value() {
+            if (this.value !== this.inputVal) {
+                this.inputVal = this.value;
             }
         },
-        data() {
-            return {
-                inputVal: this.value
-            }
-        },
-        computed: {
-            hasWarning() {
-                return !!this.warnings.find(w => w.validator === true)
-            }
-        },
-        watch: {
-            inputVal(val) {
-                this.$emit('input', val);
-            },
-            value() {
-                if (this.value !== this.inputVal) {
-                    this.inputVal = this.value
-                }
-            }
-        }
-    }
+    },
+};
 </script>
 
 <template>

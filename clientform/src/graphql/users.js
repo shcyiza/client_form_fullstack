@@ -1,6 +1,5 @@
 import { userSessionGraph, clientFormGraph } from '../lib/graphql';
 
-
 const USER_BY_EMAIL = `query ($email: String!) {
     User(email: $email) {
         id
@@ -44,21 +43,21 @@ const AUTHED_USER = `query {
 }`;
 
 export function findUserByEmail(email) {
-  const query = userSessionGraph(USER_BY_EMAIL);
-  return query({ email });
+    const query = userSessionGraph(USER_BY_EMAIL);
+    return query({ email });
 }
 
 export async function checkEmailExists(email) {
-  const { User } = await findUserByEmail(email);
-  return !!User; // Same as User !== null
+    const { User } = await findUserByEmail(email);
+    return !!User; // Same as User !== null
 }
 
 export async function registerUser(user) {
-  const mutation = userSessionGraph(SIGN_UP);
-  return mutation(user);
+    const mutation = userSessionGraph(SIGN_UP);
+    return mutation(user);
 }
 
 export function authedUser() {
-  const query = clientFormGraph(AUTHED_USER);
-  return query();
+    const query = clientFormGraph(AUTHED_USER);
+    return query();
 }

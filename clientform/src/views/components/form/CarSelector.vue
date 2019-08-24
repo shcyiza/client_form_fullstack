@@ -1,13 +1,13 @@
 <script>
 export default {
-    name: "CarSelector",
+    name: 'CarSelector',
     props: {
-        cars:{
+        cars: {
             type: Array,
-            required: true
-        }
-    }
-}
+            required: true,
+        },
+    },
+};
 </script>
 
 <template>

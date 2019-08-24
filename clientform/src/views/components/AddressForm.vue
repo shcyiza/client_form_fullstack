@@ -1,41 +1,49 @@
 <script>
-    import AddressSelector from './form/AddressSelector'
-    import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex';
+import AddressSelector from './form/AddressSelector.vue';
 
-    const initAddressDraft = () => Object.assign({}, {
-        street: '',
-        city: '',
-        zip: '',
-        name: ''
-    });
+const initAddressDraft = () => ({
+    street: '',
+    city: '',
+    zip: '',
+    name: '',
+});
 
-    export default {
-        name: 'AddressForm',
-        data() {
-            return {
-                address_draft: initAddressDraft()
-            }
+export default {
+    name: 'AddressForm',
+    data() {
+        return {
+            company_mode: false,
+            address_draft: initAddressDraft(),
+        };
+    },
+    components: {
+        AddressSelector,
+    },
+    computed: {
+        ...mapGetters({
+            user_addresses: 'getUserAddresses',
+            company_addresses: 'getCompanyAddresses',
+        }),
+        companyMode() {
+            return this.company_addresses.length > 0;
         },
-        components: {
-            AddressSelector
+        addresses() {
+            if (this.companyMode) return this.company_addresses;
+            return this.user_addresses;
         },
-        computed: {
-            ...mapGetters({
-                addresses: "getUserAddresses",
-                user: "getAuthedUser"
-            }),
-            addressAttr() {
-                return Object.keys(this.address_draft)
-            }
+        addressAttr() {
+            return Object.keys(this.address_draft);
         },
-        methods: {
-            addOrUpdateAddress(event) {
-                event.preventDefault();
-                this.$store.dispatch('addAddress', this.address_draft);
-                this.address_draft = initAddressDraft()
-            }
+    },
+    methods: {
+        addOrUpdateAddress(event) {
+            event.preventDefault();
+            this.$store.dispatch('addAddress', this.address_draft);
+            this.address_draft = initAddressDraft();
         },
-    }
+    },
+};
 </script>
 
 <template>
@@ -44,6 +52,7 @@
         <address-selector :addresses="addresses"/>
 
         <form
+                v-if="!companyMode"
                 id="add-address"
                 @submit="addOrUpdateAddress"
         >

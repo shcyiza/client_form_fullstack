@@ -3,39 +3,39 @@ import { registerAddress } from '../graphql/address';
 import { notifyError, notifySuccess } from '../helpers/toast_notification';
 
 const state = {
-  addresses: [],
+    addresses: [],
 };
 
 const getters = {
-  getUserAddresses: (state) => state.addresses,
+    getUserAddresses: (state) => state.addresses,
 };
 
 const actions = {
-  addAddress({ commit }, payload) {
-    registerAddress(payload)
-      .then(({ RegisterUserAddress: address }) => {
-        commit('pushAddress', address);
-        notifySuccess('Addresses successfully added!');
-      })
-      .catch((err) => {
-        notifyError('Address could not be added...');
-        throw err;
-      });
-  },
+    addAddress({ commit }, payload) {
+        registerAddress(payload)
+            .then(({ RegisterUserAddress: address }) => {
+                commit('pushAddress', address);
+                notifySuccess('Addresses successfully added!');
+            })
+            .catch((err) => {
+                notifyError('Address could not be added...');
+                throw err;
+            });
+    },
 };
 
 const mutations = {
-  setAddresses: (state, payload) => {
-    state.addresses = payload;
-  },
-  pushAddress: (state, payload) => {
-    state.addresses.push(payload);
-  },
+    setAddresses: (state, payload) => {
+        state.addresses = payload;
+    },
+    pushAddress: (state, payload) => {
+        state.addresses.push(payload);
+    },
 };
 
 export default {
-  state,
-  getters,
-  actions,
-  mutations,
+    state,
+    getters,
+    actions,
+    mutations,
 };

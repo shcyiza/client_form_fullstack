@@ -11,6 +11,6 @@ const REGISTER_CAR = `mutation ($plate_number: String!, $brand: String!, $model:
 }`;
 
 export function registerCar(car) {
-  const mutation = clientFormGraph(REGISTER_CAR);
-  return mutation(car);
+    const mutation = clientFormGraph(REGISTER_CAR);
+    return mutation(car);
 }

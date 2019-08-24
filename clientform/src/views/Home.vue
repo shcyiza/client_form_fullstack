@@ -1,26 +1,26 @@
 <script>
-  export default {
+export default {
     name: 'home',
     components: {},
     data() {
-      return {
-        company_code: this.$route.query.company || ""
-      }
+        return {
+            company_code: this.$route.query.company || '',
+        };
     },
     computed: {
         company() {
-          return  this.$store.getters.getCompanyDetails
-        }
+            return this.$store.getters.getCompanyDetails;
+        },
     },
     methods: {
-      companyRoute(main_path) {
-        return `${main_path}${this.company_code ? "?company=" + this.company_code : ''}`
-      }
+        companyRoute(main_path) {
+            return `${main_path}${this.company_code ? `?company=${this.company_code}` : ''}`;
+        },
     },
     created() {
-      this.$store.dispatch("initCompanyData", this.company_code)
-    }
-  }
+        this.$store.dispatch('initCompanyData', this.company_code);
+    },
+};
 </script>
 
 <template>
