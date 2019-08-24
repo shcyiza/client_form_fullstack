@@ -3,40 +3,40 @@ import { mapGetters } from 'vuex';
 import CarSelector from './form/CarSelector.vue';
 
 const initCarDraft = () => ({
-  plate_number: '',
-  brand: '',
-  model: '',
-  color: '',
+    plate_number: '',
+    brand: '',
+    model: '',
+    color: '',
 });
 
 export default {
-  name: 'CarForm',
-  components: {
-    CarSelector,
-  },
-  data() {
-    return {
-      car_draft: initCarDraft(),
-    };
-  },
-  computed: {
-    ...mapGetters({
-      cars: 'getCars',
-      user: 'getAuthedUser',
-    }),
-    carAttr() {
-      return Object.keys(this.car_draft);
+    name: 'CarForm',
+    components: {
+        CarSelector,
     },
-  },
-  methods: {
-    addCar(event) {
-      event.preventDefault();
-      this.$store.dispatch('addCar', this.car_draft);
-      this.car_draft = initCarDraft();
+    data() {
+        return {
+            car_draft: initCarDraft(),
+        };
     },
-  },
-  created() {
-  },
+    computed: {
+        ...mapGetters({
+            cars: 'getCars',
+            user: 'getAuthedUser',
+        }),
+        carAttr() {
+            return Object.keys(this.car_draft);
+        },
+    },
+    methods: {
+        addCar(event) {
+            event.preventDefault();
+            this.$store.dispatch('addCar', this.car_draft);
+            this.car_draft = initCarDraft();
+        },
+    },
+    created() {
+    },
 };
 </script>
 

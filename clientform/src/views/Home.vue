@@ -1,25 +1,25 @@
 <script>
 export default {
-  name: 'home',
-  components: {},
-  data() {
-    return {
-      company_code: this.$route.query.company || '',
-    };
-  },
-  computed: {
-    company() {
-      return this.$store.getters.getCompanyDetails;
+    name: 'home',
+    components: {},
+    data() {
+        return {
+            company_code: this.$route.query.company || '',
+        };
     },
-  },
-  methods: {
-    companyRoute(main_path) {
-      return `${main_path}${this.company_code ? `?company=${this.company_code}` : ''}`;
+    computed: {
+        company() {
+            return this.$store.getters.getCompanyDetails;
+        },
     },
-  },
-  created() {
-    this.$store.dispatch('initCompanyData', this.company_code);
-  },
+    methods: {
+        companyRoute(main_path) {
+            return `${main_path}${this.company_code ? `?company=${this.company_code}` : ''}`;
+        },
+    },
+    created() {
+        this.$store.dispatch('initCompanyData', this.company_code);
+    },
 };
 </script>
 

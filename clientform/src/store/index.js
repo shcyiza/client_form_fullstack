@@ -17,14 +17,14 @@ const actions = {};
 
 
 export default new Vuex.Store({
-  state,
-  getters,
-  mutations,
-  actions,
-  modules: {
-    company,
-    user,
-    car,
-    address,
-  },
+    state,
+    getters,
+    mutations,
+    actions,
+    modules: {
+        company,
+        user,
+        car,
+        address,
+    },
 });

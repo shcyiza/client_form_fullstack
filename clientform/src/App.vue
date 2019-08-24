@@ -3,32 +3,32 @@ import { mapGetters } from 'vuex';
 import { toast } from './helpers/toast_notification';
 
 export default {
-  data() {
-    return {
-      company_code: this.$route.query.company || '',
-    };
-  },
-  computed: {
-    ...mapGetters({
-      company: 'getCompanyInfo',
-    }),
-  },
-  methods: {
-    handleToastNotification(e) {
-      toast(
-        this.$toasted,
-        e.detail.message,
-        e.detail.type,
-      );
+    data() {
+        return {
+            company_code: this.$route.query.company || '',
+        };
     },
-  },
-  created() {
-    this.$store.dispatch('initCompanyData', this.company_code);
-    document.addEventListener('toast-notification', this.handleToastNotification);
-  },
-  beforeDestroy() {
-    document.removeEventListener('toast-notification', this.handleToastNotification);
-  },
+    computed: {
+        ...mapGetters({
+            company: 'getCompanyInfo',
+        }),
+    },
+    methods: {
+        handleToastNotification(e) {
+            toast(
+                this.$toasted,
+                e.detail.message,
+                e.detail.type,
+            );
+        },
+    },
+    created() {
+        this.$store.dispatch('initCompanyData', this.company_code);
+        document.addEventListener('toast-notification', this.handleToastNotification);
+    },
+    beforeDestroy() {
+        document.removeEventListener('toast-notification', this.handleToastNotification);
+    },
 };
 </script>
 

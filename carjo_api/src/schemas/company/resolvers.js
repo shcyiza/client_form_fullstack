@@ -7,7 +7,7 @@ const Company = {
             localisable: id,
             localisable_type: "Company",
         }).exec();
-    }
+    },
 };
 
 const CompanyQr = {
@@ -29,4 +29,4 @@ const CompanyQr = {
     },
 };
 
-module.exports = {Company, CompanyQr}
+module.exports = {Company, CompanyQr};

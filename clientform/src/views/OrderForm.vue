@@ -5,41 +5,38 @@ import AddressForm from './components/AddressForm.vue';
 import { notifySuccess } from '../helpers/toast_notification';
 
 export default {
-  name: 'OrderForm',
-  data() {
-    return {
-      // user: {},
-      // cars: [],
-    };
-  },
-  components: {
-    CarForm,
-    AddressForm,
-  },
-  computed: {
-    ...mapGetters({
-      user: 'getAuthedUser',
-    }),
-  },
-  methods: {
-    getAuthedUser() {
-      this.$store.dispatch(
-        'fetchAuthedUser',
-        this.endSession.bind(this),
-      );
+    name: 'OrderForm',
+    data() {
+        return {};
     },
-    endSession() {
-      localStorage.removeItem('user_session_token');
-      this.$router.push('/');
+    components: {
+        CarForm,
+        AddressForm,
     },
-    logout() {
-      this.endSession();
-      notifySuccess('Thank you, see you soon!');
+    computed: {
+        ...mapGetters({
+            user: 'getAuthedUser',
+        }),
     },
-  },
-  created() {
-    this.getAuthedUser();
-  },
+    methods: {
+        getAuthedUser() {
+            this.$store.dispatch(
+                'fetchAuthedUser',
+                this.endSession.bind(this),
+            );
+        },
+        endSession() {
+            localStorage.removeItem('user_session_token');
+            this.$router.push('/');
+        },
+        logout() {
+            this.endSession();
+            notifySuccess('Thank you, see you soon!');
+        },
+    },
+    created() {
+        this.getAuthedUser();
+    },
 };
 </script>
 
