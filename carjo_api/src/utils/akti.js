@@ -209,7 +209,7 @@ const findOrCreateAktiCompany = company_draft => {
 
             if (akti_company) {
                 logger.info(`company ${code_name} found in AKTI`);
-                return akti_user;
+                return akti_company;
             }
             logger.info(`company ${code_name} will be created created in AKTI`);
             return createAccount(company_draft);

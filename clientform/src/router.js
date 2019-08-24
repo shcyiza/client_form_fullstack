@@ -17,7 +17,7 @@ function ifUserSession(check, redirect) {
   };
 }
 
-export default new Router({
+const router = new Router({
   scrollBehavior() {
     return { x: 0, y: 0 };
   },
@@ -37,3 +37,18 @@ export default new Router({
     },
   ],
 });
+
+function hasQueryParams(route) {
+  return !!Object.keys(route.query).length
+}
+
+
+router.beforeEach((to, from, next) => {
+  if(!hasQueryParams(to) && hasQueryParams(from)){
+    next({name: to.name, query: from.query});
+  } else {
+    next()
+  }
+});
+
+export default router

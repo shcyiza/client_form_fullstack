@@ -9,10 +9,3 @@ export function fetchAktiCompany(company_name) {
     { headers: { 'Content-Type': 'application/json', token: TOKEN } },
   );
 }
-
-export function fetchAktiContact(accountId, email) {
-  return axios.get(
-    `${BASE_URL}/crm/account/contacts?accountId=${accountId}&email=${email}`,
-    { headers: { token: TOKEN } },
-  );
-}

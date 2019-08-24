@@ -1,7 +1,18 @@
 <script>
 import { toast } from './helpers/toast_notification';
+import {mapGetters} from "vuex";
 
 export default {
+  data() {
+    return {
+      company_code: this.$route.query.company || "",
+    }
+  },
+  computed: {
+    ...mapGetters({
+      company: "getCompanyDetails"
+    })
+  },
   methods: {
     handleToastNotification(e) {
       toast(
@@ -12,6 +23,7 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch("initCompanyData", this.company_code);
     document.addEventListener('toast-notification', this.handleToastNotification)
   },
   beforeDestroy() {
@@ -23,6 +35,8 @@ export default {
 <template>
   <div id="app">
     <div id="nav">
+      <h1>{{company.name || "Carjo"}}</h1>
+      <h3>{{company.name && "Carjo"}}</h3>
     </div>
     <router-view/>
   </div>

@@ -8,8 +8,6 @@ export default {
     name: "OrderForm",
     data() {
         return {
-            form_name: "Order Form",
-            company_code: this.$route.query.company || "",
             //user: {},
             //cars: [],
         }
@@ -32,15 +30,15 @@ export default {
             )
         },
         endSession() {
-            localStorage.removeItem('user_session_token')
+            localStorage.removeItem('user_session_token');
             this.$router.push('/')
         },
         logout() {
-            notifySuccess("Thank you, see you soon!")
-        }
+            this.endSession();
+            notifySuccess("Thank you, see you soon!");
+        },
     },
     created() {
-        this.$store.dispatch("initCompanyData", this.company_code)
         this.getAuthedUser()
     }
 }
@@ -48,8 +46,6 @@ export default {
 
 <template>
     <div>
-        <h1>{{company.name || "Carjo"}}</h1>
-        <h3>{{company.name && "Carjo"}}</h3>
         <div class="has-text-left">
             <h5><b>Hey,</b> {{user.first_name}} {{user.last_name}}</h5>
         </div>
