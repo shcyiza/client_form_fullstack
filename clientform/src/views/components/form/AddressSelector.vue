@@ -32,7 +32,11 @@ export default {
           @click="selectAddress(address.id)"
       >
           <div>{{address.name}}</div>
-          <div class="address-legend">{{address.street}}, {{address.zip_code}} {{address.city}}</div>
+          <div class="address-legend">
+              {{address.street}},
+              {{address.zip}},
+              {{address.city}}
+          </div>
       </div>
   </div>
 </template>
