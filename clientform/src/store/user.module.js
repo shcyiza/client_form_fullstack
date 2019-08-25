@@ -20,7 +20,7 @@ const getters = {
 
 // actions
 const actions = {
-    fetchAuthedUser({ commit }, fatalErrorCallback) {
+    fetchAuthedUser({ commit, rootState }, fatalErrorCallback) {
         authedUser().then((resp) => {
             const { AuthUser } = resp;
 
@@ -31,8 +31,15 @@ const actions = {
                 const { cars, addresses } = AuthUser;
 
                 commit('setUser', user);
-                if (cars.length > 0) commit('setCars', cars);
-                if (addresses.length > 0) commit('setAddresses', addresses);
+                if (cars.length > 0) {
+                    commit('setCars', cars);
+                    commit('setOrderCar', cars[0].id);
+                }
+
+                if (addresses.length > 0) {
+                    commit('setAddresses', addresses);
+                    if (!rootState.order.address_id) commit('setOrderAddress', addresses[0].id);
+                }
             } else {
                 notifyError('No account found...');
                 fatalErrorCallback();

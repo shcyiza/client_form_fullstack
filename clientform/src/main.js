@@ -1,6 +1,6 @@
 import Vue from 'vue';
-import Vuelidate from 'vuelidate';
 import Toasted from 'vue-toasted';
+import { setupCalendar } from 'v-calendar';
 import App from './App.vue';
 import store from './store';
 import router from './router';
@@ -8,7 +8,9 @@ import GQLProvider from './lib/graphql';
 
 require('./assets/styles/main.sass');
 
-Vue.use(Vuelidate);
+setupCalendar(Vue, {
+    componentPrefix: 'vc',
+});
 Vue.use(GQLProvider);
 Vue.use(Toasted);
 

@@ -74,7 +74,7 @@ export default {
     <h2>Thanks for choosing Carjo...</h2>
     <form>
         <template v-if="isValidEmail">
-            <h4>Please enter your email adress</h4>
+            <h4>Please enter your email address</h4>
             <input
                 type="email"
                 class="input auth-input is-info"

@@ -1,19 +1,6 @@
-
-<template>
-  <div class="sites-container">
-      <div v-for="(place, i) in addresses" :key="i" class="box selector">
-          <div>{{place.name}}</div>
-          <div class="address-legend">{{place.street}}, {{place.zip_code}} {{place.city}}</div>
-      </div>
-  </div>
-</template>
-
-<style lang="sass" scoped>
-.address-legend
-    font-size: smaller
-</style>
-
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
     name: 'SitesButtons',
     props: {
@@ -22,5 +9,35 @@ export default {
             required: true,
         },
     },
+    computed: {
+        ...mapGetters({
+            addressId: 'addressId',
+        }),
+    },
+    methods: {
+        selectAddress(id) {
+            this.$store.commit('setOrderAddress', id);
+        },
+    },
 };
 </script>
+
+<template>
+  <div class="sites-container">
+      <div
+          class="box selector"
+          v-for="(address, i) in addresses"
+          :key="i"
+          v-bind:class="addressId === address.id ?  'active' : ''"
+          @click="selectAddress(address.id)"
+      >
+          <div>{{address.name}}</div>
+          <div class="address-legend">{{address.street}}, {{address.zip_code}} {{address.city}}</div>
+      </div>
+  </div>
+</template>
+
+<style lang="sass" scoped>
+.address-legend
+    font-size: smaller
+</style>

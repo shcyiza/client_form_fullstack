@@ -16,7 +16,6 @@ const ApolloResource = function(path, sever) {
 
 const apollo = {
     connect: function(redis) {
-        logger.info(redis.toString());
         const session_management_path = "/session_management_graph";
         const session_management_api = new ApolloServer({
             schema: SessionManagementSchema,

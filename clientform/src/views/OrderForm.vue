@@ -1,22 +1,34 @@
 <script>
 import { mapGetters } from 'vuex';
+import { DatePicker } from 'v-calendar';
+import moment from 'moment';
+
+import ServiceForm from './components/ServiceForm.vue';
 import CarForm from './components/CarForm.vue';
 import AddressForm from './components/AddressForm.vue';
+import InterventionDateField from './components/InterventionDateField.vue';
 import { notifySuccess } from '../helpers/toast_notification';
 
 export default {
     name: 'OrderForm',
     data() {
-        return {};
+        return {
+            intervention_date: null,
+        };
     },
     components: {
+        ServiceForm,
         CarForm,
         AddressForm,
+        InterventionDateField,
     },
     computed: {
         ...mapGetters({
             user: 'getAuthedUser',
         }),
+        datePickerMinimum() {
+            return moment().add(2, 'days').format('YYYY-MM-DD');
+        },
     },
     methods: {
         getAuthedUser() {
@@ -53,14 +65,10 @@ export default {
         <hr>
 
         <div class="columns">
-            <div class="column form-container">
-                <h2>Service form</h2>
-                <a class="button">Car-wash</a>
-                <a class="button">Car-check</a>
-            </div>
+            <service-form class="column form-container"/>
             <car-form class="column form-container"/>
             <address-form class="column form-container"/>
-
+            <intervention-date-field class="column"/>
         </div>
     </div>
 </template>

@@ -4,6 +4,7 @@ import company from './company.module';
 import user from './user.module';
 import car from './car.module';
 import address from './address.module';
+import order from './order.module';
 
 Vue.use(Vuex);
 
@@ -26,5 +27,6 @@ export default new Vuex.Store({
         user,
         car,
         address,
+        order,
     },
 });

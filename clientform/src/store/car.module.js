@@ -15,6 +15,7 @@ const actions = {
         registerCar(payload)
             .then(({ RegisterCar: car }) => {
                 commit('pushCar', car);
+                commit('setOrderCar', car.id);
                 notifySuccess('Car successfully added!');
             })
             .catch((err) => {

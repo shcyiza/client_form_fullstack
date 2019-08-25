@@ -19,10 +19,11 @@ const getters = {
 };
 // actions
 const actions = {
-    fetchCompany(context, code_name) {
+    fetchCompany({ commit, state }, code_name) {
         fetchCompany(code_name).then(({ Company }) => {
             if (Company) {
-                context.commit('setCompany', Company);
+                commit('setCompany', Company);
+                commit('setOrderAddress', state.company.addresses[0].id);
             }
         })
             .catch((err) => {

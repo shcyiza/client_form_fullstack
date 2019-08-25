@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow,no-param-reassign, camelcase */
+/* eslint-disable no-shadow,no-param-reassign */
 import { registerAddress } from '../graphql/address';
 import { notifyError, notifySuccess } from '../helpers/toast_notification';
 
@@ -15,6 +15,7 @@ const actions = {
         registerAddress(payload)
             .then(({ RegisterUserAddress: address }) => {
                 commit('pushAddress', address);
+                commit('setOrderAddress', address.id);
                 notifySuccess('Addresses successfully added!');
             })
             .catch((err) => {
