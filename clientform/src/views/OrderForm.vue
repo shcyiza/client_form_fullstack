@@ -7,7 +7,7 @@ import ServiceForm from './components/ServiceForm.vue';
 import CarForm from './components/CarForm.vue';
 import AddressForm from './components/AddressForm.vue';
 import InterventionDateField from './components/InterventionDateField.vue';
-import { notifySuccess } from '../helpers/toast_notification';
+import { notifySuccess, notifyError } from '../helpers/toast_notification';
 
 export default {
     name: 'OrderForm',
@@ -25,6 +25,7 @@ export default {
     computed: {
         ...mapGetters({
             user: 'getAuthedUser',
+            validation: 'checkValidity',
         }),
         datePickerMinimum() {
             return moment().add(2, 'days').format('YYYY-MM-DD');
@@ -38,12 +39,15 @@ export default {
             );
         },
         endSession() {
+            this.$store.dispatch('endSession');
             localStorage.removeItem('user_session_token');
             this.$router.push('/');
         },
         logout() {
             this.endSession();
             notifySuccess('Thank you, see you soon!');
+        },
+        submitClientForm() {
         },
     },
     created() {
@@ -70,6 +74,7 @@ export default {
             <address-form class="column form-container"/>
             <intervention-date-field class="column"/>
         </div>
+        <button class="button is-large is-success" :disabled="!validation.ok">Done</button>
     </div>
 </template>
 

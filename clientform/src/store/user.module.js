@@ -2,15 +2,17 @@
 import { authedUser } from '../graphql/users';
 import { notifyError } from '../helpers/toast_notification';
 // initial state
+const initial_state = {
+    id: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    is_loading: false,
+};
+
 const state = {
-    user: {
-        id: '',
-        first_name: '',
-        last_name: '',
-        email: '',
-        phone: '',
-        is_loading: false,
-    },
+    user: initial_state,
 };
 
 // getters
@@ -53,6 +55,12 @@ const actions = {
                 throw err;
             }
         });
+    },
+    endSession({ commit }) {
+        commit('setUser', initial_state);
+        commit('clearOrder');
+        commit('setCars', []);
+        commit('setAddresses', []);
     },
 };
 
