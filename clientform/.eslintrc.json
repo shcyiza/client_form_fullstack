@@ -20,6 +20,7 @@
     ],
     "rules": {
         "indent": [2, 4],
-        "camelcase": "off"
+        "camelcase": "off",
+        "func-names": ["error", "as-needed"]
     }
 }

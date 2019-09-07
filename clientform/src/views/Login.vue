@@ -1,14 +1,13 @@
-/* eslint-disable camelcase */
 <script>
+/* eslint-disable import/no-unresolved */
 import { checkEmailExists, registerUser } from '../graphql/users';
 import { requestToken, claimToken } from '../graphql/auth';
 import { notifyError, notifySuccess } from '../helpers/toast_notification';
 import validateInput from '../lib/validator_service';
-import InputFieldErrorMessage from './components/form/InputFieldErrorMessage';
+import ValidationInstruction from './components/form/ValidationInstruction';
 
 const validators = {
     email: [
-        { validate: 'required', instruction: 'an email is required.' },
         { validate: 'email', instruction: 'please enter a valid email. ie: example@domain.com' },
     ],
     first_name: [
@@ -24,10 +23,20 @@ const validators = {
             instruction: 'phone must be in the same format as: "32 456123789"',
         },
     ],
+    token: [
+        {
+            validate: 'regEx',
+            expected: '[0-9]{6}',
+            instruction: 'Type the 6 digit token you received by text.',
+        },
+    ],
 };
 
 export default {
     name: 'login',
+    components: {
+        ValidationInstruction,
+    },
     data() {
         return {
             user: {
@@ -43,9 +52,6 @@ export default {
             shouldRegister: false,
         };
     },
-    components: {
-        InputFieldErrorMessage,
-    },
     computed: {
         emailErrors() {
             return validateInput(this.user.email, 'text', this.validators.email);
@@ -58,6 +64,9 @@ export default {
         },
         phoneErrors() {
             return validateInput(this.user.phone, 'text', this.validators.phone);
+        },
+        tokenErrors() {
+            return validateInput(this.claim_token, 'text', this.validators.token);
         },
         registrationErrorsCount() {
             return (
@@ -121,16 +130,16 @@ export default {
 <template>
 <div>
     <h2>Thanks for choosing Carjo...</h2>
-    <form>
+    <form autocomplete="on">
         <template v-if="isValidEmail">
             <h4>Please enter your email address</h4>
             <input
-                type="email"
-                class="input auth-input is-info"
-                placeholder="email"
-                name="email"
-                v-model="user.email"
-                required
+            type="email"
+            class="input auth-input is-info"
+            placeholder="email"
+            name="email"
+            v-model="user.email"
+            required
             />
             <button
             @click.prevent="checkEmail"
@@ -139,31 +148,31 @@ export default {
             >
                 Continue
             </button>
-            <input-field-error-message :errors="emailErrors" :validators="validators.email" />
+            <validation-instruction :errors="emailErrors" :validators="validators.email" />
         </template>
         <template v-else-if="shouldRegister">
             <h2>Registration</h2>
             <div class="columns">
                 <div class="column">
                     <input
-                        type="text"
-                        class="input auth-input is-success"
-                        placeholder="First name"
-                        v-model="user.first_name"
+                    type="text"
+                    class="input auth-input is-success"
+                    placeholder="First name"
+                    v-model="user.first_name"
                     />
-                    <input-field-error-message
+                    <validation-instruction
                     :errors="firstNameErrors"
                     :validators="validators.first_name"
                     />
                 </div>
                 <div class="column">
                     <input
-                        type="text"
-                        class="input auth-input is-success"
-                        placeholder="Last name"
-                        v-model="user.last_name"
+                    type="text"
+                    class="input auth-input is-success"
+                    placeholder="Last name"
+                    v-model="user.last_name"
                     />
-                    <input-field-error-message
+                    <validation-instruction
                     :errors="lastNameErrors"
                     :validators="validators.last_name"
                     />
@@ -175,7 +184,7 @@ export default {
                         placeholder="phone number"
                         v-model="user.phone"
                     />
-                    <input-field-error-message
+                    <validation-instruction
                     :errors="phoneErrors"
                     :validators="validators.phone"
                     />
@@ -191,18 +200,27 @@ export default {
         </template>
         <template v-else-if="verifyToken">
             <h2>Validate Token</h2>
-            <input
+            <div>
+                <input
                 type="text"
                 class="input auth-input is-info"
                 placeholder="token"
+                maxlength="6"
                 v-model="claim_token"
+                style="width: 80px"
+                />
+                <button
+                class="button is-link"
+                @click.prevent="login"
+                :disabled="tokenErrors.length > 0"
+                >
+                    login
+                </button>
+            </div>
+            <validation-instruction
+            :errors="tokenErrors"
+            :validators="validators.token"
             />
-            <button
-            class="button is-link"
-            @click.prevent="login"
-            >
-                validate
-            </button>
         </template>
     </form>
 </div>

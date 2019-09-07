@@ -1,5 +1,6 @@
 <script>
 export default {
+    name: 'ValidationInstruction',
     props: {
         errors: {
             type: Array,

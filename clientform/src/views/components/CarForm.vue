@@ -1,6 +1,11 @@
 <script>
+/* eslint-disable import/no-unresolved */
 import { mapGetters } from 'vuex';
+import validateInput from '../../lib/validator_service';
+
 import CarSelector from './form/CarSelector.vue';
+import ValidationInstruction from '../components/form/ValidationInstruction';
+import BrandAutoComplete from './form/BrandAutoComplete';
 
 const initCarDraft = () => ({
     plate_number: '',
@@ -9,14 +14,36 @@ const initCarDraft = () => ({
     color: '',
 });
 
+const validators = {
+    plate_number: [
+        { validate: 'required', instruction: 'a plate number is required.' },
+    ],
+    brand: [
+        { validate: 'required', instruction: 'an brand is required.' },
+    ],
+    model: [
+        { validate: 'required', instruction: 'an model is required.' },
+    ],
+    color: [
+        { validate: 'required', instruction: 'an color is required.' },
+    ],
+};
+
 export default {
     name: 'CarForm',
     components: {
         CarSelector,
+        ValidationInstruction,
+        BrandAutoComplete,
     },
     data() {
         return {
             car_draft: initCarDraft(),
+            validators,
+            brand_autocomplete: {
+                show: false,
+                last_selected: '',
+            },
         };
     },
     computed: {
@@ -24,8 +51,21 @@ export default {
             cars: 'getCars',
             user: 'getAuthedUser',
         }),
-        carAttr() {
-            return Object.keys(this.car_draft);
+        plateNumberErrors() {
+            return validateInput(this.car_draft.plate_number, 'text', this.validators.plate_number);
+        },
+        brandErrors() {
+            return validateInput(this.car_draft.brand, 'text', this.validators.brand);
+        },
+        modelErrors() {
+            return validateInput(this.car_draft.model, 'text', this.validators.model);
+        },
+        colorErrors() {
+            return validateInput(this.car_draft.color, 'text', this.validators.color);
+        },
+        showAutocomplete() {
+            const { car_draft, brand_autocomplete } = this;
+            return brand_autocomplete.show || brand_autocomplete.last_selected !== car_draft.brand;
         },
     },
     methods: {
@@ -34,8 +74,22 @@ export default {
             this.$store.dispatch('addCar', this.car_draft);
             this.car_draft = initCarDraft();
         },
+        autocompleteBrand(brand_name) {
+            this.car_draft.brand = brand_name;
+            this.brand_autocomplete.last_selected = brand_name;
+            this.brand_autocomplete.show = false;
+        },
+        closeAutocomplete(event) {
+            if (!event.target.classList.contains('ac-el')) {
+                this.brand_autocomplete.show = false;
+            }
+        },
     },
-    created() {
+    mounted() {
+        document.addEventListener('click', this.closeAutocomplete);
+    },
+    beforeDestroy() {
+        document.removeEventListener('click', this.closeAutocomplete);
     },
 };
 </script>
@@ -47,13 +101,65 @@ export default {
         <car-selector :cars="cars"/>
 
         <form
-                id="add-car"
-                @submit="addCar"
+        id="add-car"
+        @submit="addCar"
         >
-            <div v-for="(attr, i) in carAttr" :key="i">
-                <label class="label">{{attr}}</label>
-                <input class="input"
-                        v-model="car_draft[attr]"
+            <div class="field_div">
+                <label class="label">plate number</label>
+                <input
+                class="input"
+                type="text"
+                v-model="car_draft.plate_number"
+                />
+                <validation-instruction
+                :errors="plateNumberErrors"
+                :validators="validators.plate_number"
+                />
+            </div>
+
+            <div id="brand-input" class="field_div">
+                <label class="label">brand</label>
+                <input
+                class="input ac-el"
+                type="text"
+                v-model="car_draft.brand"
+                @focus="brand_autocomplete.show = true"
+                />
+                <brand-auto-complete
+                v-if="showAutocomplete"
+                :query="car_draft.brand"
+                :last_selected="brand_autocomplete.last_selected"
+                @input="autocompleteBrand"
+                />
+                <validation-instruction
+                :errors="brandErrors"
+                :validators="validators.brand"
+                />
+            </div>
+
+            <div class="field_div">
+                <label class="label">model</label>
+                <input
+                class="input"
+                type="text"
+                v-model="car_draft.model"
+                />
+                <validation-instruction
+                :errors="modelErrors"
+                :validators="validators.model"
+                />
+            </div>
+
+            <div class="field_div">
+                <label class="label">color car</label>
+                <input
+                class="input"
+                type="color"
+                v-model="car_draft.color"
+                />
+                <validation-instruction
+                :errors="colorErrors"
+                :validators="validators.color"
                 />
             </div>
 
@@ -62,6 +168,7 @@ export default {
     </div>
 </template>
 
-<style scoped>
-
+<style lang="sass" scoped>
+.field_div
+    min-height: 95px
 </style>
