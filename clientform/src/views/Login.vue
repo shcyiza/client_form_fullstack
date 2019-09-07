@@ -3,6 +3,28 @@
 import { checkEmailExists, registerUser } from '../graphql/users';
 import { requestToken, claimToken } from '../graphql/auth';
 import { notifyError, notifySuccess } from '../helpers/toast_notification';
+import validateInput from '../lib/validator_service';
+import InputFieldErrorMessage from './components/form/InputFieldErrorMessage';
+
+const validators = {
+    email: [
+        { validate: 'required', instruction: 'an email is required.' },
+        { validate: 'email', instruction: 'please enter a valid email. ie: example@domain.com' },
+    ],
+    first_name: [
+        { validate: 'required', instruction: 'a first name is required.' },
+    ],
+    last_name: [
+        { validate: 'required', instruction: 'an last name is required.' },
+    ],
+    phone: [
+        {
+            validate: 'regEx',
+            expected: '^[1-9]{1,3} ([0-9][\\s]*){6,16}$',
+            instruction: 'phone must be in the same format as: "32 456123789"',
+        },
+    ],
+};
 
 export default {
     name: 'login',
@@ -14,11 +36,37 @@ export default {
                 first_name: '',
                 last_name: '',
             },
+            validators,
             claim_token: '',
             isValidEmail: true,
             verifyToken: false,
             shouldRegister: false,
         };
+    },
+    components: {
+        InputFieldErrorMessage,
+    },
+    computed: {
+        emailErrors() {
+            return validateInput(this.user.email, 'text', this.validators.email);
+        },
+        firstNameErrors() {
+            return validateInput(this.user.first_name, 'text', this.validators.first_name);
+        },
+        lastNameErrors() {
+            return validateInput(this.user.last_name, 'text', this.validators.last_name);
+        },
+        phoneErrors() {
+            return validateInput(this.user.phone, 'text', this.validators.phone);
+        },
+        registrationErrorsCount() {
+            return (
+                this.firstNameErrors.length
+                + this.lastNameErrors.length
+                + this.phoneErrors.length
+                + this.emailErrors.length
+            );
+        },
     },
     methods: {
         async checkEmail() {
@@ -41,8 +89,9 @@ export default {
                 const { RequestUserSession } = await requestToken(this.user.email);
                 this.request_timestamp = RequestUserSession.request_timestamp;
                 this.verifyToken = true;
+                this.shouldRegister = false;
             }
-            // TODO throw error and try again
+            // TODO try again
         },
         async login() {
             try {
@@ -83,29 +132,62 @@ export default {
                 v-model="user.email"
                 required
             />
-            <button @click.prevent="checkEmail" class="button is-link"> Continue </button>
+            <button
+            @click.prevent="checkEmail"
+            class="button is-link"
+            :disabled="emailErrors.length > 0"
+            >
+                Continue
+            </button>
+            <input-field-error-message :errors="emailErrors" :validators="validators.email" />
         </template>
         <template v-else-if="shouldRegister">
             <h2>Registration</h2>
-            <input
-                type="text"
-                class="input auth-input is-success"
-                placeholder="First name"
-                v-model="user.first_name"
-            />
-            <input
-                type="text"
-                class="input auth-input is-success"
-                placeholder="Last name"
-                v-model="user.last_name"
-            />
-            <input
-                type="tel"
-                class="input auth-input is-success"
-                placeholder="phone number"
-                v-model="user.phone"
-            />
-            <button @click.prevent="registerUser"> Register </button>
+            <div class="columns">
+                <div class="column">
+                    <input
+                        type="text"
+                        class="input auth-input is-success"
+                        placeholder="First name"
+                        v-model="user.first_name"
+                    />
+                    <input-field-error-message
+                    :errors="firstNameErrors"
+                    :validators="validators.first_name"
+                    />
+                </div>
+                <div class="column">
+                    <input
+                        type="text"
+                        class="input auth-input is-success"
+                        placeholder="Last name"
+                        v-model="user.last_name"
+                    />
+                    <input-field-error-message
+                    :errors="lastNameErrors"
+                    :validators="validators.last_name"
+                    />
+                </div>
+                <div class="column">
+                    <input
+                        type="tel"
+                        class="input auth-input is-success"
+                        placeholder="phone number"
+                        v-model="user.phone"
+                    />
+                    <input-field-error-message
+                    :errors="phoneErrors"
+                    :validators="validators.phone"
+                    />
+                </div>
+            </div>
+            <button
+            class="button is-link"
+            @click.prevent="registerUser"
+            :disabled="registrationErrorsCount > 0"
+            >
+                Register
+            </button>
         </template>
         <template v-else-if="verifyToken">
             <h2>Validate Token</h2>
@@ -115,7 +197,12 @@ export default {
                 placeholder="token"
                 v-model="claim_token"
             />
-            <button class="button is-link" @click.prevent="login"> validate </button>
+            <button
+            class="button is-link"
+            @click.prevent="login"
+            >
+                validate
+            </button>
         </template>
     </form>
 </div>

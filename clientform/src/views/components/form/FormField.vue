@@ -1,8 +1,10 @@
 <script>
+import {Validators} from '../../../lib/validator_service';
+
 export default {
     name: 'form-field',
     props: {
-        label: {
+        type: {
             type: String,
             required: true,
         },
@@ -10,9 +12,9 @@ export default {
             type: String,
             required: true,
         },
-        warnings: {
+        validators: {
             type: Array,
-            required: true,
+            required: false,
         },
     },
     data() {
