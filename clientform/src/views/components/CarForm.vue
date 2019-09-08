@@ -79,12 +79,13 @@ export default {
         },
         autocompleteBrand(brand_name) {
             this.car_draft.brand = brand_name;
-            this.brand_autocomplete.last_selected = brand_name;
+            this.brand_autocomplete.last_selected =  this.car_draft.brand;
             this.brand_autocomplete.show = false;
         },
         closeAutocomplete(event) {
             if (!event.target.classList.contains('ac-el')) {
                 this.brand_autocomplete.show = false;
+                this.brand_autocomplete.last_selected =  this.car_draft.brand;
             }
         },
     },
@@ -176,6 +177,4 @@ export default {
 </template>
 
 <style lang="sass" scoped>
-.field_div
-    min-height: 95px
 </style>

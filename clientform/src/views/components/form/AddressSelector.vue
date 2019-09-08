@@ -34,8 +34,8 @@ export default {
           <div>{{address.name}}</div>
           <div class="address-legend">
               {{address.street}},
-              {{address.zip}},
-              {{address.city}}
+              {{address.city}},
+              {{address.zip}}
           </div>
       </div>
   </div>

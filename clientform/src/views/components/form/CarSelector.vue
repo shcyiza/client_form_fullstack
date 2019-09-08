@@ -16,7 +16,10 @@ export default {
             carId: 'carId',
         }),
         car_logos() {
-            return this.cars.map((car) => this.brandObject(car.brand).logo);
+            return this.cars.map((car) => {
+                const brand_obj = this.brandObject(car.brand)
+                return brand_obj && brand_obj.logo
+            });
         },
     },
     methods: {
@@ -24,7 +27,9 @@ export default {
             this.$store.commit('setOrderCar', id);
         },
         brandObject(queried_brand) {
-            return car_brands.find((brand) => brand.name === queried_brand);
+            return car_brands.find(
+                (brand) => brand.name.toLowerCase() === queried_brand.toLowerCase(),
+            );
         },
     },
 };
@@ -47,11 +52,11 @@ export default {
                   :alt="car.brand"
                   height="60" width="60"
                   />
-                  <p v-else class="address-legend">{{car.brand}}</p>
+                  <p v-else class="address-legend"><b>Brand:</b> {{car.brand}}</p>
               </div>
               <div class="column">
-                  <p class="address-legend">{{car.model}}</p>
-                  <p class="address-legend">{{car.plate_number}}</p>
+                  <p class="address-legend"><b>Model:</b> {{car.model}}</p>
+                  <div class="plate-number">{{car.plate_number}}</div>
               </div>
               <div class="column">
                   <svg height="32" width="32">
@@ -68,4 +73,13 @@ export default {
     font-size: smaller
 .box
     margin: 10px
+.plate-number
+    background-color: white
+    color: red
+    font-size: 13px
+    font-weight: bold
+    padding: 5px
+    border: 2px solid red
+    border-radius: 5px
+    width: 100%
 </style>
