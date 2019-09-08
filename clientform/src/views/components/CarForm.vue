@@ -1,11 +1,14 @@
 <script>
 /* eslint-disable import/no-unresolved */
 import { mapGetters } from 'vuex';
-import validateInput from '../../lib/validator_service';
+import ColorPicker from 'vue-color-picker-wheel';
 
+import car_brands from '../../../public/car_brands.json';
+import validateInput from '../../lib/validator_service';
 import CarSelector from './form/CarSelector.vue';
 import ValidationInstruction from '../components/form/ValidationInstruction';
 import BrandAutoComplete from './form/BrandAutoComplete';
+
 
 const initCarDraft = () => ({
     plate_number: '',
@@ -35,6 +38,7 @@ export default {
         CarSelector,
         ValidationInstruction,
         BrandAutoComplete,
+        ColorPicker,
     },
     data() {
         return {
@@ -43,6 +47,7 @@ export default {
             brand_autocomplete: {
                 show: false,
                 last_selected: '',
+                car_brands,
             },
         };
     },
@@ -87,6 +92,7 @@ export default {
     },
     mounted() {
         document.addEventListener('click', this.closeAutocomplete);
+        this.car_draft.color = '';
     },
     beforeDestroy() {
         document.removeEventListener('click', this.closeAutocomplete);
@@ -152,11 +158,14 @@ export default {
 
             <div class="field_div">
                 <label class="label">color car</label>
-                <input
-                class="input"
-                type="color"
-                v-model="car_draft.color"
-                />
+                <span v-if="car_draft.color">
+                    <svg height="32" width="32">
+                      <circle cx="16" cy="16" r="15" :fill="car_draft.color" />
+                    </svg>
+                </span>
+                <p style="font-size: 22px" v-else>Please select a color...</p>
+                <color-picker @input="(e) => {car_draft.color = e}">
+                </color-picker>
                 <validation-instruction
                 :errors="colorErrors"
                 :validators="validators.color"
