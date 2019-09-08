@@ -3,7 +3,6 @@
 import { mapGetters } from 'vuex';
 import ColorPicker from 'vue-color-picker-wheel';
 
-import car_brands from '../../../public/car_brands.json';
 import validateInput from '../../lib/validator_service';
 import CarSelector from './form/CarSelector.vue';
 import ValidationInstruction from '../components/form/ValidationInstruction';
@@ -47,7 +46,6 @@ export default {
             brand_autocomplete: {
                 show: false,
                 last_selected: '',
-                car_brands,
             },
         };
     },
@@ -104,7 +102,7 @@ export default {
     <div class="custom-form">
         <h2>Car Form</h2>
 
-        <car-selector :cars="cars"/>
+        <car-selector :cars="cars" v-if="cars.length > 0"/>
 
         <form
         id="add-car"
@@ -164,7 +162,7 @@ export default {
                     </svg>
                 </span>
                 <p style="font-size: 22px" v-else>Please select a color...</p>
-                <color-picker @input="(e) => {car_draft.color = e}">
+                <color-picker v-model="car_draft.color">
                 </color-picker>
                 <validation-instruction
                 :errors="colorErrors"
