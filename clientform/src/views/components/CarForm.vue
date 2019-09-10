@@ -66,6 +66,14 @@ export default {
         colorErrors() {
             return validateInput(this.car_draft.color, 'text', this.validators.color);
         },
+        carErrorsCount() {
+            return (
+                this.plateNumberErrors.length
+                + this.brandErrors.length
+                + this.modelErrors.length
+                + this.colorErrors.length
+            );
+        },
         showAutocomplete() {
             const { car_draft, brand_autocomplete } = this;
             return brand_autocomplete.show || brand_autocomplete.last_selected !== car_draft.brand;
@@ -171,7 +179,13 @@ export default {
                 />
             </div>
 
-            <button class="button" type="submit">Add Car</button>
+            <button
+            class="button"
+            type="submit"
+            :disabled="carErrorsCount > 0"
+            >
+                Add Car
+            </button>
         </form>
     </div>
 </template>

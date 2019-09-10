@@ -3,8 +3,9 @@
 
 import { mapGetters } from 'vuex';
 import AddressSelector from './form/AddressSelector.vue';
-import ValidZipCodes from '../../../public/cities.json';
+import VALID_LOCALITIES from '../../../public/cities.json';
 import { notifyError } from '../../helpers/toast_notification';
+import ValidationInstruction from './form/ValidationInstruction';
 
 const initAddressDraft = () => ({
     street: '',
@@ -12,15 +13,14 @@ const initAddressDraft = () => ({
     zip: '',
     name: '',
 });
-// TODO validation
-const validators = {
-    address_query: [
-        { validate: 'required', instruction: 'an address is required.' },
-    ],
-};
 
-let onPlaceChange;
-
+const validators = [
+    { validate: 'country', instruction: 'a country is missing...' },
+    { validate: 'postal_code', instruction: 'a postal code is missing...' },
+    { validate: 'street_number', instruction: 'a street number is missing...' },
+    { validate: 'route', instruction: 'a street is missing...' },
+    { validate: 'locality', instruction: 'a locality is missing...' },
+];
 export default {
 
     name: 'AddressForm',
@@ -29,10 +29,13 @@ export default {
             company_mode: false,
             address_draft: initAddressDraft(),
             address_query: '',
+            place_error: [],
+            validators,
         };
     },
     components: {
         AddressSelector,
+        ValidationInstruction,
     },
     computed: {
         ...mapGetters({
@@ -62,37 +65,36 @@ export default {
             const { address_components } = place;
 
             const relevent_data_types = ['country', 'postal_code', 'street_number', 'route', 'locality'];
-            const place_error = [];
+            this.place_error = [];
             const work_copy = {};
+
+            this.address_query = place.formatted_address;
 
             relevent_data_types.forEach((type) => {
                 const data = address_components.find((compo) => compo.types.includes(type));
                 if (data) {
                     work_copy[type] = data && data.short_name;
                 } else {
-                    place_error.push(type);
+                    this.place_error.push(type);
                 }
             });
 
-            if (place_error.length < 1) {
+            if (this.place_error.length < 1) {
                 const {
                     country, postal_code: zip, street_number, route, locality: city,
                 } = work_copy;
 
-                const is_valide_place = ValidZipCodes.find((valide_place) => (
+                const is_valide_place = VALID_LOCALITIES.find((valide_place) => (
                     valide_place.country === country
                     && valide_place.zip_code === zip
                 ));
 
                 if (is_valide_place) {
                     this.address_draft = { street: `${route} ${street_number}`, city, zip: `${country}-${zip}` };
-                    this.address_query = place.formatted_address;
                 } else {
                     notifyError(`We have no service in ${work_copy.locality} ${work_copy.country}`);
                     this.address_query = '';
                 }
-            } else {
-                notifyError(`!Your address is missing ${place_error}!`);
             }
         },
     },
@@ -128,6 +130,10 @@ export default {
                 class="input"
                 v-model="address_query"
                 />
+                <validation-instruction
+                :errors="place_error"
+                :validators="validators"
+                />
             </div>
             <div class="field_div">
                 <label class="label">Name</label>
@@ -137,7 +143,13 @@ export default {
                 />
             </div>
 
-            <button class="button" type="submit">Add address</button>
+            <button
+            class="button"
+            type="submit"
+            :disabled="place_error.length > 0 || !address_query"
+            >
+                Add address
+            </button>
         </form>
     </div>
 </template>
