@@ -31,6 +31,8 @@ export default {
             address_query: '',
             place_error: [],
             validators,
+            autocomplete_el: null,
+            autocomplete_active: false,
         };
     },
     components: {
@@ -60,55 +62,77 @@ export default {
             this.address_draft = initAddressDraft();
             this.address_query = '';
         },
-        buildAddressDraft() {
-            const place = this.gMapsAutocomplete.getPlace();
-            const { address_components } = place;
+        toggleActiveAutocomplete() {
+            this.autocomplete_active = !this.autocomplete_active;
+        },
+        buildAddressDraft(placeObj) {
+            if (this.autocomplete_active) {
+                const place = this.autocompleter.getPlace() || placeObj;
+                console.log(place)
+                const { address_components } = place;
 
-            const relevent_data_types = ['country', 'postal_code', 'street_number', 'route', 'locality'];
-            this.place_error = [];
-            const work_copy = {};
+                const relevent_data_types = ['country', 'postal_code', 'street_number', 'route', 'locality'];
+                this.place_error = [];
+                const work_copy = {};
 
-            this.address_query = place.formatted_address;
+                this.address_query = place.formatted_address;
 
-            relevent_data_types.forEach((type) => {
-                const data = address_components.find((compo) => compo.types.includes(type));
-                if (data) {
-                    work_copy[type] = data && data.short_name;
-                } else {
-                    this.place_error.push(type);
+                relevent_data_types.forEach((type) => {
+                    const data = address_components.find((compo) => compo.types.includes(type));
+                    if (data) {
+                        work_copy[type] = data && data.short_name;
+                    } else {
+                        this.place_error.push(type);
+                    }
+                });
+
+                if (this.place_error.length < 1) {
+                    const {
+                        country, postal_code: zip, street_number, route, locality: city,
+                    } = work_copy;
+
+                    const is_valide_place = VALID_LOCALITIES.find((valide_place) => (
+                        valide_place.country === country
+                        && valide_place.zip_code === zip
+                    ));
+
+                    if (is_valide_place) {
+                        this.address_draft = { street: `${route} ${street_number}`, city, zip: `${country}-${zip}` };
+                    } else {
+                        notifyError(`We have no service in ${work_copy.locality} ${work_copy.country}`);
+                        this.address_query = '';
+                    }
                 }
-            });
+                this.toggleActiveAutocomplete();
+            }
+        },
+        handlePlaceChange() {
+            if (this.autocomplete_active) {
+                const place_string = this.autocompleter.gm_accessors_.place.Wc.predictions[0].ki;
+                const geocoder = new google.maps.Geocoder();
 
-            if (this.place_error.length < 1) {
-                const {
-                    country, postal_code: zip, street_number, route, locality: city,
-                } = work_copy;
-
-                const is_valide_place = VALID_LOCALITIES.find((valide_place) => (
-                    valide_place.country === country
-                    && valide_place.zip_code === zip
-                ));
-
-                if (is_valide_place) {
-                    this.address_draft = { street: `${route} ${street_number}`, city, zip: `${country}-${zip}` };
-                } else {
-                    notifyError(`We have no service in ${work_copy.locality} ${work_copy.country}`);
-                    this.address_query = '';
-                }
+                geocoder.geocode({ address: place_string }, ([place]) => {
+                    this.buildAddressDraft(place);
+                });
             }
         },
     },
     mounted() {
-        const query_el = document.querySelector('#AddressQuery');
-        this.gMapsAutocomplete = new google.maps.places.Autocomplete(
-            (query_el),
-            { types: ['geocode'] },
+        this.autocomplete_el = document.querySelector('#AddressQuery');
+        this.autocompleter = new google.maps.places.Autocomplete(
+            (this.autocomplete_el),
+            { types: ['address'] },
         );
 
-        this.gMapsAutocomplete.addListener('place_changed', this.buildAddressDraft);
+        this.autocomplete_el.addEventListener('focusout', this.handlePlaceChange);
+        this.autocomplete_el.addEventListener('focusin', this.toggleActiveAutocomplete);
+
+        this.autocompleter.addListener('place_changed', this.buildAddressDraft);
     },
     beforeDestroy() {
-        google.maps.event.clearInstanceListeners(this.gMapsAutocomplete);
+        google.maps.event.clearInstanceListeners(this.autocompleter);
+        this.autocomplete_el.removeEventListener('blur', this.handlePlaceChange);
+        this.autocomplete_el.removeEventListener('focusin', this.toggleActiveAutocomplete);
     },
 };
 </script>
