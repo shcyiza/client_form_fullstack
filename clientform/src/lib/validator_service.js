@@ -38,7 +38,7 @@ const Validators = {
         },
     },
     date: {
-        require(value) {
+        required(value) {
             if (!value || value === 'Invalid date') return 'required';
         },
         max(value, expected) {
@@ -47,10 +47,11 @@ const Validators = {
         },
         min(value, expected) {
             const min = moment(expected, 'YYYYMMDD').format('YYYYMMDD');
-            if (min === 'Invalid date' || Number(min) > Number(value)) return 'min';
+            const formatted_value = moment(value, 'YYYY-MM-DD').format('YYYYMMDD');
+            if (min === 'Invalid date' || Number(min) > Number(formatted_value)) return 'min';
         },
     },
-    radios: {
+    select: {
         required,
     },
     checkbox: {
@@ -61,7 +62,7 @@ const Validators = {
     dropdown: {
         required,
     },
-    multiselect: {
+    multiSelect: {
         required: requiredMulti,
         min: selectMultiMin,
         max: selectMultiMax,
@@ -96,7 +97,7 @@ export default function validateInput(value, type, validators_array) {
                 const current_error = validationMethod(value, validator.expected);
                 if (current_error) errors.push(current_error);
             } else {
-                console.log(Error(`input type ${validator.validate} is not a valid on. Choose one of the following: ${Object.keys(input_type)}`));
+                console.log(Error(`input type ${validator.validate} is not a valid on type ${type}. Choose one of the following: ${Object.keys(input_type)}`));
             }
         });
         return errors;

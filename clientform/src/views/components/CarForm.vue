@@ -4,8 +4,8 @@ import { mapGetters } from 'vuex';
 import ColorPicker from 'vue-color-picker-wheel';
 
 import validateInput from '../../lib/validator_service';
-import CarSelector from './form/CarSelector.vue';
 import ValidationInstruction from '../components/form/ValidationInstruction';
+import CarSelector from './form/CarSelector.vue';
 import BrandAutoComplete from './form/BrandAutoComplete';
 
 
