@@ -63,12 +63,11 @@ export default {
             this.address_query = '';
         },
         toggleActiveAutocomplete() {
-            this.autocomplete_active = !this.autocomplete_active;
+            this.autocomplete_active = true;
         },
         buildAddressDraft(placeObj) {
             if (this.autocomplete_active) {
                 const place = this.autocompleter.getPlace() || placeObj;
-                console.log(place)
                 const { address_components } = place;
 
                 const relevent_data_types = ['country', 'postal_code', 'street_number', 'route', 'locality'];
@@ -103,11 +102,12 @@ export default {
                         this.address_query = '';
                     }
                 }
-                this.toggleActiveAutocomplete();
+                this.toggleActiveAutocomplete = false;
             }
         },
         handlePlaceChange() {
             if (this.autocomplete_active) {
+                // eslint-disable-next-line no-underscore-dangle
                 const place_string = this.autocompleter.gm_accessors_.place.Wc.predictions[0].ki;
                 const geocoder = new google.maps.Geocoder();
 
