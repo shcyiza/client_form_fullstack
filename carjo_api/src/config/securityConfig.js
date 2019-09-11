@@ -10,8 +10,7 @@ const securityFilter = {
                 logger.warn(
                     `POST ${path} recieved Unauthorize request`,
                 );
-                //fixme: why?
-                return null;
+                throw new Error(`POST ${path} recieved Unauthorize request`);
             }
             next();
         };
