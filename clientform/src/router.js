@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import OrderForm from './views/OrderForm.vue';
+import Checkout from './views/Checkout.vue';
 import Login from './views/Login.vue';
 
 Vue.use(Router);
@@ -33,6 +34,12 @@ const router = new Router({
             path: '/order_form',
             name: 'order_form',
             component: OrderForm,
+            beforeEnter: ifUserSession(true, 'welcome'),
+        },
+        {
+            path: '/checkout_order',
+            name: 'checkout_order',
+            component: Checkout,
             beforeEnter: ifUserSession(true, 'welcome'),
         },
     ],

@@ -1,13 +1,12 @@
 <script>
 import { mapGetters } from 'vuex';
-import { DatePicker } from 'v-calendar';
 import moment from 'moment';
 
 import ServiceForm from './components/ServiceForm.vue';
 import CarForm from './components/CarForm.vue';
 import AddressForm from './components/AddressForm.vue';
 import InterventionDateField from './components/InterventionDateField.vue';
-import { notifySuccess, notifyError } from '../helpers/toast_notification';
+import { notifySuccess } from '../helpers/toast_notification';
 
 export default {
     name: 'OrderForm',
@@ -47,7 +46,8 @@ export default {
             this.endSession();
             notifySuccess('Thank you, see you soon!');
         },
-        submitClientForm() {
+        submitOrder() {
+            this.$router.push('checkout_order');
         },
     },
     created() {
@@ -74,7 +74,13 @@ export default {
             <address-form class="column form-container"/>
             <intervention-date-field class="column"/>
         </div>
-        <button class="button is-large is-success" :disabled="!validation.ok">Done</button>
+        <button
+        class="button is-large is-success"
+        :disabled="!validation.ok"
+        @click="submitOrder"
+        >
+            To checkout!
+        </button>
     </div>
 </template>
 

@@ -12,6 +12,18 @@ const UserModel = Mongoose.model(
     "user",
 );
 
+const OfferModel = Mongoose.model(
+    "Offer",
+    {
+        name: {type: String, required: true, unique: true},
+        nominal_price: {type: Mongoose.Decimal128, required: true},
+        vat: {type: Mongoose.Decimal128, required: true},
+        description: String,
+        akti_service_id: {type: String, index: true, sparse: true},
+    },
+    "offer",
+);
+
 const CarModel = Mongoose.model(
     "Car",
     {
@@ -71,9 +83,40 @@ const AddressModel = Mongoose.model(
         city: {type: String, required: true},
         zip: {type: String, required: true},
         name: {type: String},
-        akti_address_id: {type: String, index: true, sparse: true},
+        akti_address_id: {
+            type: String,
+            index: true,
+            sparse: true,
+        },
     },
     "address",
+);
+
+const OrderModel = Mongoose.model(
+    "Order",
+    {
+        service: {type: String, required: true},
+        user: {
+            type: Mongoose.Schema.Types.ObjectId,
+            required: true,
+        },
+        car: {
+            type: Mongoose.Schema.Types.ObjectId,
+            required: true,
+        },
+        address: {
+            type: Mongoose.Schema.Types.ObjectId,
+            required: true,
+        },
+        company: {
+            type: Mongoose.Schema.Types.ObjectId,
+            required: true,
+        },
+        intervention_date: {type: Date, required: true},
+        intervention_timeframe: {type: String, required: true},
+        akti_intervention_id: {type: String, index: true, sparse: true},
+    },
+    "order",
 );
 
 const UserMethods = {
@@ -84,4 +127,12 @@ const UserMethods = {
     },
 };
 
-module.exports = {UserModel, CarModel, UserMethods, CompanyModel, AddressModel};
+module.exports = {
+    UserModel,
+    OfferModel,
+    CarModel,
+    UserMethods,
+    CompanyModel,
+    AddressModel,
+    OrderModel,
+};
