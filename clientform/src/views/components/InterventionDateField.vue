@@ -66,7 +66,6 @@ export default {
         <date-picker
             :value="new Date(interventionDate)"
             :min-date="datePickerMinimum"
-            :disabled-dates='{ weekdays: [1] }'
             is-inline
             @input="selectDate"
         />

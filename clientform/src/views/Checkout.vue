@@ -1,11 +1,5 @@
 <template>
-    <div>
-        <div class="has-text-left">
-            <h5><b>Hey,</b> {{user.first_name}} {{user.last_name}}</h5>
-        </div>
-
-        <hr>
-
+    <layout-connected>
         <form id="payment-form">
                 <h2>Checkout</h2>
             <div class="columns">
@@ -25,44 +19,28 @@
 
             <button>Submit Payment</button>
         </form>
-    </div>
+    </layout-connected>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import LayoutConnected from "./components/LayoutConnected";
 
 const stripe = Stripe('pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z');
 const elements = stripe.elements();
 
 export default {
     name: 'Checkout',
+    components: {
+        LayoutConnected,
+    },
     computed: {
         ...mapGetters({
             user: 'getAuthedUser',
         }),
     },
     mounted() {
-        // Custom styling can be passed to options when creating an Element.
-        const style = {
-            base: {
-                color: '#32325d',
-                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                fontSmoothing: 'antialiased',
-                fontSize: '16px',
-                '::placeholder': {
-                    color: '#aab7c4',
-                },
-            },
-            invalid: {
-                color: '#fa755a',
-                iconColor: '#fa755a',
-            },
-        };
-
-        // Create an instance of the card Element.
-        const card = elements.create('card', { style });
-
-        // Add an instance of the card Element into the `card-element` <div>.
+        const card = elements.create('card');
         card.mount(this.$refs.card);
     },
 };

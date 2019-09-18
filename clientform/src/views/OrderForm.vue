@@ -7,6 +7,7 @@ import CarForm from './components/CarForm.vue';
 import AddressForm from './components/AddressForm.vue';
 import InterventionDateField from './components/InterventionDateField.vue';
 import { notifySuccess } from '../helpers/toast_notification';
+import LayoutConnected from './components/LayoutConnected';
 
 export default {
     name: 'OrderForm',
@@ -20,54 +21,24 @@ export default {
         CarForm,
         AddressForm,
         InterventionDateField,
+        LayoutConnected,
     },
     computed: {
         ...mapGetters({
             user: 'getAuthedUser',
             validation: 'checkValidity',
         }),
-        datePickerMinimum() {
-            return moment().add(2, 'days').format('YYYY-MM-DD');
-        },
     },
     methods: {
-        getAuthedUser() {
-            this.$store.dispatch(
-                'fetchAuthedUser',
-                this.endSession.bind(this),
-            );
-        },
-        endSession() {
-            this.$store.dispatch('endSession');
-            localStorage.removeItem('user_session_token');
-            this.$router.push('/');
-        },
-        logout() {
-            this.endSession();
-            notifySuccess('Thank you, see you soon!');
-        },
         submitOrder() {
             this.$router.push('checkout_order');
         },
-    },
-    created() {
-        this.getAuthedUser();
     },
 };
 </script>
 
 <template>
-    <div>
-        <div class="has-text-left">
-            <h5><b>Hey,</b> {{user.first_name}} {{user.last_name}}</h5>
-        </div>
-
-        <div class="has-text-right">
-            <a class="button is-danger" @click="logout">log out</a>
-        </div>
-
-        <hr>
-
+    <layout-connected>
         <div class="columns">
             <service-form class="column form-container"/>
             <car-form class="column form-container"/>
@@ -81,7 +52,7 @@ export default {
         >
             To checkout!
         </button>
-    </div>
+    </layout-connected>
 </template>
 
 <style lang="sass" scoped>
