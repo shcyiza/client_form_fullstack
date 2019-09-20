@@ -1,10 +1,12 @@
 /* eslint-disable no-shadow,no-param-reassign, camelcase */
 import { fetchCompany } from '../graphql/company';
+import {notifyError} from "../helpers/toast_notification";
 
 // initial state
 const state = {
     company: {
         addresses: [],
+        offers: [],
     },
 };
 
@@ -24,11 +26,11 @@ const actions = {
             if (Company) {
                 commit('setCompany', Company);
                 commit('setOrderAddress', state.company.addresses[0].id);
+                if (Company.offers[0]) commit('setOrderOffer', state.company.offers[0].id);
             }
         })
             .catch((err) => {
-                // eslint-disable-next-line no-console
-                console.log('company fetch was unsuccessful', err);
+                notifyError('company fetch was unsuccessful');
                 throw err;
             });
     },

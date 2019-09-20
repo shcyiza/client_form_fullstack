@@ -1,32 +1,58 @@
 const {gql} = require("apollo-server-express");
 
-const USER_SESSION_REQUEST_TYPE = gql`
+const ORDER_TYPES = gql`
     type Order {
-        status: String!
-        message: String
-        request_timestamp: String
-        user_session_token: String
+        id: ID!
+        company: String
+        offer: String!
+        service: String!
+        car: String!
+        address: String!
+        intervention_date: String!
+        intervention_timeframe: String!
+        akti_intervention_id: String!
+        is_paid: Boolean
+        payment_ref: String
+    }
+    input OrderDraft {
+        company: String
+        offer: String!
+        service: String!
+        car: String!
+        address: String!
+        intervention_date: String!
+        intervention_timeframe: String!
     }
 `;
 
-const REQUEST_USER_SESSION_MTTN = gql`
-    extend type Mutation {
-        RequestUserSession(email: String!): UserSessionRequest
+const ORDERS_QR = gql`
+    extend type Query {
+        Orders(page: Int): [Order]
     }
 `;
 
-const CLAIM_USER_SESSION_MTTN = gql`
+const USER_ORDERS_QR = gql`
+    extend type Query {
+        UserOrders(user: String!, page: Int): [Order]
+    }
+`;
+
+const USER_ORDER_QR = gql`
+    extend type Query {
+        UserOrder(user: String, id: String): [Order]
+    }
+`;
+
+const CHECKOUT_ORDER_MTTN = gql`
     extend type Mutation {
-        ClaimUserSession(
-            email: String!
-            request_timestamp: String!
-            claim_token: String!
-        ): UserSessionRequest
+        CheckoutOrder(order: OrderDraft): Order
     }
 `;
 
 module.exports = {
-    USER_SESSION_REQUEST_TYPE,
-    REQUEST_USER_SESSION_MTTN,
-    CLAIM_USER_SESSION_MTTN,
+    ORDER_TYPES,
+    ORDERS_QR,
+    USER_ORDERS_QR,
+    USER_ORDER_QR,
+    CHECKOUT_ORDER_MTTN,
 };

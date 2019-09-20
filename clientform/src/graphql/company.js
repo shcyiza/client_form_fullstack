@@ -16,6 +16,13 @@ const COMPANY_BY_CODE_NAME = `query ($code_name: String!) {
             city
             zip
         }
+        offers {
+            id
+            name
+            nominal_price
+            vat
+            description
+        }
     }
 }`;
 

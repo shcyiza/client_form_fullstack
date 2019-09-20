@@ -9,11 +9,12 @@ const COMPANY_TYPE = gql`
         second_color: String
         third_color: String
         vat_number: String
-        addresses: [Address!]
+        addresses: [Address]!
+        offers: [Offer]!
     }
 `;
 
-const  COMPANY_QR = gql`
+const COMPANY_QR = gql`
     extend type Query {
         Company(code_name: String, id: String): Company
     }

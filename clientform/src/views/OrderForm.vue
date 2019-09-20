@@ -1,12 +1,10 @@
 <script>
 import { mapGetters } from 'vuex';
-import moment from 'moment';
 
 import ServiceForm from './components/ServiceForm.vue';
 import CarForm from './components/CarForm.vue';
 import AddressForm from './components/AddressForm.vue';
 import InterventionDateField from './components/InterventionDateField.vue';
-import { notifySuccess } from '../helpers/toast_notification';
 import LayoutConnected from './components/LayoutConnected';
 
 export default {
@@ -27,6 +25,7 @@ export default {
         ...mapGetters({
             user: 'getAuthedUser',
             validation: 'checkValidity',
+            offers: 'getOffers'
         }),
     },
     methods: {

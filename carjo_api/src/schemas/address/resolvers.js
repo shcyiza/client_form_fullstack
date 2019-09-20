@@ -14,7 +14,7 @@ const RegisterUserAddressMttn = {
             .save()
             .then(resp => {
                 logger.info(
-                    `model Address successful: ${args.street} Registered successfully`,
+                    `new Address id:${args.street} Registered successfully`,
                 );
                 return resp;
             })

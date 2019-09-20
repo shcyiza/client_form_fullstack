@@ -15,11 +15,16 @@ const UserModel = Mongoose.model(
 const OfferModel = Mongoose.model(
     "Offer",
     {
-        name: {type: String, required: true, unique: true},
-        nominal_price: {type: Mongoose.Decimal128, required: true},
-        vat: {type: Mongoose.Decimal128, required: true},
+        name: {type: String, required: true},
+        nominal_price: {type: Number, required: true},
+        vat: {type: Number, required: true},
         description: String,
         akti_service_id: {type: String, index: true, sparse: true},
+        company: {
+            type: Mongoose.Schema.Types.ObjectId,
+            index: true,
+            sparse: true,
+        },
     },
     "offer",
 );
@@ -95,7 +100,7 @@ const AddressModel = Mongoose.model(
 const OrderModel = Mongoose.model(
     "Order",
     {
-        service: {type: String, required: true},
+        offer: {type: String, required: true},
         user: {
             type: Mongoose.Schema.Types.ObjectId,
             required: true,
@@ -112,9 +117,8 @@ const OrderModel = Mongoose.model(
             type: Mongoose.Schema.Types.ObjectId,
             required: true,
         },
-        intervention_date: {type: Date, required: true},
-        intervention_timeframe: {type: String, required: true},
-        akti_intervention_id: {type: String, index: true, sparse: true},
+        is_paid: Boolean,
+        payment_ref: String,
     },
     "order",
 );

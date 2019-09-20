@@ -1,4 +1,4 @@
-const {CompanyModel, AddressModel} = require("../../models/index");
+const {CompanyModel, AddressModel, OfferModel} = require("../../models/index");
 const {onError} = require("../../utils/utils");
 
 const Company = {
@@ -7,6 +7,9 @@ const Company = {
             localisable: id,
             localisable_type: "Company",
         }).exec();
+    },
+    async offers({id}) {
+        return await OfferModel.find({company: id}).exec();
     },
 };
 

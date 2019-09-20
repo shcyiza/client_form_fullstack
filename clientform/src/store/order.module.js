@@ -5,12 +5,13 @@ const state = {
     service_index: '0',
     car_id: '',
     address_id: '',
+    offer_id: '',
     intervention_date: '',
     intervention_moment: '',
 };
 
 const getters = {
-    serviceIndex: (state) => Number(state.service_index),
+    offerId: (state) => state.offer_id,
     carId: (state) => state.car_id,
     addressId: (state) => state.address_id,
     interventionDate: (state) => state.intervention_date,
@@ -44,11 +45,14 @@ const mutations = {
     setOrderCar(state, id) {
         state.car_id = id;
     },
+    setInterventionDate(state, date) {
+        state.intervention_date = date;
+    },
     setOrderAddress(state, id) {
         state.address_id = id;
     },
-    setInterventionDate(state, date) {
-        state.intervention_date = date;
+    setOrderOffer(state, id) {
+        state.offer_id = id;
     },
     setInterventionTimeFrame(state, time_frame_value) {
         if (

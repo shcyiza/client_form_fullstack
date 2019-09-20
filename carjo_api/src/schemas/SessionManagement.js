@@ -9,6 +9,7 @@ const {
 } = require("./user_session/types");
 const {COMPANY_TYPE, COMPANY_QR} = require("./company/types");
 const {ADDRESS_TYPE} = require("./address/types");
+const {OFFER_TYPE} = require("./offer/types");
 
 const {User, UserQr, RegisterUserMttn} = require("./user/resolvers");
 const {
@@ -22,6 +23,7 @@ const SessionManagement = makeExecutableSchema({
     typeDefs: [
         BASE_TYPE,
         PUBLIC_USER_TYPE,
+        OFFER_TYPE,
         COMPANY_TYPE,
         ADDRESS_TYPE,
         USER_QR,
@@ -41,7 +43,8 @@ const SessionManagement = makeExecutableSchema({
             ...RequestUserSessionMttn,
             ...ClaimUserSessionMttn,
         },
-        User, Company
+        User,
+        Company,
     },
 });
 

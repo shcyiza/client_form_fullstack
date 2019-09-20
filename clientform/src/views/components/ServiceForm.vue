@@ -11,13 +11,17 @@ export default {
     },
     computed: {
         ...mapGetters({
-            serviceIndex: 'serviceIndex',
+            order_offer_id: 'offerId',
+            offers: 'getOffers',
         }),
     },
     methods: {
-        selectService(index) {
-            this.$store.commit('setOrderService', index);
+        selectOffer(id) {
+            this.$store.commit('setOrderOffer', id);
         },
+    },
+    mounted() {
+        if (this.offers.length < 1) this.$store.dispatch('fetchOffers');
     },
 };
 </script>
@@ -27,12 +31,14 @@ export default {
         <h2>Service form</h2>
         <div
         class="box selector"
-        v-for="(service, index) in services"
+        v-for="(offer, index) in offers"
         :key="index"
-        @click="selectService(index)"
-        v-bind:class="serviceIndex === index ?  'active' : ''"
+        @click="selectOffer(offer.id)"
+        v-bind:class="offer.id === order_offer_id ?  'active' : ''"
         >
-            {{service.name}}
+            <b>{{offer.name}}</b>
+            <br>
+            {{offer.nominal_price * (1 + offer.vat)}} €
         </div>
     </div>
 </template>
