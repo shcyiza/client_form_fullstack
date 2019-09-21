@@ -1,6 +1,6 @@
 /* eslint-disable no-shadow,no-param-reassign, camelcase */
 import { fetchCompany } from '../graphql/company';
-import {notifyError} from "../helpers/toast_notification";
+import { notifyError } from '../helpers/toast_notification';
 
 // initial state
 const state = {
@@ -21,12 +21,16 @@ const getters = {
 };
 // actions
 const actions = {
-    fetchCompany({ commit, state }, code_name) {
+    fetchCompany({ commit, state, dispatch }, code_name) {
         fetchCompany(code_name).then(({ Company }) => {
             if (Company) {
                 commit('setCompany', Company);
                 commit('setOrderAddress', state.company.addresses[0].id);
-                if (Company.offers[0]) commit('setOrderOffer', state.company.offers[0].id);
+                if (Company.offers[0]) {
+                    commit('setOrderOffer', state.company.offers[0].id);
+                } else {
+                    dispatch('fetchOffers');
+                }
             }
         })
             .catch((err) => {
@@ -37,6 +41,8 @@ const actions = {
     initCompanyData({ state, dispatch }, code_name) {
         if (code_name && !state.id) {
             dispatch('fetchCompany', code_name);
+        } else {
+            dispatch('fetchOffers');
         }
     },
 };

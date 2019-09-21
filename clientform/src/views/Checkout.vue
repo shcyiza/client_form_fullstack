@@ -37,6 +37,7 @@ export default {
     computed: {
         ...mapGetters({
             user: 'getAuthedUser',
+            offer: 'getCurrentOffer'
         }),
     },
     mounted() {

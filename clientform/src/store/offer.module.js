@@ -9,7 +9,7 @@ const state = {
 const getters = {
     getOffers: (state, getters, rootState) => {
         const company_offers = rootState.company.company.offers;
-        console.log(company_offers);
+
         return company_offers.length > 0 ? company_offers : state.offers;
     },
 };

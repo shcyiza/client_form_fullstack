@@ -57,7 +57,7 @@ const UserOrderQr = {
 const CheckoutOrderMttn = {
     CheckoutOrder(parent, {order}, {req}) {
         order.user = req.user.user_id;
-        const new_order = OrderModel.new(order);
+        const new_order = new OrderModel(order);
 
         return new_order
             .save()

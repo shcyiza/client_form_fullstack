@@ -1,4 +1,4 @@
-import { userSessionGraph, clientFormGraph } from '../lib/graphql';
+import { userSessionGraph } from '../lib/graphql';
 
 const COMPANY_BY_CODE_NAME = `query ($code_name: String!) {
     Company(code_name: $code_name) {
@@ -26,6 +26,7 @@ const COMPANY_BY_CODE_NAME = `query ($code_name: String!) {
     }
 }`;
 
+// eslint-disable-next-line import/prefer-default-export
 export async function fetchCompany(code_name) {
     const query = userSessionGraph(COMPANY_BY_CODE_NAME);
     return query({ code_name });

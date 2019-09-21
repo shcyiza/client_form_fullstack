@@ -113,10 +113,6 @@ const OrderModel = Mongoose.model(
             type: Mongoose.Schema.Types.ObjectId,
             required: true,
         },
-        company: {
-            type: Mongoose.Schema.Types.ObjectId,
-            required: true,
-        },
         is_paid: Boolean,
         payment_ref: String,
     },

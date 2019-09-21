@@ -1,13 +1,15 @@
 /* eslint-disable no-shadow,no-param-reassign */
 import { TIME_FRAME } from '../helpers/constants';
+import { checkoutOrder } from '../graphql/order';
+import { notifyError } from '../helpers/toast_notification';
+import router from '../router';
 
 const state = {
-    service_index: '0',
     car_id: '',
     address_id: '',
     offer_id: '',
     intervention_date: '',
-    intervention_moment: '',
+    intervention_timeframe: '',
 };
 
 const getters = {
@@ -15,7 +17,7 @@ const getters = {
     carId: (state) => state.car_id,
     addressId: (state) => state.address_id,
     interventionDate: (state) => state.intervention_date,
-    interventionTimeFrame: (state) => state.intervention_moment,
+    interventionTimeFrame: (state) => state.intervention_timeframe,
     checkValidity: (state) => {
         const state_attrs = Object.keys(state);
         const invalidities = [];
@@ -36,12 +38,22 @@ const getters = {
 };
 
 const actions = {
+    checkoutOrder({ state, commit, rootState }) {
+        checkoutOrder(state)
+            .then(({ CheckoutOrder: order }) => {
+                const { id } = order;
+                localStorage.setItem(`order:${rootState.user.user.email}:${rootState.company.company.id}:`, id);
+                commit('setId', id);
+                router.push('checkout_order');
+            })
+            .catch((err) => {
+                notifyError('Error in the final step of the order, please try later again');
+                throw err;
+            });
+    },
 };
 
 const mutations = {
-    setOrderService(state, index) {
-        state.service_index = String(index);
-    },
     setOrderCar(state, id) {
         state.car_id = id;
     },
@@ -54,20 +66,24 @@ const mutations = {
     setOrderOffer(state, id) {
         state.offer_id = id;
     },
+    setId(state, id) {
+        state.id = id;
+    },
     setInterventionTimeFrame(state, time_frame_value) {
         if (
             TIME_FRAME.map((item) => item.value).includes(time_frame_value)
             || time_frame_value === ''
         ) {
-            state.intervention_moment = time_frame_value;
+            state.intervention_timeframe = time_frame_value;
         }
     },
     clearOrder(state) {
-        state.service_index = '0';
+        state.id = undefined;
         state.car_id = '';
         state.address_id = '';
+        state.offer_id = '';
         state.intervention_date = '';
-        state.intervention_moment = '';
+        state.intervention_timeframe = '';
     },
 };
 

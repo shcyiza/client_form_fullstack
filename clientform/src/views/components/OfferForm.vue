@@ -12,16 +12,13 @@ export default {
     computed: {
         ...mapGetters({
             order_offer_id: 'offerId',
-            offers: 'getOffers',
+            company: 'getCompanyInfo',
         }),
     },
     methods: {
         selectOffer(id) {
             this.$store.commit('setOrderOffer', id);
         },
-    },
-    mounted() {
-        if (this.offers.length < 1) this.$store.dispatch('fetchOffers');
     },
 };
 </script>

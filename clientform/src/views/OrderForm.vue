@@ -1,11 +1,11 @@
 <script>
 import { mapGetters } from 'vuex';
 
-import ServiceForm from './components/ServiceForm.vue';
+import OfferForm from './components/OfferForm.vue';
 import CarForm from './components/CarForm.vue';
 import AddressForm from './components/AddressForm.vue';
 import InterventionDateField from './components/InterventionDateField.vue';
-import LayoutConnected from './components/LayoutConnected';
+import LayoutConnected from './components/LayoutConnected.vue';
 
 export default {
     name: 'OrderForm',
@@ -15,7 +15,7 @@ export default {
         };
     },
     components: {
-        ServiceForm,
+        OfferForm,
         CarForm,
         AddressForm,
         InterventionDateField,
@@ -25,12 +25,12 @@ export default {
         ...mapGetters({
             user: 'getAuthedUser',
             validation: 'checkValidity',
-            offers: 'getOffers'
+            offers: 'getOffers',
         }),
     },
     methods: {
         submitOrder() {
-            this.$router.push('checkout_order');
+            this.$store.dispatch('checkoutOrder');
         },
     },
 };
@@ -39,7 +39,7 @@ export default {
 <template>
     <layout-connected>
         <div class="columns">
-            <service-form class="column form-container"/>
+            <offer-form class="column form-container"/>
             <car-form class="column form-container"/>
             <address-form class="column form-container"/>
             <intervention-date-field class="column"/>

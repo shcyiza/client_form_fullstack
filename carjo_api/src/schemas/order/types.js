@@ -3,21 +3,17 @@ const {gql} = require("apollo-server-express");
 const ORDER_TYPES = gql`
     type Order {
         id: ID!
-        company: String
         offer: String!
-        service: String!
         car: String!
         address: String!
         intervention_date: String!
         intervention_timeframe: String!
-        akti_intervention_id: String!
+        akti_intervention_id: String
         is_paid: Boolean
         payment_ref: String
     }
     input OrderDraft {
-        company: String
         offer: String!
-        service: String!
         car: String!
         address: String!
         intervention_date: String!
