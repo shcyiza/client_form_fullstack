@@ -1,8 +1,23 @@
-const {OrderModel} = require("../../models/index");
+const {
+    OrderModel,
+    OfferModel,
+    CarModel,
+    AddressModel,
+} = require("../../models/index");
 const logger = require("../../utils/logger");
 const {onError} = require("../../utils/utils");
 
-const Order = {};
+const Order = {
+    offer({offer}) {
+        return OfferModel.findOne({_id: offer}).exec();
+    },
+    car({car}) {
+        return CarModel.findOne({_id: car}).exec();
+    },
+    address({address}) {
+        return AddressModel.findOne({_id: address}).exec();
+    },
+};
 
 const OrdersQr = {
     Orders(parent, {page}) {
@@ -34,23 +49,11 @@ const UserOrdersQr = {
 };
 
 const UserOrderQr = {
-    UserOrder(parent, args, {req}) {
-        const {user, id} = args;
-        const filter = {user};
-
-        if (req.user && req.user.user_id) {
-            filter.user = req.user.user_id;
-        }
-
-        if (id) {
-            filter._id = id;
-        }
-
-        if (!filter.user && user) {
-            filter.user = user;
-        }
-
-        return OrderModel.findOne(filter).exec();
+    UserOrder(parent, {id}, {req}) {
+        return OrderModel.findOne({
+            user: req.user.user_id,
+            _id: id,
+        }).exec();
     },
 };
 

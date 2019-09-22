@@ -1,26 +1,28 @@
 <template>
     <layout-connected>
-        <form id="payment-form">
+        <form id="payment-form" v-if="user.email">
                 <h2>Checkout</h2>
             <div class="columns">
                 <div class="column is-4 has-text-left">
-                    <b>recap:</b>
-                    <br>
-                    - {{orderOffer.name}}
-                    <br>
-                    - {{orderCar.brand}} {{orderCar.model}} / {{orderCar.plate_number}}
-                    <br>
-                    - {{orderAddress.street}}, {{orderAddress.city}}, {{orderAddress.zip}}
-                    <br>
-                    - {{orderInterventionTime}}
-                    <hr>
-                    <b>total:</b> {{orderOffer.nominal_price * (1 + orderOffer.vat)}} €
+                    <div v-if="order.id">
+                        <b>recap:</b>
+                        <br>
+                        - {{order.offer.name}}
+                        <br>
+                        - {{order.car.brand}} {{order.car.model}} / {{order.car.plate_number}}
+                        <br>
+                        - {{order.address.street}}, {{order.address.city}}, {{order.address.zip}}
+                        <br>
+                        - {{orderInterventionTime}}
+                        <hr>
+                        <b>total:</b> {{order.offer.nominal_price * (1 + order.offer.vat)}} €
+                    </div>
                 </div>
-                <div class="column is-4">
+                <div class="column is-4" v-if="order.offer">
                     <label for="card-element">
                         Credit or debit card
                     </label>
-                    <div ref="card" id="card-element">
+                    <div ref="stripe" id="card-element">
                         <!-- A Stripe Element will be inserted here. -->
                     </div>
                     <button>Submit Payment</button>
@@ -34,52 +36,66 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import moment from 'moment';
-import LayoutConnected from './components/LayoutConnected.vue';
+import { mapGetters } from 'vuex';
+import { userOrder } from '../graphql/order';
 
+import LayoutConnected from './components/LayoutConnected.vue';
 import { TIME_FRAME } from '../helpers/constants';
+import { notifyError } from '../helpers/toast_notification';
 
 const stripe = Stripe('pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z');
 const elements = stripe.elements();
 
 export default {
     name: 'Checkout',
+    data() {
+        return {
+            order: {},
+        };
+    },
     components: {
         LayoutConnected,
     },
     computed: {
         ...mapGetters({
             user: 'getAuthedUser',
-            company: 'getCompanyInfo',
-            order_offer_id: 'offerId',
+            validation: 'checkValidity',
             offers: 'getOffers',
-            cars: 'getCars',
-            carId: 'carId',
-            addresses: 'getValidAddresses',
-            addressId: 'addressId',
-            interventionDate: 'interventionDate',
-            interventionTimeFrame: 'interventionTimeFrame',
         }),
-        orderOffer() {
-            return this.offers.find((offer) => offer.id === this.order_offer_id);
-        },
-        orderCar() {
-            return this.cars.find((car) => car.id === this.carId);
-        },
-        orderAddress() {
-            return this.addresses.find((address) => address.id === this.addressId);
-        },
         orderInterventionTime() {
-            const date = moment(this.interventionDate, 'YYYY-MM-DD').format('LL');
-            const timeframe = TIME_FRAME.find((tf) => tf.value === this.interventionTimeFrame);
+            const date = moment(this.order.intervention_date, 'YYYY-MM-DD').format('LL');
+            const timeframe = TIME_FRAME.find((t) => t.value === this.order.intervention_timeframe);
 
             return `${date} between ${timeframe.from}h and ${timeframe.till}h`;
         },
     },
+    methods: {
+        getOrderInfo() {
+            if (this.user.email) {
+                const order_id = localStorage.getItem(`order:${this.user.email}`);
+                userOrder(order_id)
+                    .then(({ UserOrder }) => {
+                        this.order = UserOrder;
+                    })
+                    .catch((err) => {
+                        notifyError('An error occurred, try again later...');
+                        throw err;
+                    });
+            }
+        },
+    },
+    watch: {
+        user() {
+            this.getOrderInfo();
+        },
+    },
+    created() {
+        this.getOrderInfo();
+    },
     mounted() {
         const card = elements.create('card');
-        card.mount(this.$refs.card);
+        card.mount(this.$refs.stripe);
     },
 };
 </script>

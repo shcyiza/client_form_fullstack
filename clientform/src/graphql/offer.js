@@ -10,6 +10,8 @@ const OFFERS = `query{
     }
 }`;
 
+
+
 // eslint-disable-next-line import/prefer-default-export
 export async function fetchOffers() {
     const query = clientFormGraph(OFFERS);

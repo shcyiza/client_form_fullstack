@@ -42,8 +42,7 @@ const actions = {
         checkoutOrder(state)
             .then(({ CheckoutOrder: order }) => {
                 const { id } = order;
-                localStorage.setItem(`order:${rootState.user.user.email}:${rootState.company.company.id}:`, id);
-                commit('setId', id);
+                localStorage.setItem(`order:${rootState.user.user.email}`, id);
                 router.push('checkout_order');
             })
             .catch((err) => {

@@ -3,9 +3,9 @@ const {gql} = require("apollo-server-express");
 const ORDER_TYPES = gql`
     type Order {
         id: ID!
-        offer: String!
-        car: String!
-        address: String!
+        offer: Offer!
+        car: Car!
+        address: Address!
         intervention_date: String!
         intervention_timeframe: String!
         akti_intervention_id: String
@@ -35,7 +35,7 @@ const USER_ORDERS_QR = gql`
 
 const USER_ORDER_QR = gql`
     extend type Query {
-        UserOrder(user: String, id: String): [Order]
+        UserOrder(id: String): Order!
     }
 `;
 
