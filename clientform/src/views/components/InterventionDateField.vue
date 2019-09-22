@@ -5,7 +5,7 @@ import { mapGetters } from 'vuex';
 
 import { TIME_FRAME } from '../../helpers/constants';
 import validateInput from '../../lib/validator_service';
-import ValidationInstruction from './form/ValidationInstruction';
+import ValidationInstruction from './form/ValidationInstruction.vue';
 
 const validators = {
     intervention_date: [

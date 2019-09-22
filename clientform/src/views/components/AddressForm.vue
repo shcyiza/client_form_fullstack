@@ -5,7 +5,7 @@ import { mapGetters } from 'vuex';
 import AddressSelector from './form/AddressSelector.vue';
 import VALID_LOCALITIES from '../../../public/cities.json';
 import { notifyError } from '../../helpers/toast_notification';
-import ValidationInstruction from './form/ValidationInstruction';
+import ValidationInstruction from './form/ValidationInstruction.vue';
 
 const initAddressDraft = () => ({
     street: '',
@@ -42,17 +42,11 @@ export default {
     computed: {
         ...mapGetters({
             user_addresses: 'getUserAddresses',
+            addresses: 'getValidAddresses',
             company_addresses: 'getCompanyAddresses',
         }),
         companyMode() {
             return this.company_addresses.length > 0;
-        },
-        addresses() {
-            if (this.companyMode) return this.company_addresses;
-            return this.user_addresses;
-        },
-        addressAttr() {
-            return Object.keys(this.address_draft);
         },
     },
     methods: {

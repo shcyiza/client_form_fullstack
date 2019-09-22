@@ -8,6 +8,11 @@ const state = {
 
 const getters = {
     getUserAddresses: (state) => state.addresses,
+    getValidAddresses: (state, getters, rootState) => {
+        const company_addresses = rootState.company.company.addresses;
+
+        return company_addresses.length > 0 ? company_addresses : state.addresses;
+    },
 };
 
 const actions = {

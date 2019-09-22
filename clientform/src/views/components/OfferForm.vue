@@ -13,6 +13,7 @@ export default {
         ...mapGetters({
             order_offer_id: 'offerId',
             company: 'getCompanyInfo',
+            offers: 'getOffers',
         }),
     },
     methods: {
