@@ -1,8 +1,8 @@
 <script>
 import moment from 'moment';
 import { mapGetters } from 'vuex';
-import { userOrder } from '../graphql/order';
 import { Card, createToken } from 'vue-stripe-elements-plus';
+import { userOrder } from '../graphql/order';
 
 import LayoutConnected from './components/LayoutConnected.vue';
 import { TIME_FRAME } from '../helpers/constants';
@@ -53,7 +53,7 @@ export default {
             // See https://stripe.com/docs/api#tokens for the token object.
             // See https://stripe.com/docs/api#errors for the error object.
             // More general https://stripe.com/docs/stripe.js#stripe-create-token.
-            createToken().then((data) => console.log(data.token));
+            createToken().then((data) => console.log(data.token)).catch((err) => { throw err; });
         },
     },
     watch: {
@@ -89,13 +89,17 @@ export default {
                 </div>
                 <div class="column is-4" v-if="order.offer">
                     <div ref="stripe" id="card-element">
-                        <h1>Please give us your payment details:</h1>
+                        <h3>Please give us your payment details:</h3>
                         <card class='stripe-card'
                               :class='{ card_validated }'
                               stripe='pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z'
                               @change='card_validated = $event.complete'
                         />
-                        <button class='pay-with-stripe' @click='pay' :disabled='!card_validated'>
+                        <button
+                        v-on:click.prevent="pay"
+                        class="pay-with-stripe button is-primary"
+                        :disabled="!card_validated"
+                        >
                             Pay with credit card
                         </button>
                     </div>
@@ -144,6 +148,6 @@ export default {
         border-radius: 4px;
     }
     .stripe-card.card_validated {
-        border-color: green;
+        border-color: #00d1b2;
     }
 </style>
