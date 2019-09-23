@@ -1,18 +1,11 @@
 <script>
 import { mapGetters } from 'vuex';
-import { AVAILABLE_SERVICE } from '../../helpers/constants';
 
 export default {
     name: 'ServiceForm',
-    data() {
-        return {
-            services: AVAILABLE_SERVICE,
-        };
-    },
     computed: {
         ...mapGetters({
             order_offer_id: 'offerId',
-            company: 'getCompanyInfo',
             offers: 'getOffers',
         }),
     },
@@ -20,6 +13,9 @@ export default {
         selectOffer(id) {
             this.$store.commit('setOrderOffer', id);
         },
+    },
+    created() {
+        if (!this.offers[0]) this.$store.dispatch('fetchOffers');
     },
 };
 </script>

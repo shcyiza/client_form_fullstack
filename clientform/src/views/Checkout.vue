@@ -1,61 +1,24 @@
-<template>
-    <layout-connected>
-        <form id="payment-form" v-if="user.email">
-                <h2>Checkout</h2>
-            <div class="columns">
-                <div class="column is-4 has-text-left">
-                    <div v-if="order.id">
-                        <b>recap:</b>
-                        <br>
-                        - {{order.offer.name}}
-                        <br>
-                        - {{order.car.brand}} {{order.car.model}} / {{order.car.plate_number}}
-                        <br>
-                        - {{order.address.street}}, {{order.address.city}}, {{order.address.zip}}
-                        <br>
-                        - {{orderInterventionTime}}
-                        <hr>
-                        <b>total:</b> {{order.offer.nominal_price * (1 + order.offer.vat)}} €
-                    </div>
-                </div>
-                <div class="column is-4" v-if="order.offer">
-                    <label for="card-element">
-                        Credit or debit card
-                    </label>
-                    <div ref="stripe" id="card-element">
-                        <!-- A Stripe Element will be inserted here. -->
-                    </div>
-                    <button>Submit Payment</button>
-                </div>
-
-                <!-- Used to display Element errors. -->
-                <div id="card-errors" role="alert"></div>
-            </div>
-        </form>
-    </layout-connected>
-</template>
-
 <script>
 import moment from 'moment';
 import { mapGetters } from 'vuex';
 import { userOrder } from '../graphql/order';
+import { Card, createToken } from 'vue-stripe-elements-plus';
 
 import LayoutConnected from './components/LayoutConnected.vue';
 import { TIME_FRAME } from '../helpers/constants';
 import { notifyError } from '../helpers/toast_notification';
-
-const stripe = Stripe('pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z');
-const elements = stripe.elements();
 
 export default {
     name: 'Checkout',
     data() {
         return {
             order: {},
+            card_validated: false,
         };
     },
     components: {
         LayoutConnected,
+        Card,
     },
     computed: {
         ...mapGetters({
@@ -84,6 +47,14 @@ export default {
                     });
             }
         },
+        pay() {
+            // createToken returns a Promise which resolves in a result object with
+            // either a token or an error key.
+            // See https://stripe.com/docs/api#tokens for the token object.
+            // See https://stripe.com/docs/api#errors for the error object.
+            // More general https://stripe.com/docs/stripe.js#stripe-create-token.
+            createToken().then((data) => console.log(data.token));
+        },
     },
     watch: {
         user() {
@@ -93,12 +64,49 @@ export default {
     created() {
         this.getOrderInfo();
     },
-    mounted() {
-        const card = elements.create('card');
-        card.mount(this.$refs.stripe);
-    },
 };
 </script>
+
+<template>
+    <layout-connected>
+        <form id="payment-form" v-if="user.email">
+                <h2>Checkout</h2>
+            <div class="columns">
+                <div class="column is-4 has-text-left">
+                    <div v-if="order.id">
+                        <b>recap:</b>
+                        <br>
+                        - {{order.offer.name}}
+                        <br>
+                        - {{order.car.brand}} {{order.car.model}} / {{order.car.plate_number}}
+                        <br>
+                        - {{order.address.street}}, {{order.address.city}}, {{order.address.zip}}
+                        <br>
+                        - {{orderInterventionTime}}
+                        <hr>
+                        <b>total:</b> {{order.offer.nominal_price * (1 + order.offer.vat)}} €
+                    </div>
+                </div>
+                <div class="column is-4" v-if="order.offer">
+                    <div ref="stripe" id="card-element">
+                        <h1>Please give us your payment details:</h1>
+                        <card class='stripe-card'
+                              :class='{ card_validated }'
+                              stripe='pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z'
+                              @change='card_validated = $event.complete'
+                        />
+                        <button class='pay-with-stripe' @click='pay' :disabled='!card_validated'>
+                            Pay with credit card
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Used to display Element errors. -->
+                <div id="card-errors" role="alert"></div>
+            </div>
+        </form>
+    </layout-connected>
+</template>
 
 <style scoped>
     .StripeElement {
@@ -127,5 +135,15 @@ export default {
 
     .StripeElement--webkit-autofill {
         background-color: #fefde5 !important;
+    }
+    .stripe-card {
+        width: 100%;
+        border: 1px solid #cfd7df;
+        box-shadow: 0 1px 3px 0 #cfd7df;
+        padding: 5px;
+        border-radius: 4px;
+    }
+    .stripe-card.card_validated {
+        border-color: green;
     }
 </style>

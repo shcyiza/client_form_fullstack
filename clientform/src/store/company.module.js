@@ -28,8 +28,6 @@ const actions = {
                 commit('setOrderAddress', state.company.addresses[0].id);
                 if (Company.offers[0]) {
                     commit('setOrderOffer', state.company.offers[0].id);
-                } else {
-                    dispatch('fetchOffers');
                 }
             }
         })
@@ -39,10 +37,8 @@ const actions = {
             });
     },
     initCompanyData({ state, dispatch }, code_name) {
-        if (code_name && !state.id) {
+        if (code_name && !state.company.id) {
             dispatch('fetchCompany', code_name);
-        } else {
-            dispatch('fetchOffers');
         }
     },
 };
