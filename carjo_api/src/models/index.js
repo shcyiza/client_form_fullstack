@@ -8,6 +8,7 @@ const UserModel = Mongoose.model(
         email: {type: String, index: true, unique: true, required: true},
         phone: {type: String, index: true, unique: true, required: true},
         akti_contact_id: {type: String, index: true, sparse: true},
+        akti_account_id: {type: String, index: true, sparse: true},
     },
     "user",
 );

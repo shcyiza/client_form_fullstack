@@ -31,7 +31,7 @@ const ClaimUserSessionMttn = {
             .then(user => {
                 onNoUserFound(user);
 
-                const id = user.id;
+                const {id, akti_account_id, akti_contact_id} = user;
                 const key = composeClaimKey(id, request_timestamp);
 
                 return redis.get(key).then(token_to_claim => {
@@ -44,7 +44,11 @@ const ClaimUserSessionMttn = {
 
                         return {
                             status: STATUS[1],
-                            user_session_token: makeUserSessionToken(id),
+                            user_session_token: makeUserSessionToken(
+                                id,
+                                akti_account_id,
+                                akti_contact_id,
+                            ),
                         };
                     }
 

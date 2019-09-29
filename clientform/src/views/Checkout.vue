@@ -80,7 +80,10 @@ export default {
                         <br>
                         - {{order.car.brand}} {{order.car.model}} / {{order.car.plate_number}}
                         <br>
-                        - {{order.address.street}}, {{order.address.city}}, {{order.address.zip}}
+                        - {{order.address.name}}
+                        {{order.address.street}},
+                        {{order.address.city}},
+                        {{order.address.zip}}
                         <br>
                         - {{orderInterventionTime}}
                         <hr>

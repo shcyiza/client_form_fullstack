@@ -58,10 +58,13 @@ const RegisterUserMttn = {
             let akti_user = await findOrCreateAktiContact(args);
             const akti_contact_id =
                 akti_user.contactId || akti_user.data.data.contactId;
+            const akti_account_id =
+                akti_user.accountId || akti_user.data.data.accountId;
 
             return await new UserModel({
                 ...args,
                 akti_contact_id,
+                akti_account_id,
             }).save();
         } catch (err) {
             onError(err);
@@ -72,7 +75,7 @@ const RegisterUserMttn = {
 const AuthUserQr = {
     // The JWT is alreday parsed and set in req.user
     // as documented here: https://github.com/auth0/express-jwt
-    async AuthUser(parent, agrs, {req}) {
+    async AuthUser(parent, args, {req}) {
         try {
             let user = await UserModel.findOne({_id: req.user.user_id});
 

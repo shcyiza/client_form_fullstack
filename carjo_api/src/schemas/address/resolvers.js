@@ -9,7 +9,7 @@ const RegisterUserAddressMttn = {
             localisable: req.user.user_id,
             localisable_type: "User",
         });
-
+        // TODO create akti address on current account
         return address
             .save()
             .then(resp => {

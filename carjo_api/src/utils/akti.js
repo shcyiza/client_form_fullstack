@@ -180,24 +180,27 @@ const createB2BContact = async accountDraft => {
     }
 };
 
-const findOrCreateAktiContact = contact_draft => {
+const findOrCreateAktiContact = async contact_draft => {
     const {email} = contact_draft;
 
-    return getContact(email)
-        .then(resp => {
-            let akti_user = resp.data.data[0];
+    try {
+        let akti_contact = await getContact(email),
+            akti_user = akti_contact.data.data[0];
 
-            if (akti_user) {
-                logger.info(`user ${email} found in AKTI`);
-                return akti_user;
-            }
-            logger.info(`user ${email} will be created created in AKTI`);
-            return createContact(contact_draft);
-        })
-        .catch(err => {
-            logger.error(err.message);
-            throw err;
-        });
+        if (akti_user) {
+            logger.info(`user ${email} found in AKTI`);
+            return akti_user;
+        }
+
+        logger.info(`user ${email} will be created created in AKTI`);
+        await createB2BContact(contact_draft);
+
+        akti_contact = await getContact(email);
+        return akti_contact.data.data[0];
+    } catch (err) {
+        logger.error(err.message);
+        throw err;
+    }
 };
 
 const findOrCreateAktiCompany = company_draft => {
