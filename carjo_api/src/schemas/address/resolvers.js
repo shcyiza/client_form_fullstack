@@ -6,7 +6,6 @@ const logger = require("../../utils/logger");
 
 const RegisterUserAddressMttn = {
     async RegisterUserAddress(parent, args, {req}) {
-        console.log("args", args);
         try {
             const akti_address = await createAddress(
                 req.user.akti_account_id,
@@ -31,8 +30,6 @@ const RegisterUserAddressMttn = {
         } catch (err) {
             onError(err);
         }
-
-        // TODO create akti address on current account
     },
 };
 
