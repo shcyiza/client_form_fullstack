@@ -10,6 +10,7 @@ const COMPANY_TYPE = gql`
         third_color: String
         vat_number: String
         addresses: [Address]!
+        account_id: String!
         offers: [Offer]!
     }
 `;

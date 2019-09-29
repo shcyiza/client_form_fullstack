@@ -9,6 +9,7 @@ const COMPANY_BY_CODE_NAME = `query ($code_name: String!) {
         second_color
         third_color
         vat_number
+        account_id,
         addresses {
             name
             id

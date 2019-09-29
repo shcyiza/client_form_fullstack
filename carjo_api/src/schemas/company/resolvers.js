@@ -11,6 +11,9 @@ const Company = {
     async offers({id}) {
         return await OfferModel.find({company: id}).exec();
     },
+    account_id({akti_account_id}) {
+        return akti_account_id;
+    },
 };
 
 const CompanyQr = {

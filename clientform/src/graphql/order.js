@@ -32,18 +32,10 @@ const USER_ORDER_QR = `query($id: String) {
         }
         intervention_date
         intervention_timeframe
-        akti_intervention_id
     }
 }`;
 
-export async function checkoutOrder(order_draft) {
-    const order = {
-        offer: order_draft.offer_id,
-        car: order_draft.car_id,
-        address: order_draft.address_id,
-        intervention_date: order_draft.intervention_date,
-        intervention_timeframe: order_draft.intervention_timeframe,
-    };
+export async function checkoutOrder(order) {
     const mutation = clientFormGraph(CHECKOUT_ORDER_MTTN);
     return mutation({ order });
 }

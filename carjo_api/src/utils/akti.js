@@ -16,14 +16,15 @@ const akti = (method, path, data = undefined) => {
 };
 
 const createIntervention = (accountId, contactId, interventionDraft) => {
+    console.log("intervention", accountId, contactId, interventionDraft);
     try {
         const payload = {
             accountId: accountId,
-            interventionType: "1",
-            mainAddressId: "",
-            siteAddressId: "",
+            interventionType: "2",
+            mainAddressId: interventionDraft.akti_address_id,
+            siteAddressId: interventionDraft.akti_address_id,
             contactId: contactId,
-            subject: interventionDraft.subject,
+            subject: "",
             plannedDateTimestamp: interventionDraft.plannedDateTimestamp,
             startTime: interventionDraft.startTime,
             duration: "01:00",
@@ -31,12 +32,9 @@ const createIntervention = (accountId, contactId, interventionDraft) => {
             segmentKey: "",
             typeKey: "",
             sourceKey: "",
-            tasks: [
+            services: [
                 {
-                    task: interventionDraft.requestDescription || "",
-                },
-                {
-                    task: interventionDraft.notes || "",
+                    serviceId: interventionDraft.akti_service_id,
                 },
             ],
         };
@@ -143,7 +141,11 @@ const createAddress = (accountId, address_draft) => {
             isPrimary: "",
             isDelivery: "1",
             isSite: "1",
-            countryKey: address_draft.country_code,
+            // 26 is de country code of Belgium and 79 from France in Akti
+            countryKey:
+                address_draft.country_code === ("26" || "79")
+                    ? address_draft.country_code
+                    : "",
             streetAddress: address_draft.street,
             city: address_draft.city,
             zip: address_draft.zip,

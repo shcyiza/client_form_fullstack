@@ -5,17 +5,17 @@ import { notifyError } from '../helpers/toast_notification';
 import router from '../router';
 
 const state = {
-    car_id: '',
-    address_id: '',
-    offer_id: '',
+    car: '',
+    address: '',
+    offer: '',
     intervention_date: '',
     intervention_timeframe: '',
 };
 
 const getters = {
-    offerId: (state) => state.offer_id,
-    carId: (state) => state.car_id,
-    addressId: (state) => state.address_id,
+    offerId: (state) => state.offer,
+    carId: (state) => state.car,
+    addressId: (state) => state.address,
     interventionDate: (state) => state.intervention_date,
     interventionTimeFrame: (state) => state.intervention_timeframe,
     checkValidity: (state) => {
@@ -39,9 +39,11 @@ const getters = {
 
 const actions = {
     checkoutOrder({ state, commit, rootState }) {
-        checkoutOrder(state)
+        const account_id = rootState.company.company.account_id;
+        checkoutOrder({ ...state, account_id })
             .then(({ CheckoutOrder: order }) => {
                 const { id } = order;
+                commit('setId', id);
                 localStorage.setItem(`order:${rootState.user.user.email}`, id);
                 router.push('checkout_order');
             })
@@ -54,16 +56,16 @@ const actions = {
 
 const mutations = {
     setOrderCar(state, id) {
-        state.car_id = id;
+        state.car = id;
     },
     setInterventionDate(state, date) {
         state.intervention_date = date;
     },
     setOrderAddress(state, id) {
-        state.address_id = id;
+        state.address = id;
     },
     setOrderOffer(state, id) {
-        state.offer_id = id;
+        state.offer = id;
     },
     setId(state, id) {
         state.id = id;
@@ -78,9 +80,9 @@ const mutations = {
     },
     clearOrder(state) {
         state.id = undefined;
-        state.car_id = '';
-        state.address_id = '';
-        state.offer_id = '';
+        state.car = '';
+        state.address = '';
+        state.offer = '';
         state.intervention_date = '';
         state.intervention_timeframe = '';
     },

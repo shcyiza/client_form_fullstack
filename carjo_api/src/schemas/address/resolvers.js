@@ -7,12 +7,8 @@ const logger = require("../../utils/logger");
 const RegisterUserAddressMttn = {
     async RegisterUserAddress(parent, args, {req}) {
         try {
-            const akti_address = await createAddress(
-                req.user.akti_account_id,
-                args,
-            );
-            const akti_address_id =
-                akti_address.accountId || akti_address.data.data.addressId;
+            const akti_address = await createAddress(req.user.account_id, args);
+            const akti_address_id = akti_address.data.data.addressId;
 
             const address = new AddressModel({
                 ...args,

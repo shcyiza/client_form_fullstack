@@ -6,13 +6,15 @@ const ORDER_TYPES = gql`
         offer: Offer!
         car: Car!
         address: Address!
+        user: User!
         intervention_date: String!
         intervention_timeframe: String!
-        akti_intervention_id: String
+        intervention_id: String
         is_paid: Boolean
         payment_ref: String
     }
     input OrderDraft {
+        account_id: String
         offer: String!
         car: String!
         address: String!

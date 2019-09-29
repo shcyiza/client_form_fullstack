@@ -3,9 +3,13 @@ const {
     OfferModel,
     CarModel,
     AddressModel,
+    CompanyModel,
 } = require("../../models/index");
 const logger = require("../../utils/logger");
 const {onError} = require("../../utils/utils");
+const {createIntervention} = require("../../utils/akti");
+const {AKTI_TIME_FRAME} = require("../../utils/constances");
+const moment = require("moment");
 
 const Order = {
     offer({offer}) {
@@ -16,6 +20,9 @@ const Order = {
     },
     address({address}) {
         return AddressModel.findOne({_id: address}).exec();
+    },
+    intervention_id({akti_intervention_id}) {
+        return akti_intervention_id;
     },
 };
 
@@ -58,19 +65,45 @@ const UserOrderQr = {
 };
 
 const CheckoutOrderMttn = {
-    CheckoutOrder(parent, {order}, {req}) {
-        order.user = req.user.user_id;
-        const new_order = new OrderModel(order);
+    CheckoutOrder: async function(parent, {order}, {req}) {
+        try {
+            const {user_id: user, account_id, contact_id} = req.user;
+            const address = await AddressModel.findOne({_id: order.address});
+            const service = await OfferModel.findOne({_id: order.offer});
 
-        return new_order
-            .save()
-            .then(resp => {
+            let accountId = order.account_id || account_id;
+
+            const intervention_draft = {
+                akti_address_id: address.akti_address_id,
+                plannedDateTimestamp: Math.round(
+                    moment(order.intervention_date, "YYYY-MM-DD").format("X"),
+                ),
+                startTime: AKTI_TIME_FRAME[order.intervention_timeframe],
+                akti_service_id: service.akti_service_id,
+            };
+
+            const akti_intervention = await createIntervention(
+                accountId,
+                contact_id,
+                intervention_draft,
+            );
+
+            const akti_intervention_id =
+                akti_intervention.data.data.interventionId;
+
+            const new_order = new OrderModel({
+                ...order,
+                user,
+                akti_intervention_id,
+            });
+
+            return new_order.save().then(resp => {
                 logger.info(`new Order id: ${resp.id} Registered successfully`);
                 return resp;
-            })
-            .catch(err => {
-                onError(err);
             });
+        } catch (err) {
+            onError(err);
+        }
     },
 };
 
