@@ -1,26 +1,38 @@
+const {createAddress} = require("../../utils/akti");
+
 const {AddressModel} = require("../../models/index");
 const {onError} = require("../../utils/utils");
 const logger = require("../../utils/logger");
 
 const RegisterUserAddressMttn = {
-    RegisterUserAddress(parent, args, {req}) {
-        const address = new AddressModel({
-            ...args,
-            localisable: req.user.user_id,
-            localisable_type: "User",
-        });
-        // TODO create akti address on current account
-        return address
-            .save()
-            .then(resp => {
+    async RegisterUserAddress(parent, args, {req}) {
+        console.log("args", args);
+        try {
+            const akti_address = await createAddress(
+                req.user.akti_account_id,
+                args,
+            );
+            const akti_address_id =
+                akti_address.accountId || akti_address.data.data.addressId;
+
+            const address = new AddressModel({
+                ...args,
+                localisable: req.user.user_id,
+                localisable_type: "User",
+                akti_address_id,
+            });
+
+            return address.save().then(resp => {
                 logger.info(
                     `new Address id:${args.street} Registered successfully`,
                 );
                 return resp;
-            })
-            .catch(err => {
-                onError(err);
             });
+        } catch (err) {
+            onError(err);
+        }
+
+        // TODO create akti address on current account
     },
 };
 

@@ -12,6 +12,7 @@ const initAddressDraft = () => ({
     city: '',
     zip: '',
     name: '',
+    country_code: '',
 });
 
 const validators = [
@@ -90,7 +91,9 @@ export default {
                     ));
 
                     if (is_valide_place) {
-                        this.address_draft = { street: `${route} ${street_number}`, city, zip: `${country}-${zip}` };
+                        this.address_draft = {
+                            street: `${route} ${street_number}`, city, zip: `${country}-${zip}`, country_code: `${is_valide_place.country_code}`,
+                        };
                     } else {
                         notifyError(`We have no service in ${work_copy.locality} ${work_copy.country}`);
                         this.address_query = '';

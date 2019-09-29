@@ -135,6 +135,27 @@ const createContact = contact_draft => {
     }
 };
 
+const createAddress = (accountId, address_draft) => {
+    try {
+        const payload = {
+            accountId,
+            isBilling: "1",
+            isPrimary: "",
+            isDelivery: "1",
+            isSite: "1",
+            countryKey: address_draft.country_code,
+            streetAddress: address_draft.street,
+            city: address_draft.city,
+            zip: address_draft.zip,
+        };
+
+        return akti("post", "/crm/account/addresses", payload);
+    } catch (err) {
+        logger.error(err.message);
+        throw err;
+    }
+};
+
 const createB2BContact = async accountDraft => {
     try {
         const payload = {
@@ -230,6 +251,7 @@ module.exports = {
     createAccount,
     getAccountById,
     createIntervention,
+    createAddress,
     createB2BContact,
     findOrCreateAktiContact,
     findOrCreateAktiCompany,

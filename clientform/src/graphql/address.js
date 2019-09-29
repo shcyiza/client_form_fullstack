@@ -1,7 +1,7 @@
 import { clientFormGraph } from '../lib/graphql';
 
-const REGISTER_USER_ADDRESS = `mutation ($street: String!, $city: String!, $zip: String!, $name: String){
-    RegisterUserAddress(street: $street, city: $city, zip: $zip, name: $name){
+const REGISTER_USER_ADDRESS = `mutation ($country_code: String!, $street: String!, $city: String!, $zip: String!, $name: String){
+    RegisterUserAddress(country_code: $country_code, street: $street, city: $city, zip: $zip, name: $name){
         id
         name
         street

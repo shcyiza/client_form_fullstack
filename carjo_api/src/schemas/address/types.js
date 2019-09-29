@@ -13,6 +13,7 @@ const ADDRESS_TYPE = gql`
 const REGISTER_USER_ADDRESS_MTTN = gql`
     extend type Mutation {
         RegisterUserAddress(
+            country_code: String!
             street: String!
             city: String!
             zip: String!
