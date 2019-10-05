@@ -1,12 +1,7 @@
-const {generateDigitToken} = require("../../utils/token_generator");
 const logger = require("../../utils/logger");
 const {UserModel} = require("../../models/index");
 // FIXME [IJP] 2019-08-18: should avoid this dependency if possible
 const {makeUserSessionToken} = require("../../utils/jwt");
-const twilio_client = require("twilio")(
-    process.env.TWILIO_SID,
-    process.env.TWILIO_TOKEN,
-);
 
 const {
     STATUS,
@@ -14,7 +9,7 @@ const {
     onNoUserFound,
     onError,
     delTokenToClaim,
-    cacheTokenToClaim,
+    operateTokenToClaim,
 } = require("./helpers");
 
 const RequestUserSessionMttn = {
@@ -24,22 +19,7 @@ const RequestUserSessionMttn = {
 
             onNoUserFound(claimed_user);
 
-            const token_to_claim = generateDigitToken(6);
-            const claim_data = cacheTokenToClaim(
-                token_to_claim,
-                redis,
-                claimed_user,
-            );
-
-            await twilio_client.messages.create({
-                body: `Hey ${claimed_user.first_name}, Your code for Carjo Service is: ${token_to_claim}`,
-                from: process.env.TWILIO_NUMBER,
-                to: `+${claimed_user.phone}`,
-            });
-
-            logger.debug(`Login token sent to user with email ${email}`);
-
-            return claim_data;
+            return operateTokenToClaim(redis, claimed_user);
         } catch (err) {
             onError(err);
         }
@@ -86,7 +66,7 @@ const ClaimUserSessionMttn = {
                         msg: "Invalide token, please try again",
                     };
 
-                    return cacheTokenToClaim(redis, user, passed_status);
+                    return operateTokenToClaim(redis, user, passed_status);
                 });
             })
             .catch(err => {
