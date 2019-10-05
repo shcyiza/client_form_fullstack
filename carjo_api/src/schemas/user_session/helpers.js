@@ -1,4 +1,3 @@
-const {generateDigitToken} = require("../../utils/token_generator");
 const moment = require("moment");
 const logger = require("../../utils/logger");
 const {UserMethods} = require("../../models/index");
@@ -26,10 +25,14 @@ const delTokenToClaim = function(redis, key, cbOnSuccess) {
         });
 };
 
-const cacheTokenToClaim = (redis, {id, email}, passed_status = {}) => {
+const cacheTokenToClaim = (
+    token_to_claim,
+    redis,
+    {id, email},
+    passed_status = {},
+) => {
     const request_timestamp = moment().format("YYMMDDHHmmss");
     const key = composeClaimKey(id, request_timestamp);
-    const token_to_claim = generateDigitToken(6);
 
     return redis
         .set(key, token_to_claim, "NX", "EX", 600)
