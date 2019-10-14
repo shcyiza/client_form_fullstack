@@ -14,6 +14,7 @@ export default {
         return {
             order: {},
             card_validated: false,
+            activePaymentTab: 0,
         };
     },
     components: {
@@ -71,6 +72,7 @@ export default {
     <layout-connected>
         <form id="payment-form" v-if="user.email">
                 <h2>Checkout</h2>
+                <hr>
             <div class="columns">
                 <div class="column is-4 has-text-left">
                     <div v-if="order.id">
@@ -91,21 +93,34 @@ export default {
                     </div>
                 </div>
                 <div class="column is-4" v-if="order.offer">
-                    <div ref="stripe" id="card-element">
-                        <h3>Please give us your payment details:</h3>
-                        <card class='stripe-card'
-                              :class='{ card_validated }'
-                              stripe='pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z'
-                              @change='card_validated = $event.complete'
-                        />
-                        <button
-                        v-on:click.prevent="pay"
-                        class="pay-with-stripe button is-primary"
-                        :disabled="!card_validated"
-                        >
-                            Pay with credit card
-                        </button>
-                    </div>
+                    <h3>Please give us your payment details:</h3>
+                    <section>
+                        <b-tabs v-model="activeTab">
+                            <b-tab-item label="Bancontact">
+                                Nunc nec velit nec libero vestibulum eleifend.
+                                Curabitur pulvinar congue luctus.
+                                Nullam hendrerit iaculis augue vitae ornare.
+                                Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
+                            </b-tab-item>
+
+                            <b-tab-item :visible="showBooks" label="Visa/Master-Card/AMEX">
+                                <div ref="stripe" id="card-element">
+                                    <card class='stripe-card'
+                                          :class='{ card_validated }'
+                                          stripe='pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z'
+                                          @change='card_validated = $event.complete'
+                                    />
+                                    <button
+                                            v-on:click.prevent="pay"
+                                            class="pay-with-stripe button is-primary"
+                                            :disabled="!card_validated"
+                                    >
+                                        Pay with credit card
+                                    </button>
+                                </div>
+                            </b-tab-item>
+                        </b-tabs>
+                    </section>
                 </div>
 
                 <!-- Used to display Element errors. -->
