@@ -4,10 +4,13 @@ import { mapGetters } from 'vuex';
 import { Card, createToken } from 'vue-stripe-elements-plus';
 import { userOrder } from '../graphql/order';
 import BillingAddressForm from './components/BillingAddressForm.vue';
+import router from '../router';
 
 import LayoutConnected from './components/LayoutConnected.vue';
 import { TIME_FRAME } from '../helpers/constants';
 import { notifyError } from '../helpers/toast_notification';
+import bancontactImg from '../assets/bancontact.svg';
+import creditCardImg from '../assets/cards.jpeg';
 
 export default {
     name: 'Checkout',
@@ -16,6 +19,8 @@ export default {
             order: {},
             card_validated: false,
             activePaymentTab: 0,
+            bancontactImg,
+            creditCardImg
         };
     },
     components: {
@@ -35,6 +40,12 @@ export default {
 
             return `${date} between ${timeframe.from}h and ${timeframe.till}h`;
         },
+        totalPrice() {
+            return this.order.offer.nominal_price * (1 + this.order.offer.vat);
+        },
+        fullName() {
+            return `${this.user.first_name} ${this.user.last_name}`;
+        },
     },
     methods: {
         getOrderInfo() {
@@ -52,13 +63,33 @@ export default {
                     });
             }
         },
-        pay() {
+        payWithCard() {
             // createToken returns a Promise which resolves in a result object with
             // either a token or an error key.
             // See https://stripe.com/docs/api#tokens for the token object.
             // See https://stripe.com/docs/api#errors for the error object.
             // More general https://stripe.com/docs/stripe.js#stripe-create-token.
             createToken().then((data) => console.log(data.token)).catch((err) => { throw err; });
+        },
+        payWithBC() {
+            const stripe = Stripe('pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z');
+
+            stripe.createSource({
+                type: 'bancontact',
+                amount: Math.round(this.totalPrice * 100),
+                currency: 'eur',
+                owner: {
+                    name: this.fullName,
+                },
+                redirect: {
+                    return_url: `http://localhost:8080/order_confirmed?order=${this.order.id}`,
+                },
+            }).then(({ source }) => {
+                window.open(source.redirect.url, '_blank');
+            });
+        },
+        unpaidAction() {
+            router.push('/order_confirmed');
         },
     },
     watch: {
@@ -93,7 +124,7 @@ export default {
                         <br>
                         - {{orderInterventionTime}}
                         <hr>
-                        <b>total:</b> {{order.offer.nominal_price * (1 + order.offer.vat)}} €
+                        <b>total:</b> {{totalPrice}} €
                         <hr>
                     </div>
                     <billing-address-form class="column form-container"/>
@@ -102,33 +133,50 @@ export default {
                     <div class="column">
                         <h2>Payment</h2>
                         <h3>Please choose a payment method:</h3>
+                        <hr>
                         <section>
-                            <b-tabs v-model="activePaymentTab">
-                                <b-tab-item label="Bancontact">
-                                    Nunc nec velit nec libero vestibulum eleifend.
-                                    Curabitur pulvinar congue luctus.
-                                    Nullam hendrerit iaculis augue vitae ornare.
-                                    Maecenas vehicula pulvinar tellus.
-                                </b-tab-item>
-                                <b-tab-item label="Visa/Master-Card/AMEX">
-                                    <form id="payment-form" v-if="user.email">
+                            <div v-model="activePaymentTab" v-if="user.email && order.id">
+                                <div>
+                                    <h3>Bancontact</h3>
+                                    <div
+                                    class="box selector"
+                                    @click="payWithBC"
+                                    >
+                                        <img :src="bancontactImg" width="300">
+                                    </div>
+                                </div>
+                                <hr>
+                                <div>
+                                    <h3>Visa/Master-Card/AMEX</h3>
+                                    <img :src="creditCardImg" width="300">
+                                    <form id="payment-form">
                                         <div ref="stripe" id="card-element">
-                                            <card class='stripe-card'
-                                              :class='{ card_validated }'
-                                              stripe='pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z'
-                                              @change='card_validated = $event.complete'
+                                            <card
+                                            class='stripe-card'
+                                            :class='{ card_validated }'
+                                            stripe='pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z'
+                                            @change='card_validated = $event.complete'
                                             />
                                             <button
-                                                    v-on:click.prevent="pay"
-                                                    class="pay-with-stripe button is-primary"
-                                                    :disabled="!card_validated"
+                                            v-on:click.prevent="payWithCard"
+                                            class="pay-with-stripe button is-primary"
+                                            :disabled="!card_validated"
                                             >
                                                 Pay with credit card
                                             </button>
                                         </div>
                                     </form>
-                                </b-tab-item>
-                            </b-tabs>
+                                </div>
+                                <hr>
+                                <div>
+                                    <div
+                                    class="box selector"
+                                    @click="unpaidAction"
+                                    >
+                                        Pay later... (we will contact you later)
+                                    </div>
+                                </div>
+                            </div>
                         </section>
                     </div>
                 </div>
