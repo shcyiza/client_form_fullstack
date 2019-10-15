@@ -3,13 +3,22 @@ const {
     OfferModel,
     CarModel,
     AddressModel,
-    CompanyModel,
 } = require("../../models/index");
 const logger = require("../../utils/logger");
 const {onError} = require("../../utils/utils");
 const {createIntervention} = require("../../utils/akti");
 const {AKTI_TIME_FRAME} = require("../../utils/constances");
 const moment = require("moment");
+
+let default_address;
+
+const fetchAnAddress = function(_id) {
+    return AddressModel.findOne({_id}).exec();
+};
+
+const fetchDefaultAddress = function(_id) {
+    default_address = AddressModel.findOne({_id}).exec();
+};
 
 const Order = {
     offer({offer}) {
@@ -19,7 +28,26 @@ const Order = {
         return CarModel.findOne({_id: car}).exec();
     },
     address({address}) {
-        return AddressModel.findOne({_id: address}).exec();
+        fetchDefaultAddress(address);
+        return default_address;
+    },
+    billing_address({address, billing_address}) {
+        if (billing_address) {
+            return fetchAnAddress(billing_address);
+        }
+        if (!default_address) {
+            fetchDefaultAddress(address);
+            return default_address;
+        }
+
+        return default_address;
+    },
+    billing_address_id({address, billing_address}) {
+        if (billing_address) {
+            return billing_address;
+        }
+
+        return address;
     },
     intervention_id({akti_intervention_id}) {
         return akti_intervention_id;
@@ -107,10 +135,35 @@ const CheckoutOrderMttn = {
     },
 };
 
+const UpdateOrderBillingMttn = {
+    UpdateOrderBilling: function(parent, {id, address_id}, {req}) {
+        const filter = {
+            _id: id,
+            user: req.user.user_id,
+        };
+
+        return OrderModel.findOneAndUpdate(
+            filter,
+            {billing_address: address_id},
+            {new: true},
+        )
+            .then(order => {
+                logger.info(
+                    `Billing address of Order id: ${id} Updated successfully`,
+                );
+                return order;
+            })
+            .catch(err => {
+                onError(err);
+            });
+    },
+};
+
 module.exports = {
     Order,
     OrdersQr,
     UserOrderQr,
     UserOrdersQr,
     CheckoutOrderMttn,
+    UpdateOrderBillingMttn,
 };

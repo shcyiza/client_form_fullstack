@@ -1,6 +1,4 @@
 <script>
-import { mapGetters } from 'vuex';
-
 export default {
     name: 'SitesButtons',
     props: {
@@ -8,15 +6,23 @@ export default {
             type: Array,
             required: true,
         },
+        store_callback: {
+            type: String,
+            default: 'selectedAddress',
+        },
+        selected_getter: {
+            type: String,
+            default: 'addressId',
+        },
     },
     computed: {
-        ...mapGetters({
-            addressId: 'addressId',
-        }),
+        addressId() {
+            return this.$store.getters[this.selected_getter];
+        },
     },
     methods: {
         selectAddress(id) {
-            this.$store.commit('setOrderAddress', id);
+            this.$store.dispatch(this.store_callback, id);
         },
     },
 };

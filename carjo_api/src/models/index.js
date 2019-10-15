@@ -117,6 +117,9 @@ const OrderModel = Mongoose.model(
         intervention_date: String,
         intervention_timeframe: String,
         akti_intervention_id: String,
+        billing_address: {
+            type: Mongoose.Schema.Types.ObjectId,
+        },
         is_paid: Boolean,
         payment_ref: String,
     },

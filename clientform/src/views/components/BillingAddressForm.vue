@@ -1,6 +1,5 @@
 <script>
 /* eslint-disable no-undef */
-
 import { mapGetters } from 'vuex';
 import AddressSelector from './form/AddressSelector.vue';
 import VALID_LOCALITIES from '../../../public/cities.json';
@@ -11,7 +10,7 @@ const initAddressDraft = () => ({
     street: '',
     city: '',
     zip: '',
-    name: '',
+    name: 'Billing Address',
     country_code: '',
 });
 
@@ -23,11 +22,12 @@ const validators = [
     { validate: 'locality', instruction: 'a locality is missing...' },
 ];
 export default {
+    name: 'BillingAddressForm',
+    props: {
 
-    name: 'AddressForm',
+    },
     data() {
         return {
-            company_mode: false,
             address_draft: initAddressDraft(),
             address_query: '',
             place_error: [],
@@ -53,8 +53,7 @@ export default {
     methods: {
         addOrUpdateAddress(event) {
             event.preventDefault();
-            const address_id = this.$store.dispatch('addAddress', this.address_draft);
-            this.$store.commit('setOrderAddress', address_id)
+            this.$store.dispatch('addAddress', this.address_draft, 'updateBillingAddress');
             this.address_draft = initAddressDraft();
             this.address_query = '';
         },
@@ -93,7 +92,11 @@ export default {
 
                     if (is_valide_place) {
                         this.address_draft = {
-                            street: `${route} ${street_number}`, city, zip: `${country}-${zip}`, country_code: `${is_valide_place.country_code}`,
+                            street: `${route} ${street_number}`,
+                            city,
+                            zip: `${country}-${zip}`,
+                            country_code: `${is_valide_place.country_code}`,
+                            name: this.address_draft.name,
                         };
                     } else {
                         notifyError(`We have no service in ${work_copy.locality} ${work_copy.country}`);
@@ -137,8 +140,12 @@ export default {
 
 <template>
     <div>
-        <h2>Address</h2>
-        <address-selector :addresses="addresses"/>
+        <h2>Billing Address</h2>
+        <address-selector
+        :addresses="addresses"
+        selected_getter="billingAddressId"
+        store_callback="updateBillingAddress"
+        />
 
         <form
         v-if="!companyMode"

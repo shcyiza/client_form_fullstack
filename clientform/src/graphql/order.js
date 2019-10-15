@@ -30,14 +30,27 @@ const USER_ORDER_QR = `query($id: String) {
             city
             zip
         }
+        billing_address_id
         intervention_date
         intervention_timeframe
+    }
+}`;
+
+
+const UPDATE_ORDER_BILLING_MTTN = `mutation ($id: String!, $address_id: String!){
+    UpdateOrderBilling(id: $id, address_id: $address_id) {
+        billing_address_id
     }
 }`;
 
 export async function checkoutOrder(order) {
     const mutation = clientFormGraph(CHECKOUT_ORDER_MTTN);
     return mutation({ order });
+}
+
+export async function UpdateOrderBilling(id, address_id) {
+    const mutation = clientFormGraph(UPDATE_ORDER_BILLING_MTTN);
+    return mutation({ id, address_id });
 }
 
 export async function userOrder(id) {

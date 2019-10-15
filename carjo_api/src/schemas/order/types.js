@@ -6,6 +6,8 @@ const ORDER_TYPES = gql`
         offer: Offer!
         car: Car!
         address: Address!
+        billing_address: Address!
+        billing_address_id: String!
         user: User!
         intervention_date: String!
         intervention_timeframe: String!
@@ -47,10 +49,17 @@ const CHECKOUT_ORDER_MTTN = gql`
     }
 `;
 
+const UPDATE_ORDER_BILLING_MTTN = gql`
+    extend type Mutation {
+        UpdateOrderBilling(id: String!, address_id: String!): Order
+    }
+`;
+
 module.exports = {
     ORDER_TYPES,
     ORDERS_QR,
     USER_ORDERS_QR,
     USER_ORDER_QR,
     CHECKOUT_ORDER_MTTN,
+    UPDATE_ORDER_BILLING_MTTN,
 };

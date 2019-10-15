@@ -11,8 +11,8 @@ const {Car, RegisterCarMttn} = require("./car/resolvers");
 const {ADDRESS_TYPE, REGISTER_USER_ADDRESS_MTTN, UPDATE_USER_ADDRESS_MTTN} = require("./address/types");
 const {RegisterUserAddressMttn, UpdateUserAddressMttn} = require("./address/resolvers");
 
-const {ORDER_TYPES, USER_ORDER_QR, CHECKOUT_ORDER_MTTN} = require("./order/types");
-const {Order, UserOrderQr, CheckoutOrderMttn} = require("./order/resolvers");
+const {ORDER_TYPES, USER_ORDER_QR, CHECKOUT_ORDER_MTTN, UPDATE_ORDER_BILLING_MTTN} = require("./order/types");
+const {Order, UserOrderQr, CheckoutOrderMttn, UpdateOrderBillingMttn} = require("./order/resolvers");
 
 const {OFFER_TYPE, OFFERS_QR} = require("./offer/types");
 const {Offer, OffersQr} = require("./offer/resolvers");
@@ -36,6 +36,7 @@ const ClientFormSchema = makeExecutableSchema({
         REGISTER_USER_ADDRESS_MTTN,
         UPDATE_USER_ADDRESS_MTTN,
         CHECKOUT_ORDER_MTTN,
+        UPDATE_ORDER_BILLING_MTTN,
     ],
     resolvers:  {
         Query: {
@@ -48,6 +49,7 @@ const ClientFormSchema = makeExecutableSchema({
             ...RegisterUserAddressMttn,
             ...UpdateUserAddressMttn,
             ...CheckoutOrderMttn,
+            ...UpdateOrderBillingMttn,
         },
         User:{...User, cars, addresses},
         Car,

@@ -3,6 +3,7 @@ import moment from 'moment';
 import { mapGetters } from 'vuex';
 import { Card, createToken } from 'vue-stripe-elements-plus';
 import { userOrder } from '../graphql/order';
+import BillingAddressForm from './components/BillingAddressForm.vue';
 
 import LayoutConnected from './components/LayoutConnected.vue';
 import { TIME_FRAME } from '../helpers/constants';
@@ -20,6 +21,7 @@ export default {
     components: {
         LayoutConnected,
         Card,
+        BillingAddressForm,
     },
     computed: {
         ...mapGetters({
@@ -41,6 +43,8 @@ export default {
                 userOrder(order_id)
                     .then(({ UserOrder }) => {
                         this.order = UserOrder;
+                        this.$store.commit('setOrderAddress', UserOrder.address.id);
+                        this.$store.commit('setOrderBillingAddress', UserOrder.billing_address_id);
                     })
                     .catch((err) => {
                         notifyError('An error occurred, try again later...');
@@ -70,13 +74,13 @@ export default {
 
 <template>
     <layout-connected>
-        <form id="payment-form" v-if="user.email">
-                <h2>Checkout</h2>
-                <hr>
+        <div class="checkout_container" v-if="user.email">
+            <h2>Checkout</h2>
+            <hr>
             <div class="columns">
-                <div class="column is-4 has-text-left">
+                <div class="column has-text-left">
                     <div v-if="order.id">
-                        <b>recap:</b>
+                        <h2>Recap</h2>
                         <br>
                         - {{order.offer.name}}
                         <br>
@@ -90,47 +94,64 @@ export default {
                         - {{orderInterventionTime}}
                         <hr>
                         <b>total:</b> {{order.offer.nominal_price * (1 + order.offer.vat)}} €
+                        <hr>
+                    </div>
+                    <billing-address-form class="column form-container"/>
+                </div>
+                <div class="column">
+                    <div class="column">
+                        <h2>Payment</h2>
+                        <h3>Please choose a payment method:</h3>
+                        <section>
+                            <b-tabs v-model="activePaymentTab">
+                                <b-tab-item label="Bancontact">
+                                    Nunc nec velit nec libero vestibulum eleifend.
+                                    Curabitur pulvinar congue luctus.
+                                    Nullam hendrerit iaculis augue vitae ornare.
+                                    Maecenas vehicula pulvinar tellus.
+                                </b-tab-item>
+                                <b-tab-item label="Visa/Master-Card/AMEX">
+                                    <form id="payment-form" v-if="user.email">
+                                        <div ref="stripe" id="card-element">
+                                            <card class='stripe-card'
+                                              :class='{ card_validated }'
+                                              stripe='pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z'
+                                              @change='card_validated = $event.complete'
+                                            />
+                                            <button
+                                                    v-on:click.prevent="pay"
+                                                    class="pay-with-stripe button is-primary"
+                                                    :disabled="!card_validated"
+                                            >
+                                                Pay with credit card
+                                            </button>
+                                        </div>
+                                    </form>
+                                </b-tab-item>
+                            </b-tabs>
+                        </section>
                     </div>
                 </div>
-                <div class="column is-4" v-if="order.offer">
-                    <h3>Please give us your payment details:</h3>
-                    <section>
-                        <b-tabs v-model="activeTab">
-                            <b-tab-item label="Bancontact">
-                                Nunc nec velit nec libero vestibulum eleifend.
-                                Curabitur pulvinar congue luctus.
-                                Nullam hendrerit iaculis augue vitae ornare.
-                                Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
-                            </b-tab-item>
+            </div>
+            <hr>
+            <div class="columns payments" v-if="order.offer">
+                <div class="column"></div>
 
-                            <b-tab-item :visible="showBooks" label="Visa/Master-Card/AMEX">
-                                <div ref="stripe" id="card-element">
-                                    <card class='stripe-card'
-                                          :class='{ card_validated }'
-                                          stripe='pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z'
-                                          @change='card_validated = $event.complete'
-                                    />
-                                    <button
-                                            v-on:click.prevent="pay"
-                                            class="pay-with-stripe button is-primary"
-                                            :disabled="!card_validated"
-                                    >
-                                        Pay with credit card
-                                    </button>
-                                </div>
-                            </b-tab-item>
-                        </b-tabs>
-                    </section>
-                </div>
-
+                <div class="column"></div>
                 <!-- Used to display Element errors. -->
                 <div id="card-errors" role="alert"></div>
             </div>
-        </form>
+        </div>
     </layout-connected>
 </template>
 
 <style scoped>
+    .checkout_container{
+        padding: 50px;
+    }
+    .payments{
+        min-height: 250px;
+    }
     .StripeElement {
         box-sizing: border-box;
 

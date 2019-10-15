@@ -1,12 +1,13 @@
 /* eslint-disable no-shadow,no-param-reassign */
 import { TIME_FRAME } from '../helpers/constants';
-import { checkoutOrder } from '../graphql/order';
+import { checkoutOrder, UpdateOrderBilling } from '../graphql/order';
 import { notifyError } from '../helpers/toast_notification';
 import router from '../router';
 
 const state = {
     car: '',
     address: '',
+    billing_address: '',
     offer: '',
     intervention_date: '',
     intervention_timeframe: '',
@@ -16,6 +17,7 @@ const getters = {
     offerId: (state) => state.offer,
     carId: (state) => state.car,
     addressId: (state) => state.address,
+    billingAddressId: (state) => state.billing_address || state.address,
     interventionDate: (state) => state.intervention_date,
     interventionTimeFrame: (state) => state.intervention_timeframe,
     checkValidity: (state) => {
@@ -52,6 +54,21 @@ const actions = {
                 throw err;
             });
     },
+    updateBillingAddress({ commit, rootState }, address_id) {
+        const id = localStorage.getItem(`order:${rootState.user.user.email}`);
+        UpdateOrderBilling(id, address_id)
+            .then(({ UpdateOrderBilling: order }) => {
+                const { billing_address_id } = order;
+                commit('setOrderBillingAddress', billing_address_id);
+            })
+            .catch((err) => {
+                notifyError('Could not change the billing address');
+                throw err;
+            });
+    },
+    selectedAddress({ commit }, id) {
+        commit('setOrderAddress', id);
+    },
 };
 
 const mutations = {
@@ -63,6 +80,9 @@ const mutations = {
     },
     setOrderAddress(state, id) {
         state.address = id;
+    },
+    setOrderBillingAddress(state, id) {
+        state.billing_address = id;
     },
     setOrderOffer(state, id) {
         state.offer = id;
@@ -82,6 +102,7 @@ const mutations = {
         state.id = undefined;
         state.car = '';
         state.address = '';
+        state.billing_address = '';
         state.offer = '';
         state.intervention_date = '';
         state.intervention_timeframe = '';

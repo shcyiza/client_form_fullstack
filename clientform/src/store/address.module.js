@@ -16,12 +16,13 @@ const getters = {
 };
 
 const actions = {
-    addAddress({ commit }, payload) {
+    addAddress({ commit, dispatch }, payload, callback_type = 'selectedAddress') {
         registerAddress(payload)
             .then(({ RegisterUserAddress: address }) => {
                 commit('pushAddress', address);
-                commit('setOrderAddress', address.id);
+                dispatch(callback_type, address.id);
                 notifySuccess('Addresses successfully added!');
+                return address.id;
             })
             .catch((err) => {
                 notifyError('Address could not be added...');
