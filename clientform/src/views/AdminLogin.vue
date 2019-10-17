@@ -1,6 +1,6 @@
 <script>
 import validateInput from '../lib/validator_service';
-import ValidationInstruction from './components/form/ValidationInstruction';
+import ValidationInstruction from './components/form/ValidationInstruction.vue';
 import { notifyError, notifySuccess } from '../helpers/toast_notification';
 import { loginAdmin } from '../graphql/auth';
 
@@ -50,6 +50,7 @@ export default {
                 if (user_session_token) {
                     localStorage.setItem('admin_session_token', user_session_token);
                     notifySuccess('Welcome colleague!');
+                    this.$router.push('/admin/orders');
                 } else {
                     notifyError('Wrong token. please try again...');
                 }
