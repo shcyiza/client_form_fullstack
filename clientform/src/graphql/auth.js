@@ -17,6 +17,13 @@ const CLAIM_TOKEN = `mutation ($email: String!, $request_timestamp: String!, $cl
     }
 }`;
 
+const LOGIN_ADMIN = `mutation ($email: String!, $pwd: String!){
+    LoginAdmin(username: $email, password: $pwd){
+        status
+        user_session_token
+    }
+}`;
+
 export function requestToken(email) {
     const mutation = userSessionGraph(REQUEST_TOKEN);
     return mutation({
@@ -30,5 +37,13 @@ export function claimToken(email, request_timestamp, claim_token) {
         email,
         request_timestamp,
         claim_token,
+    });
+}
+
+export function loginAdmin(email, pwd) {
+    const mutation = userSessionGraph(LOGIN_ADMIN);
+    return mutation({
+        email,
+        pwd,
     });
 }

@@ -4,6 +4,7 @@ import OrderForm from './views/OrderForm.vue';
 import Checkout from './views/Checkout.vue';
 import OrderConfirmed from './views/OrderConfirmed.vue';
 import Login from './views/Login.vue';
+import AdminLogin from "./views/AdminLogin";
 
 Vue.use(Router);
 
@@ -48,6 +49,11 @@ const router = new Router({
             name: 'order_confirmed',
             component: OrderConfirmed,
             beforeEnter: ifUserSession(true, 'welcome'),
+        },
+        {
+            path: '/admin_login',
+            name: 'admin_login',
+            component: AdminLogin,
         },
     ],
 });

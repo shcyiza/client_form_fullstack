@@ -10,6 +10,13 @@ export const clientFormGraph = graphql('http://localhost:6060/client_form_graph'
     asJSON: true,
 });
 
+export const adminGraph = graphql('http://localhost:6060/admin_graph', {
+    headers: {
+        Authorization: () => `Bearer ${localStorage.getItem('admin_session_token')}`,
+    },
+    asJSON: true,
+});
+
 /* eslint-disable no-underscore-dangle */
 export default {
     install(Vue, url, options) {
