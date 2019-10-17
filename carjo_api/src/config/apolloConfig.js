@@ -2,6 +2,7 @@ const {ApolloServer} = require("apollo-server-express");
 const SessionManagementSchema = require("../schemas/SessionManagement");
 const ClientFormSchema = require("../schemas/ClientForm");
 const AdminPanelSchema = require("../schemas/AdminPanel");
+const {adminFilter} = require("../config/securityConfig");
 
 const ApolloResource = function(path, sever) {
     this.path = path;
@@ -36,10 +37,10 @@ const apollo = {
         const admin_path = "/admin_graph";
         const admin_api = new ApolloServer({
             schema: AdminPanelSchema,
-            context: ({req, res}) => ({
-                req,
-                res,
-            }),
+            context: ({req, res}) => {
+                adminFilter(req, res);
+                return {req, res};
+            },
         });
 
         return {
