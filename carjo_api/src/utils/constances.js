@@ -4,4 +4,10 @@ const AKTI_TIME_FRAME = {
     PM: "14:00",
 };
 
-module.exports = {AKTI_TIME_FRAME};
+const AUTHORIZED_USER = [
+    "apicarjo@gmail.com",
+    "daniel@carjo.co",
+    "nouramine.mankouri@gmail.com",
+];
+
+module.exports = {AKTI_TIME_FRAME, AUTHORIZED_USER};

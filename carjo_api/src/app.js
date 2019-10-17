@@ -18,6 +18,7 @@ app.use(requestLog.getMiddleware(), cors({origin: "*"}));
 const apollo = apolloConfig.connect(redis);
 
 apollo.session_management.applyMiddleware(app);
+
 // Secure the client_form with JWT
 // depend of oder of injection of other midelware :-(
 app.post(
@@ -25,7 +26,14 @@ app.post(
     security.jwtFilter,
     security.authenticationErrorFilter(apollo.client_form.path),
 );
-apollo.client_form.applyMiddleware(app);
+apollo.client_form.applyMiddleware(app, apollo.client_form.path);
+
+app.post(
+    apollo.admin.path,
+    security.jwtFilter,
+    security.authenticationErrorFilter(apollo.admin.path),
+);
+apollo.admin.applyMiddleware(app, apollo.admin.path);
 
 const connection_port = 6060;
 

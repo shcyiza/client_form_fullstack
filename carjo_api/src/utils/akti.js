@@ -1,10 +1,14 @@
 const logger = require("../utils/logger");
 const axios = require("axios");
 
-const token = process.env.AKTI_API_KEY;
 const url = "https://my.akti.com/api/v2";
 
-const akti = (method, path, data = undefined) => {
+const akti = (
+    method,
+    path,
+    data = undefined,
+    token = process.env.AKTI_API_KEY,
+) => {
     return axios({
         method,
         url: url + path,
@@ -16,7 +20,6 @@ const akti = (method, path, data = undefined) => {
 };
 
 const createIntervention = (accountId, contactId, interventionDraft) => {
-    console.log("intervention", accountId, contactId, interventionDraft);
     try {
         const payload = {
             accountId: accountId,
@@ -41,6 +44,21 @@ const createIntervention = (accountId, contactId, interventionDraft) => {
 
         // console.log('options', options)
         return akti("post", `/intervention/interventions`, payload);
+    } catch (err) {
+        logger.error(err.message);
+        throw err;
+    }
+};
+
+const Login = (username, password) => {
+    try {
+        const payload = {
+            username,
+            password,
+        };
+
+        // console.log('options', options)
+        return akti("post", `/auth/login`, payload);
     } catch (err) {
         logger.error(err.message);
         throw err;
@@ -257,4 +275,5 @@ module.exports = {
     createB2BContact,
     findOrCreateAktiContact,
     findOrCreateAktiCompany,
+    Login,
 };

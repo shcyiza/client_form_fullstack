@@ -1,7 +1,7 @@
 const {ApolloServer} = require("apollo-server-express");
 const SessionManagementSchema = require("../schemas/SessionManagement");
 const ClientFormSchema = require("../schemas/ClientForm");
-const logger = require("../utils/logger");
+const AdminPanelSchema = require("../schemas/AdminPanel");
 
 const ApolloResource = function(path, sever) {
     this.path = path;
@@ -33,6 +33,14 @@ const apollo = {
                 res,
             }),
         });
+        const admin_path = "/admin_graph";
+        const admin_api = new ApolloServer({
+            schema: AdminPanelSchema,
+            context: ({req, res}) => ({
+                req,
+                res,
+            }),
+        });
 
         return {
             session_management: new ApolloResource(
@@ -40,6 +48,7 @@ const apollo = {
                 session_management_api,
             ),
             client_form: new ApolloResource(client_form_path, client_form_api),
+            admin: new ApolloResource(admin_path, admin_api),
         };
     },
 };

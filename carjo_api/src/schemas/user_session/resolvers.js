@@ -1,7 +1,9 @@
+const {Login} = require("../../utils/akti");
 const logger = require("../../utils/logger");
+const {AUTHORIZED_USER} = require("../../utils/constances");
 const {UserModel} = require("../../models/index");
 // FIXME [IJP] 2019-08-18: should avoid this dependency if possible
-const {makeUserSessionToken} = require("../../utils/jwt");
+const {makeUserSessionToken, makeAdminToken} = require("../../utils/jwt");
 
 const {
     STATUS,
@@ -75,4 +77,26 @@ const ClaimUserSessionMttn = {
     },
 };
 
-module.exports = {RequestUserSessionMttn, ClaimUserSessionMttn};
+const LoginAdminMttn = {
+    // The JWT is alreday parsed and set in req.user
+    // as documented here: https://github.com/auth0/express-jwt
+    async LoginAdmin(parent, {username, password}) {
+        try {
+            if (!AUTHORIZED_USER.includes(username)) {
+                throw new Error("Unauthorized admin request!");
+            }
+
+            const token_request = await Login(username, password);
+            const token = token_request.data.data.token;
+
+            return {
+                status: STATUS[1],
+                user_session_token: makeAdminToken(token, username),
+            };
+        } catch (err) {
+            onError(err);
+        }
+    },
+};
+
+module.exports = {RequestUserSessionMttn, ClaimUserSessionMttn, LoginAdminMttn};

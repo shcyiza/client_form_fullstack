@@ -6,6 +6,7 @@ const {
     USER_SESSION_REQUEST_TYPE,
     REQUEST_USER_SESSION_MTTN,
     CLAIM_USER_SESSION_MTTN,
+    LOGIN_ADMIN_MTTN,
 } = require("./user_session/types");
 const {COMPANY_TYPE, COMPANY_QR} = require("./company/types");
 const {ADDRESS_TYPE} = require("./address/types");
@@ -15,6 +16,7 @@ const {User, UserQr, RegisterUserMttn} = require("./user/resolvers");
 const {
     RequestUserSessionMttn,
     ClaimUserSessionMttn,
+    LoginAdminMttn,
 } = require("./user_session/resolvers");
 
 const {Company, CompanyQr} = require("./company/resolvers");
@@ -32,6 +34,7 @@ const SessionManagement = makeExecutableSchema({
         USER_SESSION_REQUEST_TYPE,
         REQUEST_USER_SESSION_MTTN,
         CLAIM_USER_SESSION_MTTN,
+        LOGIN_ADMIN_MTTN,
     ],
     resolvers: {
         Query: {
@@ -42,6 +45,7 @@ const SessionManagement = makeExecutableSchema({
             ...RegisterUserMttn,
             ...RequestUserSessionMttn,
             ...ClaimUserSessionMttn,
+            ...LoginAdminMttn,
         },
         User,
         Company,
