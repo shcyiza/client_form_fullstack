@@ -67,10 +67,9 @@ export default {
         payWithCard() {
             createToken().then(async ({ token }) => {
                 this.is_paying = true;
+                const charge_result = await chargeCard(token.id, this.order.id);
 
-                const { ChargeCard: { is_paid } } = await chargeCard(JSON.stringify(token), this.order.id);
-
-                if (is_paid) {
+                if (charge_result.ChargeCard.is_paid) {
                     localStorage.removeItem(`order:${this.user.email}`);
                     router.push('/order_confirmed');
                 }

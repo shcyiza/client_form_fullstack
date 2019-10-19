@@ -15,11 +15,10 @@ const ChargeCardMttn = {
             const amount = Math.round(
                 offer.nominal_price * (1 + offer.vat) * 100,
             );
-            const source = JSON.parse(token).id;
 
             const charge = await stripe.charges.create({
                 amount,
-                source,
+                source: token,
                 currency: "eur",
                 description: `payment akti intervention id ${order.akti_intervention_id}`,
                 metadata: {order_id},
