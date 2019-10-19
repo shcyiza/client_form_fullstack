@@ -25,6 +25,7 @@ const OfferModel = Mongoose.model(
             type: Mongoose.Schema.Types.ObjectId,
             index: true,
             sparse: true,
+            ref: "Company",
         },
     },
     "offer",
@@ -101,18 +102,25 @@ const AddressModel = Mongoose.model(
 const OrderModel = Mongoose.model(
     "Order",
     {
-        offer: {type: String, required: true},
+        offer: {
+            type: Mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: "Offer",
+        },
         user: {
             type: Mongoose.Schema.Types.ObjectId,
             required: true,
+            ref: "User",
         },
         car: {
             type: Mongoose.Schema.Types.ObjectId,
             required: true,
+            ref: "Car",
         },
         address: {
             type: Mongoose.Schema.Types.ObjectId,
             required: true,
+            ref: "Address",
         },
         intervention_date: String,
         intervention_timeframe: String,

@@ -21,9 +21,6 @@ const fetchDefaultAddress = function(_id) {
 };
 
 const Order = {
-    offer({offer}) {
-        return OfferModel.findOne({_id: offer}).exec();
-    },
     car({car}) {
         return CarModel.findOne({_id: car}).exec();
     },
@@ -88,7 +85,9 @@ const UserOrderQr = {
         return OrderModel.findOne({
             user: req.user.user_id,
             _id: id,
-        }).exec();
+        })
+            .populate("offer")
+            .exec();
     },
 };
 

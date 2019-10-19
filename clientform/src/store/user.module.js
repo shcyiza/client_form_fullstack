@@ -47,7 +47,7 @@ const actions = {
                 fatalErrorCallback();
             }
         }).catch((err) => {
-            if (err.status === 404) {
+            if (err.status === 401) {
                 notifyError('Your session has expired... Please log back in.');
                 fatalErrorCallback();
             } else {

@@ -2,13 +2,13 @@
 import moment from 'moment';
 import { mapGetters } from 'vuex';
 import { Card, createToken } from 'vue-stripe-elements-plus';
-import { userOrder } from '../graphql/order';
+import { userOrder, chargeCard } from '../graphql/order';
 import BillingAddressForm from './components/BillingAddressForm.vue';
 import router from '../router';
 
 import LayoutConnected from './components/LayoutConnected.vue';
 import { TIME_FRAME } from '../helpers/constants';
-import { notifyError } from '../helpers/toast_notification';
+import { notifyError, notifySuccess } from '../helpers/toast_notification';
 import bancontactImg from '../assets/bancontact.svg';
 import creditCardImg from '../assets/cards.jpeg';
 
@@ -16,11 +16,12 @@ export default {
     name: 'Checkout',
     data() {
         return {
+            stripe_pk: process.env.VUE_APP_STRIPE_PK,
             order: {},
             card_validated: false,
-            activePaymentTab: 0,
+            is_paying: false,
             bancontactImg,
-            creditCardImg
+            creditCardImg,
         };
     },
     components: {
@@ -64,15 +65,22 @@ export default {
             }
         },
         payWithCard() {
-            // createToken returns a Promise which resolves in a result object with
-            // either a token or an error key.
-            // See https://stripe.com/docs/api#tokens for the token object.
-            // See https://stripe.com/docs/api#errors for the error object.
-            // More general https://stripe.com/docs/stripe.js#stripe-create-token.
-            createToken().then((data) => console.log(data.token)).catch((err) => { throw err; });
+            createToken().then(async ({ token }) => {
+                this.is_paying = true;
+
+                const { ChargeCard: { is_paid } } = await chargeCard(JSON.stringify(token), this.order.id);
+
+                if (is_paid) {
+                    localStorage.removeItem(`order:${this.user.email}`);
+                    router.push('/order_confirmed');
+                }
+            }).catch((err) => {
+                notifyError("Something went wrong... your payment didn't go through. Please Try again.");
+                throw err;
+            });
         },
         payWithBC() {
-            const stripe = Stripe('pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z');
+            const stripe = Stripe(this.stripe_pk);
 
             stripe.createSource({
                 type: 'bancontact',
@@ -82,7 +90,7 @@ export default {
                     name: this.fullName,
                 },
                 redirect: {
-                    return_url: `http://localhost:8080/order_confirmed?order=${this.order.id}`,
+                    return_url: `${process.env.VUE_APP_HOST}/order_confirmed?order=${this.order.id}`,
                 },
             }).then(({ source }) => {
                 window.open(source.redirect.url, '_blank');
@@ -135,7 +143,7 @@ export default {
                         <h3>Please choose a payment method:</h3>
                         <hr>
                         <section>
-                            <div v-model="activePaymentTab" v-if="user.email && order.id">
+                            <div v-if="user.email && order.id">
                                 <div>
                                     <h3>Bancontact</h3>
                                     <div
@@ -153,14 +161,15 @@ export default {
                                         <div ref="stripe" id="card-element">
                                             <card
                                             class='stripe-card'
-                                            :class='{ card_validated }'
-                                            stripe='pk_test_FJWLzLqmP5sCjWTyW3UUsepT00LyZIDl9Z'
-                                            @change='card_validated = $event.complete'
+                                            :options="{hidePostalCode: true}"
+                                            :class="{ card_validated }"
+                                            :stripe="stripe_pk"
+                                            @change="card_validated = $event.complete"
                                             />
                                             <button
                                             v-on:click.prevent="payWithCard"
                                             class="pay-with-stripe button is-primary"
-                                            :disabled="!card_validated"
+                                            :disabled="!card_validated || is_paying"
                                             >
                                                 Pay with credit card
                                             </button>
