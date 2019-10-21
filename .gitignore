@@ -2,6 +2,7 @@
 /carjo_api/node_modules
 /clientform/node_modules
 /clientform/dist
+/clientform/build
 doc_carjo_client_form.md
 
 # local env files

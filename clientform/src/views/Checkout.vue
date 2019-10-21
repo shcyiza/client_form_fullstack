@@ -74,7 +74,7 @@ export default {
                     router.push('/order_confirmed');
                 }
             }).catch((err) => {
-                notifyError("Something went wrong... your payment didn't go through. Please Try again.");
+                notifyError("Something went wrong... your payment didn't go through. Please try again.");
                 throw err;
             });
         },

@@ -1,10 +1,9 @@
 const {OrderModel} = require("../../models/index");
-const logger = require("../../utils/logger");
 const {onError} = require("../../utils/utils");
 const stripe = require("stripe")(process.env.STRIPE_SK);
 
-const ChargeCardMttn = {
-    ChargeCard: async function(parent, {token, order_id}, {req}) {
+const CHARGE_PAYMENT_MTTN = {
+    ChargePayment: async function(parent, {token, order_id}, {req}) {
         try {
             const filter = {
                 _id: order_id,
@@ -34,4 +33,4 @@ const ChargeCardMttn = {
     },
 };
 
-module.exports = {ChargeCardMttn};
+module.exports = {CHARGE_PAYMENT_MTTN};

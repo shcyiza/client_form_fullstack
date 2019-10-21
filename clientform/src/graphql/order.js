@@ -43,8 +43,8 @@ const UPDATE_ORDER_BILLING_MTTN = `mutation ($id: String!, $address_id: String!)
     }
 }`;
 
-const CHARGE_CARD_MTTN = `mutation ($token: String!, $order_id: String!){
-    ChargeCard(token: $token, order_id: $order_id) {
+const CHARGE_PAYMENT_MTTN = `mutation ($token: String!, $order_id: String!){
+    ChargePayment(token: $token, order_id: $order_id) {
         is_paid
         payment_ref
     }
@@ -65,7 +65,7 @@ export async function userOrder(id) {
     return query({ id });
 }
 
-export async function chargeCard(token, order_id) {
-    const query = clientFormGraph(CHARGE_CARD_MTTN);
+export async function chargePayment(token, order_id) {
+    const query = clientFormGraph(CHARGE_PAYMENT_MTTN);
     return query({ token, order_id });
 }

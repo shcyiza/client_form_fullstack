@@ -19,8 +19,8 @@ const {Offer, OffersQr} = require("./offer/resolvers");
 
 const {COMPANY_TYPE} = require("./company/types");
 
-const {CHARGE_CARD_MTTN} = require("./payment/types");
-const {ChargeCardMttn} = require("./payment/resolvers");
+const {CHARGE_PAYMENT_MTTN} = require("./payment/types");
+const {ChargePaymentMttn} = require("./payment/resolvers");
 
 const ClientFormSchema = makeExecutableSchema({
     typeDefs: [
@@ -40,7 +40,7 @@ const ClientFormSchema = makeExecutableSchema({
         UPDATE_USER_ADDRESS_MTTN,
         CHECKOUT_ORDER_MTTN,
         UPDATE_ORDER_BILLING_MTTN,
-        CHARGE_CARD_MTTN,
+        CHARGE_PAYMENT_MTTN,
     ],
     resolvers:  {
         Query: {
@@ -54,7 +54,7 @@ const ClientFormSchema = makeExecutableSchema({
             ...UpdateUserAddressMttn,
             ...CheckoutOrderMttn,
             ...UpdateOrderBillingMttn,
-            ...ChargeCardMttn,
+            ...ChargePaymentMttn,
         },
         User:{...User, cars, addresses},
         Car,

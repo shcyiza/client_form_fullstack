@@ -1,9 +1,9 @@
 const {gql} = require("apollo-server-express");
 
-const CHARGE_CARD_MTTN = gql`
+const CHARGE_PAYMENT_MTTN = gql`
     extend type Mutation {
-        ChargeCard(token: String!, order_id: String!): Order!
+        ChargePayment(token: String!, order_id: String!): Order!
     }
 `;
 
-module.exports = {CHARGE_CARD_MTTN};
+module.exports = {CHARGE_PAYMENT_MTTN};
