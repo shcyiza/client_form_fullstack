@@ -5,8 +5,6 @@ const app = express();
 
 app.use(serveStatic(`${__dirname}/dist`));
 
-app.get('*', serveStatic(`${__dirname}/dist`));
-
 const port = process.env.PORT || 5000;
 app.listen(port);
 console.log(`server started cors ok? ${port}`);
