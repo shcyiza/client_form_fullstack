@@ -79,7 +79,7 @@ const AddressModel = Mongoose.model(
         localisable: {
             type: Mongoose.Schema.Types.ObjectId,
             required: true,
-            refPath: "localisable",
+            refPath: "localisable_type",
         },
         localisable_type: {
             type: String,
@@ -130,6 +130,7 @@ const OrderModel = Mongoose.model(
         },
         is_paid: Boolean,
         payment_ref: String,
+        payment_client_secret: String,
     },
     "order",
 );

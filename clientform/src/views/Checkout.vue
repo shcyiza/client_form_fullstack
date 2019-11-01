@@ -2,13 +2,14 @@
 import moment from 'moment';
 import { mapGetters } from 'vuex';
 import { Card, createToken } from 'vue-stripe-elements-plus';
-import { userOrder, chargeCard } from '../graphql/order';
+import { userOrder } from '../graphql/order';
+import { chargePayment, tokenizeInfo, updatePaymentInfo } from '../graphql/payment';
 import BillingAddressForm from './components/BillingAddressForm.vue';
 import router from '../router';
 
 import LayoutConnected from './components/LayoutConnected.vue';
 import { TIME_FRAME } from '../helpers/constants';
-import { notifyError, notifySuccess } from '../helpers/toast_notification';
+import { notifyError } from '../helpers/toast_notification';
 import bancontactImg from '../assets/bancontact.svg';
 import creditCardImg from '../assets/cards.jpeg';
 
@@ -49,6 +50,10 @@ export default {
         },
     },
     methods: {
+        PaymentErrorNotification() {
+            notifyError("Something went wrong... your payment didn't go through. Please try again.");
+            this.is_paying = false;
+        },
         getOrderInfo() {
             if (this.user.email) {
                 const order_id = localStorage.getItem(`order:${this.user.email}`);
@@ -67,33 +72,54 @@ export default {
         payWithCard() {
             createToken().then(async ({ token }) => {
                 this.is_paying = true;
-                const charge_result = await chargeCard(token.id, this.order.id);
+                const charge_result = await chargePayment(token.id, this.order.id);
 
-                if (charge_result.ChargeCard.is_paid) {
+                if (charge_result.ChargePayment.is_paid) {
                     localStorage.removeItem(`order:${this.user.email}`);
                     router.push('/order_confirmed');
+                } else {
+                    this.PaymentErrorNotification();
                 }
             }).catch((err) => {
-                notifyError("Something went wrong... your payment didn't go through. Please try again.");
+                this.PaymentErrorNotification();
                 throw err;
             });
         },
-        payWithBC() {
-            const stripe = Stripe(this.stripe_pk);
+        async payWithBC() {
+            try {
+                if (this.is_paying === false) {
+                    this.is_paying = true;
+                    const stripe = Stripe(this.stripe_pk);
 
-            stripe.createSource({
-                type: 'bancontact',
-                amount: Math.round(this.totalPrice * 100),
-                currency: 'eur',
-                owner: {
-                    name: this.fullName,
-                },
-                redirect: {
-                    return_url: `${process.env.VUE_APP_HOST}/order_confirmed?order=${this.order.id}`,
-                },
-            }).then(({ source }) => {
-                window.open(source.redirect.url, '_blank');
-            });
+                    const payment_info = await tokenizeInfo(this.order.id);
+                    const { internal_token } = payment_info.TokenizeChargeInfo;
+
+                    const { source } = await stripe.createSource({
+                        type: 'bancontact',
+                        amount: Math.round(this.totalPrice * 100),
+                        currency: 'eur',
+                        owner: {
+                            name: this.fullName,
+                        },
+                        redirect: {
+                            return_url: `${process.env.VUE_APP_HOST}/order_confirmed?internal_token=${internal_token}`,
+                        },
+                    });
+
+                    const updates = {
+                        order_id: this.order.id,
+                        payment_ref: source.id,
+                        payment_client_secret: source.client_secret,
+                    };
+
+                    await updatePaymentInfo(updates);
+
+                    window.open(source.redirect.url, '_blank');
+                }
+            } catch (err) {
+                this.PaymentErrorNotification();
+                throw err;
+            }
         },
         unpaidAction() {
             router.push('/order_confirmed');

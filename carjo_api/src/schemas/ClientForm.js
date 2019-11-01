@@ -19,8 +19,10 @@ const {Offer, OffersQr} = require("./offer/resolvers");
 
 const {COMPANY_TYPE} = require("./company/types");
 
-const {CHARGE_PAYMENT_MTTN} = require("./payment/types");
-const {ChargePaymentMttn} = require("./payment/resolvers");
+const {
+    PAYMENT_INFO_TYPE, CHARGE_PAYMENT_MTTN, TOKENIZE_CHARGE_INFO_MTTN, DECODE_TOKENIZE_CHARGE_INFO_MTTN, UPDATE_ORDER_PAYMENT_INFO_MTTN
+} = require("./payment/types");
+const {ChargePaymentMttn, DecodeTokenizeChargeInfoQr, TokenizeChargeInfoQr, UpdateOrderPaymentInfoMttn} = require("./payment/resolvers");
 
 const ClientFormSchema = makeExecutableSchema({
     typeDefs: [
@@ -30,6 +32,7 @@ const ClientFormSchema = makeExecutableSchema({
         PRIVATE_USER_TYPE,
         ADDRESS_TYPE,
         COMPANY_TYPE,
+        PAYMENT_INFO_TYPE,
         OFFER_TYPE,
         AUTH_USER_QR,
         USER_CARS_QR,
@@ -41,12 +44,17 @@ const ClientFormSchema = makeExecutableSchema({
         CHECKOUT_ORDER_MTTN,
         UPDATE_ORDER_BILLING_MTTN,
         CHARGE_PAYMENT_MTTN,
+        TOKENIZE_CHARGE_INFO_MTTN,
+        UPDATE_ORDER_PAYMENT_INFO_MTTN,
+        DECODE_TOKENIZE_CHARGE_INFO_MTTN,
     ],
     resolvers:  {
         Query: {
             ...AuthUserQr,
             ...UserOrderQr,
             ...OffersQr,
+            ...TokenizeChargeInfoQr,
+            ...DecodeTokenizeChargeInfoQr,
         },
         Mutation: {
             ...RegisterCarMttn,
@@ -55,6 +63,7 @@ const ClientFormSchema = makeExecutableSchema({
             ...CheckoutOrderMttn,
             ...UpdateOrderBillingMttn,
             ...ChargePaymentMttn,
+            ...UpdateOrderPaymentInfoMttn,
         },
         User:{...User, cars, addresses},
         Car,

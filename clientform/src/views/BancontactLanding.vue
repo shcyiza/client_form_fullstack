@@ -5,6 +5,11 @@
 <script>
 export default {
     name: 'BancontactLanding',
+    data() {
+        return {};
+    },
+    methods: {},
+    mounted() {},
 };
 </script>
 
