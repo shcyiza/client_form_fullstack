@@ -14,6 +14,8 @@ const ORDER_TYPES = gql`
         intervention_id: String
         is_paid: Boolean
         payment_ref: String
+        payment_client_secret: String
+        payment_receipt: String
     }
     input OrderDraft {
         account_id: String

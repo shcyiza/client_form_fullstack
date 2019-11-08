@@ -15,7 +15,7 @@ const TokenizeChargeInfoQr = {
             if (order) {
                 const internal_token = makePaymentUrlToken(order_id).replace(
                     /\./g,
-                    "_",
+                    "%",
                 );
 
                 return {internal_token};
@@ -29,7 +29,11 @@ const TokenizeChargeInfoQr = {
 };
 
 const UpdateOrderPaymentInfoMttn = {
-    UpdateOrderPaymentInfo: async function(parent, {order_id, payment_ref, payment_client_secret}, {req}) {
+    UpdateOrderPaymentInfo: async function(
+        parent,
+        {order_id, payment_ref, payment_client_secret},
+        {req},
+    ) {
         try {
             const filter = {
                 _id: order_id,
@@ -52,16 +56,26 @@ const UpdateOrderPaymentInfoMttn = {
     },
 };
 
-const DecodeTokenizeChargeInfoQr = {
-    DecodeTokenizeChargeInfo: async function(
+const GetChargeInfoQr = {
+    GetChargeInfo: async function(
         parent,
-        {payment_info_token},
+        {payment_ref, payment_client_secret},
         {req},
     ) {
         if (req.user.user_id) {
-            const valid_jwt = payment_info_token.replace(/_/g, ".");
+            const user_id = req.user.user_id;
 
-            return decodePaymentUrlToken(valid_jwt);
+            const {id} = await OrderModel.findOne({
+                payment_client_secret,
+                payment_ref,
+                user: user_id,
+            });
+
+            return {
+                payment_client_secret,
+                payment_ref,
+                order_id: id,
+            };
         }
     },
 };
@@ -89,7 +103,7 @@ const ChargePaymentMttn = {
 
             const updates = {
                 is_paid: true,
-                payment_ref: charge.receipt_url,
+                payment_receipt: charge.receipt_url,
             };
 
             await OrderModel.findOneAndUpdate(filter, updates);
@@ -104,6 +118,6 @@ const ChargePaymentMttn = {
 module.exports = {
     TokenizeChargeInfoQr,
     UpdateOrderPaymentInfoMttn,
-    DecodeTokenizeChargeInfoQr,
+    GetChargeInfoQr,
     ChargePaymentMttn,
 };

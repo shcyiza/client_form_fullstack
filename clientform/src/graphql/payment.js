@@ -23,8 +23,8 @@ mutation (
     }
 }`;
 
-const DECODE_TOKENIZE_CHARGE_INFO_MTTN = `query ($payment_info_token: String){
-    DecodeTokenizeChargeInfo(payment_info_token: $payment_info_token) {
+const GET_CHARGE_INFO_QR = `query ($payment_ref: String!, $payment_client_secret: String!){
+    GetChargeInfo(payment_client_secret: $payment_client_secret, payment_ref: $payment_ref) {
         order_id
         payment_ref
         payment_client_secret
@@ -48,9 +48,9 @@ export async function updatePaymentInfo(updates) {
     return mutation(updates);
 }
 
-export async function decodeTokenizeInfo(payment_info_token) {
-    const query = clientFormGraph(DECODE_TOKENIZE_CHARGE_INFO_MTTN);
-    return query({ payment_info_token });
+export async function getChargeInfo(payment_info) {
+    const query = clientFormGraph(GET_CHARGE_INFO_QR);
+    return query(payment_info);
 }
 
 export async function chargePayment(token, order_id) {

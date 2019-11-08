@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import OrderForm from './views/OrderForm.vue';
 import Checkout from './views/Checkout.vue';
+import ProcessPayment from './views/ProcessPayment.vue';
 import OrderConfirmed from './views/OrderConfirmed.vue';
 import Login from './views/Login.vue';
 import AdminLogin from './views/AdminLogin.vue';
@@ -57,6 +58,12 @@ const router = new Router({
             path: '/checkout_order',
             name: 'checkout_order',
             component: Checkout,
+            beforeEnter: ifUserSession(true, 'welcome'),
+        },
+        {
+            path: '/process_payment',
+            name: 'process_payment',
+            component: ProcessPayment,
             beforeEnter: ifUserSession(true, 'welcome'),
         },
         {

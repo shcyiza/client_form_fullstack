@@ -25,9 +25,12 @@ const UPDATE_ORDER_PAYMENT_INFO_MTTN = gql`
     }
 `;
 
-const DECODE_TOKENIZE_CHARGE_INFO_MTTN = gql`
+const GET_CHARGE_INFO_QR = gql`
     extend type Query {
-        DecodeTokenizeChargeInfo(payment_info_token: String!): PaymentInfo!
+        GetChargeInfo(
+            payment_ref: String!
+            payment_client_secret: String!
+        ): PaymentInfo!
     }
 `;
 
@@ -41,6 +44,6 @@ module.exports = {
     PAYMENT_INFO_TYPE,
     TOKENIZE_CHARGE_INFO_MTTN,
     UPDATE_ORDER_PAYMENT_INFO_MTTN,
-    DECODE_TOKENIZE_CHARGE_INFO_MTTN,
+    GET_CHARGE_INFO_QR,
     CHARGE_PAYMENT_MTTN,
 };

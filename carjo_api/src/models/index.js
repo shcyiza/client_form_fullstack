@@ -131,6 +131,7 @@ const OrderModel = Mongoose.model(
         is_paid: Boolean,
         payment_ref: String,
         payment_client_secret: String,
+        payment_receipt: String,
     },
     "order",
 );

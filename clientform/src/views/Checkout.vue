@@ -91,9 +91,6 @@ export default {
                     this.is_paying = true;
                     const stripe = Stripe(this.stripe_pk);
 
-                    const payment_info = await tokenizeInfo(this.order.id);
-                    const { internal_token } = payment_info.TokenizeChargeInfo;
-
                     const { source } = await stripe.createSource({
                         type: 'bancontact',
                         amount: Math.round(this.totalPrice * 100),
@@ -102,7 +99,7 @@ export default {
                             name: this.fullName,
                         },
                         redirect: {
-                            return_url: `${process.env.VUE_APP_HOST}/order_confirmed?internal_token=${internal_token}`,
+                            return_url: `${process.env.VUE_APP_HOST}/process_payment`,
                         },
                     });
 
@@ -173,6 +170,7 @@ export default {
                                     <h3>Bancontact</h3>
                                     <div
                                     class="box selector"
+                                    v-bind:class="{ active: is_paying }"
                                     @click="payWithBC"
                                     >
                                         <img :src="bancontactImg" width="300">
